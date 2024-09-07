@@ -10,8 +10,8 @@
 
 | Имя | Должность в команде | Уровень/должность в программировании
 | --------- | ----------- | ------- |
-| [FOCKUSTY](https://github.com/FOCKUSTY)  | Основатель команды, CEO         | бэкэнедер   |
-| [aculaOne](https://github.com/aculaOne)  | Помощник и хороший друг, тимлид | фронтэндер  |
+| [FOCKUSTY](https://github.com/FOCKUSTY)  | Основатель команды, CEO         | бэкенедер   |
+| [aculaOne](https://github.com/aculaOne)  | Помощник и хороший друг, тимлид | фронтендер  |
 | [lottop](https://github.com/lottophello) | Раб-отник, джуниор?             | человек     |
 
 
