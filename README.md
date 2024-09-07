@@ -7,9 +7,13 @@
 ## Команда
 
 Данный проект создали 3 (2) человека, а именно:
-1. [FOCKUSTY](https://github.com/FOCKUSTY) - Основатель команды, CEO, бэк-ендер
-2. [aculaOne](https://github.com/aculaOne) - Помощник и хороший друг, teamlid, фронт-эндер
-3. [lottop](https://github.com/lottophello) - Раб-отник, джуниор?, человек
+
+| Имя | Должность в команде | Уровень/должность в программировании
+| --------- | ----------- | ------- |
+| [FOCKUSTY](https://github.com/FOCKUSTY)  | Основатель команды, CEO         | бэкэнедер   |
+| [aculaOne](https://github.com/aculaOne)  | Помощник и хороший друг, тимлид | фронт-эндер |
+| [lottop](https://github.com/lottophello) | Раб-отник, джуниор?             | человек     |
+
 
 ## Дополнительно...
 
