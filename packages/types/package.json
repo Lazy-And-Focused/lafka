@@ -2,7 +2,7 @@
   "name": "@types/lafka",
   "version": "0.0.1",
   "description": "types for lafka",
-  "main": "index.js",
+  "main": "dist/index.d.ts",
   "scripts": {
     "build": "tsc"
   },
