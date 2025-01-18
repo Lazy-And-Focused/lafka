@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "CommonJS",
+        "rootDir": "./",
+        "outDir": "./dist",
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true, 
+        "baseUrl": "./",
+        "paths": {
+            "database/*": ["src/database/*"],
+            "classes/*": ["src/classes/*"],
+            "types/*": [
+                "src/types/*",
+                "node_modules/@types/lafka/dist"
+            ]
+        }
+    },
+    "include": ["./**/*.ts"]
+}
