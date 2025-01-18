@@ -1,0 +1,28 @@
+{
+  "name": "lafka",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -r tsconfig-paths/register src/database/index.database.ts",
+    "start:prod": "node dist/database/index.database.js",
+    "start": "pnpm run build && pnpm run start:prod",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fock-logger": "^2.0.5",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/lafka": "workspace:^",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.3.3"
+  }
+}

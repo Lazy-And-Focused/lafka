@@ -2,14 +2,16 @@
 *.bat
 .vscode/
 .vs/
+.loggercfg
 
 # Logs
-logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
+log
+logs
+*.log
+
+# build
+build
+dist
 
 # Dependency directories
 node_modules/
@@ -21,7 +23,3 @@ jspm_packages/
 .env.test.local
 .env.production.local
 .env.local
-
-# build
-dist
-out
