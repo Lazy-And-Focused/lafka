@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:types": "pnpm --filter @types/lafka build"
   },
   "keywords": [],
   "author": "LAF",

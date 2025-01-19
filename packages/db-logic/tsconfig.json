@@ -14,7 +14,7 @@
             "classes/*": ["src/classes/*"],
             "types/*": [
                 "src/types/*",
-                "node_modules/@types/lafka/dist"
+                "node_modules/@types/lafka/dist/*"
             ]
         }
     },
