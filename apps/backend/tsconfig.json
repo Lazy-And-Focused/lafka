@@ -19,7 +19,12 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "db-logic/*": ["node_modules/db-logic/dist"],
-      "types/*": ["node_modules/@types/lafka/dist"]
+      "types/*": ["node_modules/@types/lafka/dist"],
+      "api": [ "src/api/index.api.ts" ],
+      "api/*": [ "src/api/*" ],
+      "routes/*": [ "src/routes/*" ],
+      "middleware/*": [ "src/middleware/*" ],
+      "strategies/*": [ "src/strategies/*" ]
     }
   }
 }
