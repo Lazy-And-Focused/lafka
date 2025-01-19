@@ -16,6 +16,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "db-logic/*": ["node_modules/db-logic/dist"],
+      "types/*": ["node_modules/@types/lafka/dist"]
+    }
   }
 }
