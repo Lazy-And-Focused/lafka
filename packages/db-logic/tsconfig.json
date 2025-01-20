@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "removeComments": true,
+        "declaration": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true, 
+        "baseUrl": "./",
+        "paths": {
+            "database/*": ["src/database/*"],
+            "classes/*": ["src/classes/*"],
+            "types/*": [
+                "src/types/*",
+                "node_modules/@types/lafka/dist"
+            ]
+        }
+    },
+    "exclude": [ "node_modules", "dist" ]
+}
