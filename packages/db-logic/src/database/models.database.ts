@@ -5,11 +5,11 @@ import CommentsSchema from "./schema/comments.schema";
 import PostsSchema from "./schema/posts.schema";
 import UsersSchema from "./schema/user.schema";
 
+import type { AuthUser } from "types/auth/auth-user.types";
 import type { User } from "types/authors/user.types";
 import type { Comment } from "types/content/comment.types";
 import type { BlogPost } from "types/posts/blog-post.types";
 import type { ForumPost } from "types/posts/forum-post.types";
-import type AuthUser from "types/auth/auth-user.types";
 
 class Database {
 	private readonly _auth_users = new DatabaseClass<AuthUser>(AuthUserSchema)

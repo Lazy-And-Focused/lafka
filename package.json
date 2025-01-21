@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:types": "pnpm --filter @types/lafka build"
+    "build:types": "pnpm --filter @types/lafka build",
+    "build:database": "pnpm --filter db-logic build"
   },
   "keywords": [],
   "author": "LAF",

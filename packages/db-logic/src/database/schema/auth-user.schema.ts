@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-import AuthUser from "types/auth/auth-user.types";
+import { AuthUser } from "types/auth/auth-user.types";
 
 const schema = new Schema<AuthUser>({
 	profile_id: {
