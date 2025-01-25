@@ -9,7 +9,7 @@ import type { Comment as CommentType } from "types/content/comment.types";
 import Comment from "./comment.class";
 
 class Post implements PostType {
-	private _id_: string;
+	private _id: string;
 	private _created_at: Date;
 	private _creator_id: string;
 
@@ -56,7 +56,7 @@ class Post implements PostType {
 		this._creator_id = data.creator_id;
 		this._type = data.type;
 
-		this._id_ = "";
+		this._id = "";
 		this._created_at = now;
 
 		this._constructor_data = {
@@ -102,7 +102,7 @@ class Post implements PostType {
 
 		if (data._id) {
 			const status = await Database.posts.getData({
-				filter: { _id: data._id }
+				filter: { id: data._id }
 			});
 
 			if (status.data) {
@@ -117,10 +117,10 @@ class Post implements PostType {
 	};
 
 	private readonly paste = (
-		data: CreateData<BlogPost & ForumPost> & { _id?: string },
+		data: CreateData<BlogPost & ForumPost> & { id?: string },
 		post: BlogPost & ForumPost
 	) => {
-		this._id_ = data._id || post._id;
+		this._id = data.id || post.id;
 
 		this._name = data.name || post.name;
 		this._content = data.content || post.content;
@@ -165,12 +165,12 @@ class Post implements PostType {
 		comment: CreatePickData<CommentType, "author_id" | "content">
 	) {
 		const created = await new Comment({
-			post_id: this._id_,
+			post_id: this._id,
 			...comment
 		}).init();
 
 		return {
-			response: this.addComments([created._id]),
+			response: this.addComments([created.id]),
 			comment: created
 		};
 	}
@@ -181,7 +181,7 @@ class Post implements PostType {
 		this._tags.push(...tags);
 
 		return await Database.posts.update({
-			filter: { _id: this._id_ },
+			filter: { id: this._id },
 			update: { $push: { tags: tags } }
 		});
 	};
@@ -192,7 +192,7 @@ class Post implements PostType {
 		this._likes += likes;
 
 		return await Database.posts.update({
-			filter: { _id: this._id_ },
+			filter: { id: this._id },
 			update: { likes: this._likes }
 		});
 	};
@@ -203,7 +203,7 @@ class Post implements PostType {
 		this._dislikes += dislikes;
 
 		return await Database.posts.update({
-			filter: { _id: this._id_ },
+			filter: { id: this._id },
 			update: { dislikes: this._dislikes }
 		});
 	};
@@ -214,7 +214,7 @@ class Post implements PostType {
 		this._reposts += reposts;
 
 		return await Database.posts.update({
-			filter: { _id: this._id_ },
+			filter: { id: this._id },
 			update: { reposts: this._reposts }
 		});
 	};
@@ -242,11 +242,7 @@ class Post implements PostType {
 	}
 
 	public get id(): string {
-		return this._id_;
-	}
-
-	public get _id() {
-		return this._id_;
+		return this._id;
 	}
 
 	public get created_at() {

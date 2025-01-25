@@ -26,7 +26,7 @@ export type FindOptions<T> = {
 	options?: Options<T>;
 };
 
-export type ModelData<T> = Omit<T, "_id">;
+export type ModelData<T> = Omit<T, "id"|"_id">;
 export type CreateData<T> = Partial<ModelData<T>>;
 export type CreatePickData<T, K extends keyof ModelData<T>> = Partial<ModelData<T>> &
 	Pick<ModelData<T>, K>;

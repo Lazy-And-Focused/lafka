@@ -28,7 +28,7 @@ type UserDataTypes = `_${Data}`;
 type UserPostTypes = `${PostTypes}_posts`;
 
 class User implements UserType {
-	private _id_: string;
+	private _id: string;
 	private _username: string;
 	private _nickname?: string;
 	private _avatar?: string;
@@ -63,7 +63,7 @@ class User implements UserType {
 			created_at: now
 		};
 
-		this._id_ = "";
+		this._id = "";
 		this._username = data.username;
 		this._created_at = now;
 	}
@@ -124,7 +124,7 @@ class User implements UserType {
 	};
 
 	private readonly paste = (data: CreateData<UserType>, user: UserType) => {
-		this._id_ = user._id;
+		this._id = user.id;
 		this._avatar = data.avatar || user.avatar;
 		this._nickname = data.nickname || user.nickname;
 		this._biography = data.biography || user.biography;
@@ -146,7 +146,7 @@ class User implements UserType {
 	};
 
 	private readonly getDatabaseUser = async (id?: string) => {
-		return await Database.users.model.findById(id || this._id_);
+		return await Database.users.model.findById(id || this._id);
 	};
 
 	private async addPosts(posts: string[], type: PostTypes) {
@@ -210,10 +210,10 @@ class User implements UserType {
 	public async createPost(
 		post: CreatePickData<ForumPost & BlogPost, "content" | "name" | "type">
 	) {
-		const created = await new Post({ ...post, creator_id: this._id_ }).init();
+		const created = await new Post({ ...post, creator_id: this._id }).init();
 
 		return {
-			response: await this.addPosts([created._id], post.type),
+			response: await this.addPosts([created.id], post.type),
 			post: created
 		};
 	}
@@ -227,11 +227,7 @@ class User implements UserType {
 	}
 
 	public get id(): string {
-		return this._id_;
-	}
-
-	public get _id(): string {
-		return this._id_;
+		return this._id;
 	}
 
 	public get username(): string {

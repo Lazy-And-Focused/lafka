@@ -48,7 +48,7 @@ class GooglePassport extends GeneralStrategy {
 							refresh_token,
 							service_id: id,
 							type: "google",
-							profile_id: user._id
+							profile_id: user.id
 						}).init();
 
 						return done(null, authUser);

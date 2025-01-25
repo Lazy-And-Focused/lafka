@@ -4,7 +4,7 @@ import Database from "database/models.database";
 import { CreatePickData } from "types/schema/mongodb.types";
 
 class Comment implements CommentType {
-	private _id_: string;
+	private _id: string;
 	private _created_at: Date;
 	private _author_id: string;
 	private _post_id: string;
@@ -27,7 +27,7 @@ class Comment implements CommentType {
 	) {
 		const now = new Date();
 
-		this._id_ = "";
+		this._id = "";
 		this._created_at = now;
 		this._content = data.content;
 		this._author_id = data.author_id;
@@ -81,7 +81,7 @@ class Comment implements CommentType {
 		>,
 		comment: CommentType
 	) {
-		this._id_ = comment._id;
+		this._id = comment.id;
 		this._author_id = data.author_id || comment.author_id;
 		this._content = data.content || comment.content;
 		this._created_at = data.created_at || comment.created_at;
@@ -103,11 +103,7 @@ class Comment implements CommentType {
 	}
 
 	public get id(): string {
-		return this._id_;
-	}
-
-	public get _id(): string {
-		return this._id_;
+		return this._id;
 	}
 
 	public get content(): string {

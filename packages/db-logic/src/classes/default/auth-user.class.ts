@@ -7,7 +7,7 @@ import { ModelData } from "types/schema/mongodb.types";
 const { auth_users: AuthUsers } = Database;
 
 class AuthUser implements AuthUserType {
-	private readonly _id_: string;
+	private readonly _id: string;
 	private readonly _profile_id: string;
 	private readonly _service_id: string;
 	private readonly _access_token: string;
@@ -15,7 +15,7 @@ class AuthUser implements AuthUserType {
 	private readonly _type: AuthTypes;
 
 	public constructor(data: ModelData<AuthUserType> & { profile_id?: string }) {
-		this._id_ = "";
+		this._id = "";
 		this._profile_id = data.profile_id || "null";
 		this._service_id = data.service_id;
 
@@ -79,7 +79,7 @@ class AuthUser implements AuthUserType {
 	}
 
 	public async updateProfileId(id: string): Promise<User | null> {
-		const user = await AuthUsers.model.findById(this._id_);
+		const user = await AuthUsers.model.findById(this._id);
 
 		if (!user) return null;
 
@@ -90,11 +90,7 @@ class AuthUser implements AuthUserType {
 	}
 
 	public get id(): string {
-		return this._id_;
-	}
-
-	public get _id(): string {
-		return this._id_;
+		return this._id;
 	}
 
 	public get profile_id(): string {
