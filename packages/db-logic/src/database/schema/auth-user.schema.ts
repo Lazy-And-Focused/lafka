@@ -6,7 +6,7 @@ const schema = new Schema<AuthUser>({
 	profile_id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,
-		unique: true
+		unique: false
 	},
 
 	access_token: {
@@ -16,7 +16,7 @@ const schema = new Schema<AuthUser>({
 
 	refresh_token: {
 		type: mongoose.SchemaTypes.String,
-		required: true
+		required: false
 	},
 
     type: {

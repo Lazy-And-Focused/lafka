@@ -20,7 +20,6 @@
     "paths": {
       "database/*": ["node_modules/db-logic/dist/*"],
       "types/*": ["node_modules/@types/lafka/dist/*"],
-      "api": [ "src/api/index.api.ts" ],
       "api/*": [ "src/api/*" ],
       "routes/*": [ "src/routes/*" ],
       "middleware/*": [ "src/middleware/*" ],

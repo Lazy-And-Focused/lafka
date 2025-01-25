@@ -1,11 +1,9 @@
-import passport from "passport";
-
 import Database from "database/database/models.database";
 
 const { auth_users: AuthUsers } = Database;
 
 class GeneralStrategy {
-    protected readonly _passport = passport;
+    protected readonly _passport = require("passport");
 
     public constructor() {
         this.serializer();
@@ -30,6 +28,18 @@ class GeneralStrategy {
 			}
 		});
     }
+
+	public readonly initialize = () => {
+		return this._passport.initialize();
+	};
+
+	public readonly session = () => {
+		return this._passport.session();
+	};
+
+	public get passport() {
+		return this._passport;
+	}
 }
 
 export default GeneralStrategy;

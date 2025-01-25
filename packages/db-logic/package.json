@@ -7,7 +7,7 @@
     "dev": "nodemon -r tsconfig-paths/register src/database/index.database.ts",
     "start:prod": "node dist/database/index.database.js",
     "start": "pnpm run build && pnpm run start:prod",
-    "build": "tsc"
+    "build": "tsc && tsc-alias"
   },
   "keywords": [],
   "author": "",
@@ -18,10 +18,11 @@
     "mongoose": "^8.5.3"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
     "@types/lafka": "workspace:^",
+    "@types/node": "^20.10.5",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3"
   }

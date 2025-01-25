@@ -226,6 +226,10 @@ class User implements UserType {
 		return await this.followController(unfollowing, "unfollow");
 	}
 
+	get id(): string {
+		return this._id_;
+	}
+
 	get _id(): string {
 		return this._id_;
 	}

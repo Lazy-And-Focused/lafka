@@ -1,4 +1,4 @@
-import Database from "src/database/models.database";
+import Database from "../../database/models.database";
 
 import type { BlogPost } from "types/posts/blog-post.types";
 import type { ForumPost } from "types/posts/forum-post.types";
@@ -242,6 +242,10 @@ class Post implements PostType {
 
 	set followers(followers: number) {
 		this._followers = followers;
+	}
+
+	get id(): string {
+		return this._id_;
 	}
 
 	get _id() {

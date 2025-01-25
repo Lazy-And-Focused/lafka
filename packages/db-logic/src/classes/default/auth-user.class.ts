@@ -9,11 +9,11 @@ class AuthUser implements AuthUserType {
     private readonly _id_: string;
     private readonly _profile_id: string;
     private readonly _access_token: string;
-    private readonly _refresh_token: string;
+    private readonly _refresh_token?: string;
     private readonly _type: AuthTypes;
 
     public constructor(data: AuthUserType & { profile_id?: string }) {
-        this._profile_id = data.profile_id || "";
+        this._profile_id = data.profile_id || "null";
 
         this._id_ = data._id;
         this._access_token = data.access_token;
@@ -22,9 +22,28 @@ class AuthUser implements AuthUserType {
     }
 
     public async init() {
-        const user = await AuthUsers.model.findById(this._id_);
+        if (this._profile_id !== "null") {
+            const user = (await Database.auth_users.getData({filter: {
+                profile_id: this._profile_id,
+                type: this._type
+            }})).data;
 
-        if (user) {
+            if (user && user[0] && user.length === 1) {
+                user[0].access_token = this._access_token;
+                user[0].refresh_token = this._refresh_token;
+                await user[0].save();
+                
+                return this;
+            } else if (user && user.length > 1) {
+                for (const u of user) {
+                    u.deleteOne();
+                };
+            };
+        };
+
+        const user = (await Database.auth_users.getData({filter: {_id: this._id_}})).data;
+
+        if (user && user[0]) {
             await AuthUsers.update({
                 filter: { _id: this._id_ },
                 update: {
@@ -57,6 +76,10 @@ class AuthUser implements AuthUserType {
         return ((await Database.users.getData({filter: { _id: id }})).data as any)[0];
     }
 
+    get id(): string {
+		return this._id_;
+	}
+    
     public get _id(): string {
         return this._id_;
     }
@@ -69,7 +92,7 @@ class AuthUser implements AuthUserType {
         return this._access_token;
     };
     
-    public get refresh_token(): string {
+    public get refresh_token(): string | undefined {
         return this._refresh_token;
     };
     

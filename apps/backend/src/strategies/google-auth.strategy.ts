@@ -1,14 +1,15 @@
-import passport from "passport";
+import { Profile } from "passport";
 
-import { Strategy, VerifyCallback } from "passport-google-oauth2";
+import { Strategy, VerifyCallback } from "passport-google-oauth20";
 
 import GoogleApi from "api/google.api";
-import Api from "api";
+import Api from "api/index.api";
 
 import GeneralStrategy from "./general.stategy";
 
 import AuthUser from "database/classes/default/auth-user.class";
 import User from "database/classes/default/user.class";
+import Database from "database/database/models.database";
 
 const googleApi = new GoogleApi();
 const api = new Api();
@@ -27,29 +28,35 @@ class GooglePassport extends GeneralStrategy {
                     clientID: api.googleApi.id,
                     clientSecret: api.googleApi.secret,
                     callbackURL: api.googleApi.callback,
+                    scope: ["profile"]
                 },
                 async (
                     access_token: string,
 					refresh_token: string,
-					profile: passport.Profile,
+					profile: Profile,
 					done: VerifyCallback
                 ) => {
-                    const { id } = profile;
+                    try {
+                        const { id } = profile;
+    
+                        const user = await new User({
+                            username: profile.name.givenName || profile.displayName
+                        }).init();
+    
+                        const authUser = await new AuthUser({
+                            _id: id,
+                            access_token,
+                            refresh_token,
+                            type: "google",
+                            profile_id: user._id
+                        }).init();
 
-                    const authUser = await new AuthUser({
-                        _id: id,
-                        access_token,
-                        refresh_token,
-                        type: "google",
-                        profile_id: ""
-                    }).init();
+                        return done(null, authUser);
+                    } catch (error) {
+                        console.log(error);
 
-                    console.log(profile);
-                    console.log(await googleApi.getUser(access_token));
-
-/*                     const user = new User({
-                        username: (await googleApi.getUser(access_token)).data.displayName                      
-                    }); */
+                        return done(error, null);
+                    }
                 }
             )
         )

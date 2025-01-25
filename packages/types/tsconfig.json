@@ -3,6 +3,7 @@
     "target": "ES2018",
     "declaration": true,
     "declarationDir": "dist",
+    "outDir": "dist",
     "emitDeclarationOnly": true
   },
   "include": ["src"]
