@@ -48,8 +48,11 @@ class AuthUser implements AuthUserType {
 			}
 		}
 
-		const user = (await Database.auth_users.getData({ filter: { service_id: this._service_id, type: this._type } }))
-			.data;
+		const user = (
+			await Database.auth_users.getData({
+				filter: { service_id: this._service_id, type: this._type }
+			})
+		).data;
 
 		if (user && user[0]) {
 			await AuthUsers.update({

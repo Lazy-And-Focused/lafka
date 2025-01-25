@@ -1,13 +1,13 @@
 import { name, version } from "../../package.json";
 
 type AppInfoType = {
-  name: string;
-  version: string;
+	name: string;
+	version: string;
 };
 
 const appInfo: AppInfoType = {
-  name: name.toUpperCase(),
-  version,
+	name: name.toUpperCase(),
+	version
 };
 
 export type { AppInfoType };

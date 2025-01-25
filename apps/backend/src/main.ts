@@ -13,7 +13,7 @@ const api = new Api();
 
 async function bootstrap() {
 	await connect(api.env.MONGO_URL);
-	
+
 	const app = await NestFactory.create(AppModule);
 
 	app.use(require("cors")({ origin: [api.env.CLIENT_URL], credentials: true }));
