@@ -2,7 +2,6 @@ import {
 	Controller,
 	Get,
 	Injectable,
-	NestMiddleware,
 	Next,
 	Req,
 	Res
