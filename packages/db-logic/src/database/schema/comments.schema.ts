@@ -3,6 +3,12 @@ import mongoose, { Schema, SchemaTypes } from "mongoose";
 import type { Comment } from "types/content/comment.types";
 
 const schema = new Schema<Comment>({
+	id: {
+		type: mongoose.SchemaTypes.String,
+		required: true,
+		unique: true
+	},
+
 	content: { type: SchemaTypes.String, required: true },
 
 	created_at: { type: SchemaTypes.Date, required: true },

@@ -6,6 +6,12 @@ import type { BlogPost } from "types/posts/blog-post.types";
 import { Tag } from "./tag.utility-schema";
 
 const schema = new Schema<ForumPost & BlogPost>({
+	id: {
+		type: mongoose.SchemaTypes.String,
+		required: true,
+		unique: true
+	},
+
 	name: { type: SchemaTypes.String, required: true, unique: false },
 	content: { type: SchemaTypes.String, required: true, unique: false },
 	description: { type: SchemaTypes.String, required: false, unique: false },

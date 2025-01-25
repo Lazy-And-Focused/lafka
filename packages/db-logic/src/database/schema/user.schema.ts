@@ -4,6 +4,12 @@ import type { User } from "types/authors/user.types";
 import { Link } from "./link.utility-schema";
 
 const schema = new Schema<User>({
+	id: {
+		type: mongoose.SchemaTypes.String,
+		required: true,
+		unique: true
+	},
+
 	username: { type: SchemaTypes.String, required: true, unique: true },
 	nickname: { type: SchemaTypes.String, required: false, unique: false },
 

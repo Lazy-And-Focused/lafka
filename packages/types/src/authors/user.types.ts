@@ -1,7 +1,7 @@
 import type { Link } from "../utility/utility.types";
 
 interface User {
-	_id: string;
+	id: string;
 
 	username: string;
 	nickname?: string;

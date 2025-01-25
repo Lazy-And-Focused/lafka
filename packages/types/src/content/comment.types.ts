@@ -1,5 +1,5 @@
 interface Comment {
-	_id: string;
+	id: string;
 
 	content: string;
 
