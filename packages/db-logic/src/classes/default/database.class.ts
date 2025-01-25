@@ -24,19 +24,8 @@ class Database<T, K = Partial<T>> {
 		return this._model;
 	}
 
-	public generateId = async (length: number = 10): Promise<string> => {
-		const position = `${await this._model.collection.count() + 1}`;
-
-		if (position.length >= length)
-			return position;
-
-		const offset = length - position.length;
-		const array: string[] = new Array(offset).fill("0");
-
-		console.log(await this._model.collection.count());
-		console.log(array.join("") + position);
-
-		return array.join("") + position;
+	public generateId = async (): Promise<string> => {
+		return `${await this._model.collection.count() + 1}`;
 	};
 
 	public create = async (doc: CreateData<T> & K) => {
