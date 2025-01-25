@@ -19,10 +19,10 @@ const schema = new Schema<AuthUser>({
 		required: false
 	},
 
-    type: {
-        type: mongoose.SchemaTypes.String,
-        required: true
-    }
+	type: {
+		type: mongoose.SchemaTypes.String,
+		required: true
+	}
 });
 
 const database = mongoose.model("auth-users", schema);

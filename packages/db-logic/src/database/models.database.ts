@@ -12,7 +12,7 @@ import type { BlogPost } from "types/posts/blog-post.types";
 import type { ForumPost } from "types/posts/forum-post.types";
 
 class Database {
-	private readonly _auth_users = new DatabaseClass<AuthUser>(AuthUserSchema)
+	private readonly _auth_users = new DatabaseClass<AuthUser>(AuthUserSchema);
 	private readonly _comments = new DatabaseClass<Comment>(CommentsSchema);
 
 	private readonly _posts = new DatabaseClass<

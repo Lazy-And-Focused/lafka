@@ -1,26 +1,26 @@
 import "database/database/index.database";
 
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
 
 import Passport from "./strategies/google-auth.strategy";
 
-import Session from './app/session.app';
-import Api from 'api/index.api';
+import Session from "./app/session.app";
+import Api from "api/index.api";
 
 const passport = new Passport();
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    
-    app.use(require("cors")({ origin: [new Api().env.CLIENT_URL], credentials: true }));
+	const app = await NestFactory.create(AppModule);
 
-    new Session("AVlzkjbsazvhxczvoiz", app).create();
+	app.use(require("cors")({ origin: [new Api().env.CLIENT_URL], credentials: true }));
 
-    app.use(passport.session());
-    app.use(passport.initialize());
+	new Session("AVlzkjbsazvhxczvoiz", app).create();
 
-    await app.listen(3001);
-};
+	app.use(passport.session());
+	app.use(passport.initialize());
+
+	await app.listen(3001);
+}
 
 bootstrap();

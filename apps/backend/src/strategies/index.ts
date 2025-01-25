@@ -2,11 +2,11 @@ import GeneralStrategy from "./general.stategy";
 import GooglePassport from "./google-auth.strategy";
 
 class Passport extends GeneralStrategy {
-    public constructor() {
-        super();
+	public constructor() {
+		super();
 
-        new GooglePassport();
-    }
+		new GooglePassport();
+	}
 }
 
 export default Passport;

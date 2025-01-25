@@ -15,52 +15,52 @@ const googleApi = new GoogleApi();
 const api = new Api();
 
 class GooglePassport extends GeneralStrategy {
-    public constructor() {
-        super();
+	public constructor() {
+		super();
 
-        this.init();
-    }
+		this.init();
+	}
 
-    private init() {
-        this._passport.use(
-            new Strategy(
-                {
-                    clientID: api.googleApi.id,
-                    clientSecret: api.googleApi.secret,
-                    callbackURL: api.googleApi.callback,
-                    scope: ["profile"]
-                },
-                async (
-                    access_token: string,
+	private init() {
+		this._passport.use(
+			new Strategy(
+				{
+					clientID: api.googleApi.id,
+					clientSecret: api.googleApi.secret,
+					callbackURL: api.googleApi.callback,
+					scope: ["profile"]
+				},
+				async (
+					access_token: string,
 					refresh_token: string,
 					profile: Profile,
 					done: VerifyCallback
-                ) => {
-                    try {
-                        const { id } = profile;
-    
-                        const user = await new User({
-                            username: profile.name.givenName || profile.displayName
-                        }).init();
-    
-                        const authUser = await new AuthUser({
-                            _id: id,
-                            access_token,
-                            refresh_token,
-                            type: "google",
-                            profile_id: user._id
-                        }).init();
+				) => {
+					try {
+						const { id } = profile;
 
-                        return done(null, authUser);
-                    } catch (error) {
-                        console.log(error);
+						const user = await new User({
+							username: profile.name.givenName || profile.displayName
+						}).init();
 
-                        return done(error, null);
-                    }
-                }
-            )
-        )
-    };
+						const authUser = await new AuthUser({
+							_id: id,
+							access_token,
+							refresh_token,
+							type: "google",
+							profile_id: user._id
+						}).init();
+
+						return done(null, authUser);
+					} catch (error) {
+						console.log(error);
+
+						return done(error, null);
+					}
+				}
+			)
+		);
+	}
 }
 
 export default GooglePassport;

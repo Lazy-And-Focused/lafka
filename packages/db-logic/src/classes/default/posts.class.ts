@@ -4,10 +4,7 @@ import type { BlogPost } from "types/posts/blog-post.types";
 import type { ForumPost } from "types/posts/forum-post.types";
 import type { Post as PostType } from "types/posts/post.types";
 import type { PostStatus, Tag } from "types/utility/utility.types";
-import type {
-	CreateData,
-	CreatePickData
-} from "types/schema/mongodb.types";
+import type { CreateData, CreatePickData } from "types/schema/mongodb.types";
 import type { Comment as CommentType } from "types/content/comment.types";
 import Comment from "./comment.class";
 
@@ -169,7 +166,7 @@ class Post implements PostType {
 	) {
 		const created = await new Comment({
 			post_id: this._id_,
-			...comment,
+			...comment
 		}).init();
 
 		return {
