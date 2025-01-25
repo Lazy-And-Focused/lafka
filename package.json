@@ -7,6 +7,7 @@
     "build:packages": "pnpm run build:types && pnpm run build:database",
     "build:types": "pnpm --filter @types/lafka build",
     "build:database": "pnpm --filter db-logic build",
+    "dev:database": "pnpm --filter db-logic dev",
     "start:backend": "pnpm --filter backend start"
   },
   "keywords": [],

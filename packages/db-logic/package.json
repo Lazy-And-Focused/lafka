@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r tsconfig-paths/register src/database/index.database.ts",
+    "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
     "start:prod": "node dist/database/index.database.js",
     "start": "pnpm run build && pnpm run start:prod",
     "build": "tsc && tsc-alias"
