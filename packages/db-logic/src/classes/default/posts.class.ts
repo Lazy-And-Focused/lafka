@@ -219,109 +219,109 @@ class Post implements PostType {
 		});
 	};
 
-	set name(data: string) {
+	public set name(data: string) {
 		this.changed();
 
 		this._name = data;
 	}
 
-	set content(data: string) {
+	public set content(data: string) {
 		this.changed();
 
 		this._content = data;
 	}
 
-	set description(data: string) {
+	public set description(data: string) {
 		this.changed();
 
 		this._description = data;
 	}
 
-	set followers(followers: number) {
+	public set followers(followers: number) {
 		this._followers = followers;
 	}
 
-	get id(): string {
+	public get id(): string {
 		return this._id_;
 	}
 
-	get _id() {
+	public get _id() {
 		return this._id_;
 	}
 
-	get created_at() {
+	public get created_at() {
 		return this._created_at;
 	}
 
-	get changed_at() {
+	public get changed_at() {
 		return this._changed_at;
 	}
 
-	get creator_id() {
+	public get creator_id() {
 		return this._creator_id;
 	}
 
-	get view_status() {
+	public get view_status() {
 		return this._view_status;
 	}
 
-	get name(): string {
+	public get name(): string {
 		return this._name;
 	}
 
-	get content(): string {
+	public get content(): string {
 		return this._content;
 	}
 
-	get description(): string | undefined {
+	public get description(): string | undefined {
 		return this._description;
 	}
 
-	get comments(): string[] {
+	public get comments(): string[] {
 		return this._comments;
 	}
 
-	get followers(): number {
+	public get followers(): number {
 		return this._followers;
 	}
 
-	get createdAt(): Date {
+	public get createdAt(): Date {
 		return this._created_at;
 	}
 
-	get changedAt(): Date | undefined {
+	public get changedAt(): Date | undefined {
 		return this._changed_at;
 	}
 
-	get type(): "forum" | "blog" {
+	public get type(): "forum" | "blog" {
 		return this._type;
 	}
 
-	get likes(): number {
+	public get likes(): number {
 		if (this._type != "blog") return 0;
 
 		return this._likes;
 	}
 
-	get dislikes(): number {
+	public get dislikes(): number {
 		if (this._type != "blog") return 0;
 
 		return this._dislikes;
 	}
 
-	get reposts(): number {
+	public get reposts(): number {
 		if (this._type != "blog") return 0;
 
 		return this._reposts;
 	}
 
-	get tags(): Tag[] {
+	public get tags(): Tag[] {
 		if (this._type != "forum") return [];
 
 		return this._tags;
 	}
 
-	get status(): PostStatus {
+	public get status(): PostStatus {
 		if (this._type !== "forum") return "blocked";
 
 		return this._status;

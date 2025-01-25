@@ -226,63 +226,63 @@ class User implements UserType {
 		return await this.followController(unfollowing, "unfollow");
 	}
 
-	get id(): string {
+	public get id(): string {
 		return this._id_;
 	}
 
-	get _id(): string {
+	public get _id(): string {
 		return this._id_;
 	}
 
-	get username(): string {
+	public get username(): string {
 		return this._username;
 	}
 
-	get nickname(): string | undefined {
+	public get nickname(): string | undefined {
 		return this._nickname || undefined;
 	}
 
-	get biography(): string {
+	public get biography(): string {
 		return this._biography || "";
 	}
 
-	get links(): LinkType[] {
+	public get links(): LinkType[] {
 		return this._links;
 	}
 
-	get avatar(): string | undefined {
+	public get avatar(): string | undefined {
 		return this._avatar;
 	}
 
-	get created_at(): Date {
+	public get created_at(): Date {
 		return this._created_at;
 	}
 
-	get forum_posts(): string[] {
+	public get forum_posts(): string[] {
 		return this._forum_posts;
 	}
 
-	get blog_posts(): string[] {
+	public get blog_posts(): string[] {
 		return this._blog_posts;
 	}
 
-	get followed_forum_posts(): string[] {
+	public get followed_forum_posts(): string[] {
 		return this._followed_forum_posts;
 	}
 
-	get followed_blog_posts(): string[] {
+	public get followed_blog_posts(): string[] {
 		return this._followed_blog_posts;
 	}
 
-	get blocked_posts(): string[] {
+	public get blocked_posts(): string[] {
 		return this._blocked_posts;
 	}
 
-	get followers(): string[] {
+	public get followers(): string[] {
 		return this._followers;
 	}
 
-	get following(): string[] {
+	public get following(): string[] {
 		return this._following;
 	}
 }

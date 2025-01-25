@@ -96,41 +96,41 @@ class Comment implements CommentType {
 		this._changed_at = new Date();
 	};
 
-	set content(content: string) {
+	public set content(content: string) {
 		this.changed();
 
 		this._content = content;
 	}
 
-	get id(): string {
+	public get id(): string {
 		return this._id_;
 	}
 
-	get _id(): string {
+	public get _id(): string {
 		return this._id_;
 	}
 
-	get content(): string {
+	public get content(): string {
 		return this._content;
 	}
 
-	get created_at(): Date {
+	public get created_at(): Date {
 		return this._created_at;
 	}
 
-	get author_id(): string {
+	public get author_id(): string {
 		return this._author_id;
 	}
 
-	get post_id(): string {
+	public get post_id(): string {
 		return this._post_id;
 	}
 
-	get reply(): string | undefined {
+	public get reply(): string | undefined {
 		return this._reply;
 	}
 
-	get changed_at(): Date | undefined {
+	public get changed_at(): Date | undefined {
 		return this._changed_at;
 	}
 }

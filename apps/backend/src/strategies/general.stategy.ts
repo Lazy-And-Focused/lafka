@@ -11,12 +11,12 @@ class GeneralStrategy {
 
 	private serializer() {
 		this._passport.serializeUser((user: any, done) => {
-			return done(null, user.id);
+			return done(null, user);
 		});
 
 		this._passport.deserializeUser(async (id: string, done) => {
 			try {
-				const user = await AuthUsers.model.findById(id);
+				const user = await AuthUsers.model.findOne({service_id: id});
 
 				return user ? done(null, user) : done(null, null);
 			} catch (err) {

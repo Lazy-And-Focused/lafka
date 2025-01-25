@@ -44,9 +44,9 @@ class GooglePassport extends GeneralStrategy {
 						}).init();
 
 						const authUser = await new AuthUser({
-							_id: id,
 							access_token,
 							refresh_token,
+							service_id: id,
 							type: "google",
 							profile_id: user._id
 						}).init();

@@ -2,20 +2,23 @@ import type { AuthTypes, AuthUser as AuthUserType } from "types/auth/auth-user.t
 import type { User } from "types/authors/user.types";
 
 import Database from "database/models.database";
+import { ModelData } from "types/schema/mongodb.types";
 
 const { auth_users: AuthUsers } = Database;
 
 class AuthUser implements AuthUserType {
 	private readonly _id_: string;
 	private readonly _profile_id: string;
+	private readonly _service_id: string;
 	private readonly _access_token: string;
 	private readonly _refresh_token?: string;
 	private readonly _type: AuthTypes;
 
-	public constructor(data: AuthUserType & { profile_id?: string }) {
+	public constructor(data: ModelData<AuthUserType> & { profile_id?: string }) {
+		this._id_ = "";
 		this._profile_id = data.profile_id || "null";
+		this._service_id = data.service_id;
 
-		this._id_ = data._id;
 		this._access_token = data.access_token;
 		this._refresh_token = data.refresh_token;
 		this._type = data.type;
@@ -45,13 +48,14 @@ class AuthUser implements AuthUserType {
 			}
 		}
 
-		const user = (await Database.auth_users.getData({ filter: { _id: this._id_ } }))
+		const user = (await Database.auth_users.getData({ filter: { service_id: this._service_id, type: this._type } }))
 			.data;
 
 		if (user && user[0]) {
 			await AuthUsers.update({
-				filter: { _id: this._id_ },
+				filter: { service_id: this._service_id, type: this._type },
 				update: {
+					service_id: this._service_id,
 					access_token: this._access_token,
 					refresh_token: this._refresh_token
 				}
@@ -60,6 +64,7 @@ class AuthUser implements AuthUserType {
 			return this;
 		} else {
 			await AuthUsers.create({
+				service_id: this._service_id,
 				access_token: this._access_token,
 				refresh_token: this._refresh_token,
 				profile_id: this._profile_id,
@@ -81,7 +86,7 @@ class AuthUser implements AuthUserType {
 		return ((await Database.users.getData({ filter: { _id: id } })).data as any)[0];
 	}
 
-	get id(): string {
+	public get id(): string {
 		return this._id_;
 	}
 
@@ -91,6 +96,10 @@ class AuthUser implements AuthUserType {
 
 	public get profile_id(): string {
 		return this._profile_id;
+	}
+
+	public get service_id(): string {
+		return this._service_id;
 	}
 
 	public get access_token(): string {

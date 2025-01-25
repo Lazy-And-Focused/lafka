@@ -3,6 +3,12 @@ import mongoose, { Schema } from "mongoose";
 import { AuthUser } from "types/auth/auth-user.types";
 
 const schema = new Schema<AuthUser>({
+	service_id: {
+		type: mongoose.SchemaTypes.String,
+		required: true,
+		unique: true
+	},
+
 	profile_id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,
