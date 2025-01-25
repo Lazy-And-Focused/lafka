@@ -24,6 +24,19 @@ class Database<T, K = Partial<T>> {
 		return this._model;
 	}
 
+	public generateId = (length: number = 10): string => {
+		const position = `${this._model.length + 1}`;
+
+		if (position.length >= length)
+			return position;
+
+		const offset = length - position.length;
+		const array: string[] = ([] as string[])
+			.fill("0", 0, offset);
+
+		return array.join("") + position;
+	};
+
 	public create = async (doc: CreateData<T> & K) => {
 		return await this._model.create(doc);
 	};
@@ -53,6 +66,10 @@ class Database<T, K = Partial<T>> {
 	public static deleteModel = async (name: string): Promise<DatabaseStatus> => {
 		return await deleteModel(name);
 	};
+
+	get id(): string {
+		return this.generateId();
+	}
 }
 
 export default Database;
