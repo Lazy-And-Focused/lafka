@@ -146,7 +146,7 @@ class User implements UserType {
 	};
 
 	private readonly getDatabaseUser = async (id?: string) => {
-		return await Database.users.model.findById(id || this._id);
+		return await Database.users.model.findOne({ id: id || this._id });
 	};
 
 	private async addPosts(posts: string[], type: PostTypes) {

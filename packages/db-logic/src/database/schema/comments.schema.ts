@@ -17,7 +17,7 @@ const schema = new Schema<Comment>({
 	author_id: { type: SchemaTypes.String, required: true },
 	post_id: { type: SchemaTypes.String, required: true },
 
-	reply: { type: SchemaTypes.ObjectId, ref: "comments", required: false }
+	reply: { type: SchemaTypes.String, ref: "comments", required: false }
 });
 
 const database = mongoose.model("comments", schema);

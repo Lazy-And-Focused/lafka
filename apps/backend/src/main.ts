@@ -3,7 +3,7 @@ import connect from "database/database/index.database";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 
-import Passport from "./strategies/google-auth.strategy";
+import Passport from "./strategies";
 
 import Session from "./app/session.app";
 import Api from "api/index.api";

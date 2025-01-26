@@ -79,7 +79,7 @@ class AuthUser implements AuthUserType {
 	}
 
 	public async updateProfileId(id: string): Promise<User | null> {
-		const user = await AuthUsers.model.findById(this._id);
+		const user = await AuthUsers.model.findOne({ id: id || this._id });
 
 		if (!user) return null;
 

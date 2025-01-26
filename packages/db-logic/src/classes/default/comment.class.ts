@@ -17,12 +17,12 @@ class Comment implements CommentType {
 	private readonly _constructor_data: CreatePickData<
 		CommentType,
 		"author_id" | "post_id" | "content" | "created_at"
-	> & { _id?: string };
+	> & { id?: string };
 	private initialized: boolean = false;
 
 	public constructor(
 		data: CreatePickData<CommentType, "author_id" | "post_id" | "content"> & {
-			_id?: string;
+			id?: string;
 		}
 	) {
 		const now = new Date();
@@ -60,8 +60,8 @@ class Comment implements CommentType {
 			return this.paste(data, comment);
 		};
 
-		if (data._id) {
-			const comment = await Database.comments.model.findById(data._id);
+		if (data.id) {
+			const comment = await Database.comments.model.findOne({ id: data.id });
 
 			if (comment) {
 				this.initialized = true;

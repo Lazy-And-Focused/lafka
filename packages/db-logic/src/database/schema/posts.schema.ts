@@ -16,7 +16,7 @@ const schema = new Schema<ForumPost & BlogPost>({
 	content: { type: SchemaTypes.String, required: true, unique: false },
 	description: { type: SchemaTypes.String, required: false, unique: false },
 
-	comments: [{ type: SchemaTypes.ObjectId, ref: "comments" }],
+	comments: [{ type: SchemaTypes.String, ref: "comments" }],
 	followers: { type: SchemaTypes.Number, required: true, unique: false },
 
 	created_at: { type: SchemaTypes.Date, required: true, unique: false },

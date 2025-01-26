@@ -39,7 +39,7 @@ class Post implements PostType {
 	private readonly _constructor_data: CreatePickData<
 		ForumPost & BlogPost,
 		"content" | "creator_id" | "name" | "type" | "created_at"
-	> & { _id?: string };
+	> & { id?: string };
 
 	public constructor(
 		data: CreatePickData<
@@ -100,9 +100,9 @@ class Post implements PostType {
 			return this.paste(data, post);
 		};
 
-		if (data._id) {
+		if (data.id) {
 			const status = await Database.posts.getData({
-				filter: { id: data._id }
+				filter: { id: data.id }
 			});
 
 			if (status.data) {
@@ -144,7 +144,7 @@ class Post implements PostType {
 	};
 
 	private readonly getDatabasePost = async (id?: string) => {
-		return await Database.posts.model.findById(id || this._id);
+		return await Database.posts.model.findOne({ id: id || this._id });
 	};
 
 	private readonly changed = () => {
@@ -165,9 +165,9 @@ class Post implements PostType {
 		comment: CreatePickData<CommentType, "author_id" | "content">
 	) {
 		const created = await new Comment({
-			post_id: this._id,
-			...comment
-		}).init();
+            post_id: this._id,
+            ...comment
+        }).init();
 
 		return {
 			response: this.addComments([created.id]),

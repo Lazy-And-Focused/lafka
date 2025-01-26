@@ -18,15 +18,15 @@ const schema = new Schema<User>({
 
 	created_at: { type: SchemaTypes.Date, required: true, unique: false },
 
-	blocked_posts: [{ type: SchemaTypes.ObjectId, ref: "posts" }],
+	blocked_posts: [{ type: SchemaTypes.String, ref: "posts" }],
 
-	blog_posts: [{ type: SchemaTypes.ObjectId, ref: "posts" }],
-	forum_posts: [{ type: SchemaTypes.ObjectId, ref: "posts" }],
+	blog_posts: [{ type: SchemaTypes.String, ref: "posts" }],
+	forum_posts: [{ type: SchemaTypes.String, ref: "posts" }],
 
-	followed_blog_posts: [{ type: SchemaTypes.ObjectId, ref: "posts" }],
-	followed_forum_posts: [{ type: SchemaTypes.ObjectId, ref: "posts" }],
+	followed_blog_posts: [{ type: SchemaTypes.String, ref: "posts" }],
+	followed_forum_posts: [{ type: SchemaTypes.String, ref: "posts" }],
 
-	followers: [{ type: SchemaTypes.ObjectId, ref: "users" }],
+	followers: [{ type: SchemaTypes.String, ref: "users" }],
 
 	links: [Link]
 });
