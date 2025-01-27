@@ -12,7 +12,10 @@ class AuthApi {
 		this._method = method;
 	}
 
-	private getMethod(): [boolean, { [key: string]: unknown; method: string; body: any }] {
+	private getMethod(): [
+		boolean,
+		{ [key: string]: unknown; method: string; body: any }
+	] {
 		if (!authTypes.includes(this._method as any)) {
 			if (abbreviations.get(this._method))
 				return [true, { body: null, method: abbreviations.get(this._method) }];
