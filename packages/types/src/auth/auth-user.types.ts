@@ -1,4 +1,6 @@
-export type AuthTypes = "google" | "vk";
+export const authTypes = ["google", "vkontakte"] as const;
+
+export type AuthTypes = (typeof authTypes)[number];
 
 interface AuthUser {
 	id: string;

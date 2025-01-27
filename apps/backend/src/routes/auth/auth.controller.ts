@@ -1,25 +1,26 @@
 import { Controller, Get, Injectable, Next, Req, Res } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 
+import AuthApi from "api/auth.api";
+
 @Injectable()
 @Controller("auth")
 export class AuthController {
-	@Get("google")
-	public googleAuth(
+	@Get(":method")
+	public auth(
 		@Req() req: Request,
 		@Res() res: Response,
 		@Next() next: NextFunction
-	): void {
-		return require("passport").authenticate("google")(req, res, next);
+	): unknown {
+		return new AuthApi(req.params.method).auth(req, res, next);
 	}
 
-	@Get("google/callback")
-	public googleRedirect(
+	@Get(":method/callback")
+	public callback(
 		@Req() req: Request,
 		@Res() res: Response,
 		@Next() next: NextFunction
-	): string {
-		require("passport").authenticate("google")(req, res, next);
-		return "Hello! You are authenticated!";
+	): unknown {
+		return new AuthApi(req.params.method).callback(req, res, next);
 	}
 }

@@ -6,7 +6,6 @@ import GeneralStrategy from "./general.stategy";
 
 import AuthUser from "database/classes/default/auth-user.class";
 import User from "database/classes/default/user.class";
-import Database from "database/database/models.database";
 
 const api = new Api();
 
@@ -42,7 +41,7 @@ class VkStrategy extends GeneralStrategy {
 							access_token,
 							refresh_token,
 							service_id: id,
-							type: "vk",
+							type: "vkontakte",
 							profile_id: user.id
 						}).init();
 
