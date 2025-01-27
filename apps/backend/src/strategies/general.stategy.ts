@@ -2,8 +2,10 @@ import Database from "database/database/models.database";
 
 const { auth_users: AuthUsers } = Database;
 
+import passport from "passport";
+
 class GeneralStrategy {
-	protected readonly _passport = require("passport");
+	protected readonly _passport: passport.PassportStatic = require("passport");
 
 	public constructor() {
 		this.serializer();

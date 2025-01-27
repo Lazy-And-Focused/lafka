@@ -2,16 +2,13 @@ import { Profile } from "passport";
 
 import { Strategy, VerifyCallback } from "passport-google-oauth20";
 
-import GoogleApi from "api/google.api";
 import Api from "api/index.api";
 
 import GeneralStrategy from "./general.stategy";
 
 import AuthUser from "database/classes/default/auth-user.class";
 import User from "database/classes/default/user.class";
-import Database from "database/database/models.database";
 
-const googleApi = new GoogleApi();
 const api = new Api();
 
 class GooglePassport extends GeneralStrategy {
