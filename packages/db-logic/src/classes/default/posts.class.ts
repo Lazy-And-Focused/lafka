@@ -165,9 +165,9 @@ class Post implements PostType {
 		comment: CreatePickData<CommentType, "author_id" | "content">
 	) {
 		const created = await new Comment({
-            post_id: this._id,
-            ...comment
-        }).init();
+			post_id: this._id,
+			...comment
+		}).init();
 
 		return {
 			response: this.addComments([created.id]),

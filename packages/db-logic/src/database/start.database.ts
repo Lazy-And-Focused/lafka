@@ -1,1 +1,1 @@
-(require("./index.database").default)();
+require("./index.database").default();

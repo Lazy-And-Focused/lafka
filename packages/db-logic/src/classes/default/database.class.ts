@@ -25,7 +25,7 @@ class Database<T, K = Partial<T>> {
 	}
 
 	public generateId = async (): Promise<string> => {
-		return `${await this._model.collection.count() + 1}`;
+		return `${(await this._model.collection.count()) + 1}`;
 	};
 
 	public create = async (doc: CreateData<T> & K) => {
