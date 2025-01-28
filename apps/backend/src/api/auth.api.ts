@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { AuthTypes, authTypes } from "types/auth/auth-user.types";
 
-const abbreviations: Map<string, AuthTypes> = new Map().set("vk", "vkontakte");
+const abbreviations: Map<string, AuthTypes> = new Map();
 
 class AuthApi {
 	private readonly _method: string;
