@@ -32,7 +32,7 @@
 #### params
 | name         | type               | value                        |
 | ------------ | ------------------ | --------------------------   |
-| `method`     | `AuthTypes`        | Метод аутентификации на сайте (google, yandex...)   |
+| `method`     | [`AuthTypes`](./types.doc.md#authtypes)        | Метод аутентификации на сайте (google, yandex...)   |
 
 ## Пользователь
 ### /api/v1/user/:id
@@ -54,4 +54,5 @@
 | method       | data                | response |
 | ------------ | ------------------  | -------- |
 | `get`        | `access token`      | [`User`](./types.doc.md#user) |
-| `delete`     | `access token`      | undefined |
+| `delete`     | `access token`      | [`DeleteData`](./types.doc.md#deletedata) |
+| `put`        | `access token`      | [`ChangeData`](./types.doc.md/#changedata) |

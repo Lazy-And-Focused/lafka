@@ -2,6 +2,38 @@
 
 Просто отдельная документация по типам, дабы не открывать бесконечно файлы
 
+## AuthTypes
+```ts
+type AuthTypes = "google" | "yandex";
+```
+
+## ChangeData
+```ts
+interface ChangedData<T extends unknown> {
+    type: "user"|"post"|"comment";
+    successed: boolean;
+
+	resource: T;
+	changed_resource?: T;
+	date: Date;
+    
+	error?: unknown;
+}
+```
+
+## DeleteData
+```ts
+interface DeleteData<T extends unknown> {
+    type: "user"|"post"|"comment";
+    successed: boolean;
+	
+	resource: T;
+    date: Date;
+
+    error?: unknown;
+}
+```
+
 ## User
 ```ts
 interface User {
