@@ -150,7 +150,7 @@ interface Post {
 #### methods
 | method       | data                | response |
 | ------------ | ------------------  | -------- |
-| post         | `{ content: string, creator_id: string, name: string, type: string }` | [`CreateData<Post>`](./types.doc.md#createdata) |
+| post         | `{ acess_token: string, content: string, creator_id: string, name: string, type: string }` | [`CreateData<Post>`](./types.doc.md#createdata) |
 
 ### `/:id`
 #### params
@@ -163,3 +163,49 @@ interface Post {
 | get          | `undefined`              | [`GetData<Post>`](./types.doc.md#getdata) |
 | put          | `{ access_token: string, user_id: string } & Partial<Post>`     | [`ChangeData<Post>`](./types.doc.md#changedata) |
 | delete       | `{ acess_token: string, user_id: string }` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
+
+## Комментарии (/comments)
+### `root`
+
+#### types
+<details>
+<summary><a href="./types.doc.md#comment">Comment</a></summary>
+
+```ts
+interface Comment {
+	id: string;
+
+	content: string;
+
+	created_at: Date;
+	changed_at?: Date;
+
+	author_id: string;
+	post_id: string;
+
+	reply?: string;
+}
+```
+
+</details>
+
+#### abbreviations
+| full          | abbreviation       |
+| ------------- | ------------------ |
+| `/comments`   | `/c`               |
+#### methods
+| method       | data                | response |
+| ------------ | ------------------  | -------- |
+| `post`       | `{ access_token: string, author_id: string, post_id: string, content: string }` | [`CreateData<Comment>`](./types.doc.md#changedata) |
+
+### /:id
+#### params
+| name         | type               | value                        |
+| ------------ | ------------------ | --------------------------   |
+| `id`         | `string`           | `id` комментария на сайте    |
+#### methods
+| method       | data                | response |
+| ------------ | ------------------  | -------- |
+| `get`        | `undefined`         | [`GetData<Comment>`](./types.doc.md#getdata) |
+| `put`        | `{ access_token: string, user_id: string } & Partial<Comment>` | [`ChangeData<Comment>`](./types.doc.md#changedata) |
+| `delete`     | `{ access_token: string, user_id: string }` | [`DeleteData<Comment>`](./types.doc.md#deletedata) |
