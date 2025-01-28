@@ -56,6 +56,36 @@
 
 - Предназначается для фетчинга пользователя с помощью запросов.
 
+#### types
+<details>
+<summary><a href="./types.doc.md#user">User</a></summary>
+
+```ts
+interface User {
+	id: string;
+
+	username: string;
+	nickname?: string;
+	avatar?: string;
+
+	biography?: string;
+	links: Link[];
+
+	created_at: Date;
+
+	forum_posts: string[];
+	blog_posts: string[];
+	followed_forum_posts: string[];
+	followed_blog_posts: string[];
+	blocked_posts: string[];
+
+	followers: string[];
+	following: string[];
+}
+```
+
+</details>
+
 #### params
 | name         | type               | value                        |
 | ------------ | ------------------ | --------------------------   |
@@ -67,14 +97,52 @@
 #### methods
 | method       | data                | response |
 | ------------ | ------------------  | -------- |
-| `get`        | `access token`      | [`User`](./types.doc.md#user) |
-| `delete`     | `access token`      | [`DeleteData`](./types.doc.md#deletedata) |
-| `put`        | `access token`      | [`ChangeData`](./types.doc.md/#changedata) |
+| `get`        | `access_token: string`      | [`GetData<User>`](./types.doc.md#getdata) |
+| `delete`     | `access_token: string`      | [`DeleteData<User>`](./types.doc.md#deletedata) |
+| `put`        | `{ access_token: string } & Partial<User>`      | [`ChangeData<User>`](./types.doc.md/#changedata) |
 
 <hr>
 
 ## Посты (/posts)
-### root
+### `root`
+
+#### types
+<details>
+<summary><a href="./types.doc.md#post">Post</a></summary>
+
+```ts
+interface Post {
+	id: string;
+
+	name: string;
+	content: string;
+	description?: string;
+	comments: string[];
+	followers: number;
+
+	created_at: Date;
+	changed_at?: Date;
+
+	creator_id: string;
+
+	type: "forum" | "blog";
+	view_status: 0 | 1;
+
+	// Forum post:
+
+	tags: Tag[] | null;
+	status: PostStatus | null;
+
+	// Blog post:
+
+	likes: number | null;
+	dislikes: number | null;
+	reposts: number | null;
+}
+```
+
+</details>
+
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
@@ -82,7 +150,7 @@
 #### methods
 | method       | data                | response |
 | ------------ | ------------------  | -------- |
-| post         | `{ content: string, creator_id: string, name: string, type: string }` | [`Post`](./types.doc.md#post) |
+| post         | `{ content: string, creator_id: string, name: string, type: string }` | [`CreateData<Post>`](./types.doc.md#createdata) |
 
 ### /:id
 #### params
@@ -92,4 +160,6 @@
 #### methods
 | method       | data                | response |
 | ------------ | ------------------  | -------- |
-| get          | `null`              | [`Post`](./types.doc.md/#post)
+| get          | `null`              | [`GetData<Post>`](./types.doc.md#getdata) |
+| put          | `{ access_token: string, user_id: string } & Partial<Post>`     | [`ChangeData<Post>`](./types.doc.md#changedata) |
+| delete       | `{ acess_token: string, user_id: string }` | [`DeleteData<Post>`](./types.doc.md#deletedata) |

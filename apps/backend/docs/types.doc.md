@@ -9,6 +9,27 @@ type AuthTypes = "google" | "yandex";
 
 <hr>
 
+## GetData
+```ts
+interface GetData<T extends unknown> {
+	type: "user"|"post"|"comment";
+	successed: boolean;
+	resource?: T;
+	error?: unknown;
+}
+```
+
+## CreateData
+```ts
+interface CreateData<T extends unknown> {
+	type: "user"|"post"|"comment";
+	successed: boolean;
+	created_resource?: T;
+	date: Date;
+	error?: unknown;
+}
+```
+
 ## ChangeData
 ```ts
 interface ChangeData<T extends unknown> {
