@@ -15,24 +15,6 @@ class Api {
 			api: this.env[type + "_API_URL"]
 		};
 	}
-
-	get googleApi() {
-		return {
-			id: this.env.GOOGLE_CLIENT_ID,
-			secret: this.env.GOOGLE_CLIENT_SECRET,
-			callback: this.env.GOOGLE_CALLBACK_URL,
-			api: this.env.GOOGLE_API_URL
-		};
-	}
-
-	get vkApi() {
-		return {
-			id: this.env.VK_CLIENT_ID,
-			secret: this.env.VK_CLIENT_SECRET,
-			callback: this.env.VK_CALLBACK_URL,
-			api: this.env.VK_API_URL
-		};
-	}
 }
 
 export default Api;
