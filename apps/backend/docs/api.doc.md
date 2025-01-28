@@ -6,12 +6,18 @@
 
 - == Описание ==
 
-params:
-- `id: string`
+#### params
+| name         | type               | value                        |
+| ------------ | ------------------ | --------------------------   |
+| `id`         | `string`           | `id` пользователя на сайте   |
 
-abbreviations:
-- `user: u`
+#### abbreviations
+| full          | abbreviation       |
+| ------------- | ------------------ |
+| /api/v1       | /api               |
+| /user         | /u                 |
 
+#### path
 | method     | data            |
 | ---------- | --------------- |
 | get        | `access_token`  |
@@ -31,9 +37,13 @@ params:
 
 - Предназначается для фетчинга пользователя с помощью запросов.
 
-params:
-- `id: string`
+#### params
+| name         | type               | value                        |
+| ------------ | ------------------ | --------------------------   |
+| `id`         | `string`           | `id` пользователя на сайте   |
 
-abbreviations:
-- `api/v1: api`
-- `user: u`
+#### abbreviations
+| full          | abbreviation       |
+| ------------- | ------------------ |
+| /api/v1       | /api               |
+| /user         | /u                 |
