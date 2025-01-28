@@ -1,5 +1,5 @@
 # Api
-Документация по api для фронтенда. Запросы, пути, агрументы и другое будет описано тут используя типы из `packages/types` (`@types/lafka`)
+Документация по api для фронтенда. Запросы, пути, агрументы и другое будет описано тут используя типы из `packages/types` (`@types/lafka`). Или же использование типов из [отдельной документации](./types.doc.md)
 
 ## Пример
 ### /user/:id
@@ -14,15 +14,15 @@
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| /api/v1       | /api               |
-| /user         | /u                 |
+| `/api/v1`       | /api               |
+| `/user`         | /u                 |
 
-#### path
-| method     | data            |
-| ---------- | --------------- |
-| get        | `access_token`  |
-| post       | `1234`          |
-| delete     | `null`          |
+#### methods
+| method       | data            | response |
+| ------------ | --------------- | -------- |
+| `get`        | `access_token`  | [`User`](./types.doc.md#user)   |
+| `post`       | `1234`          | `undefined` |
+| `delete`     | `null`          | `1234helloworld` |
 
 ## Аутентификация/Авторизация
 ### /auth/:method
@@ -47,5 +47,11 @@
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| /api/v1       | /api               |
-| /user         | /u                 |
+| `/api/v1`       | /api               |
+| `/user`         | /u                 |
+
+#### methods
+| method       | data                | response |
+| ------------ | ------------------  | -------- |
+| `get`        | `access token`      | [`User`](./types.doc.md#user) |
+| `delete`     | `access token`      | undefined |
