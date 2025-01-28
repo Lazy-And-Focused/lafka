@@ -9,7 +9,7 @@ type AuthTypes = "google" | "yandex";
 
 ## ChangeData
 ```ts
-interface ChangedData<T extends unknown> {
+interface ChangeData<T extends unknown> {
     type: "user"|"post"|"comment";
     successed: boolean;
 
