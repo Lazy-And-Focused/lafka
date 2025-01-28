@@ -5,7 +5,7 @@ import Database from "database/database/models.database";
 const { auth_users: AuthUsers } = Database;
 
 import passport, { Profile } from "passport";
-import { Strategy, VerifyCallback, VerifyFunction } from 'passport-oauth2';
+import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
 import { AuthTypes } from "types/auth/auth-user.types";
 
 import Api from "api/index.api";
@@ -27,13 +27,16 @@ class GeneralStrategy {
 	protected defaultInitialize = () => {
 		for (const passport of defaultPassports) {
 			const strategy = require(passport[1]).Strategy;
-			this.strategy(strategy, {...api.getApi(passport[0].toUpperCase() as Uppercase<AuthTypes>), type: passport[0]});
-		};
-	}
+			this.strategy(strategy, {
+				...api.getApi(passport[0].toUpperCase() as Uppercase<AuthTypes>),
+				type: passport[0]
+			});
+		}
+	};
 
 	protected verify<Done extends (...data: any) => void = VerifyCallback>(
 		type: AuthTypes
-	)  {
+	) {
 		return async (
 			access_token: string,
 			refresh_token: string,
@@ -42,11 +45,11 @@ class GeneralStrategy {
 		) => {
 			try {
 				const { id } = profile;
-	
+
 				const user = await new User({
 					username: profile.name.givenName || profile.displayName
 				}).init();
-	
+
 				const authUser = await new AuthUser({
 					access_token,
 					refresh_token,
@@ -54,27 +57,34 @@ class GeneralStrategy {
 					type: type,
 					profile_id: user.id
 				}).init();
-	
+
 				return done(null, authUser);
 			} catch (error) {
 				console.log(error);
-	
+
 				return done(error, null);
 			}
-		}
+		};
 	}
 
-	protected strategy(strategy: new (options: {
-		clientID: string
-		clientSecret: string
-		callbackURL: string,
-		scope?: string[]
-	}, verify: VerifyFunction) => Strategy,
+	protected strategy(
+		strategy: new (
+			options: {
+				clientID: string;
+				clientSecret: string;
+				callbackURL: string;
+				scope?: string[];
+			},
+			verify: VerifyFunction
+		) => Strategy,
 		api: {
-			id: string, secret: string, callback: string, scopes?: string[],
-			type: AuthTypes,
-			authURL?: string,
-			tokenURL?: string,
+			id: string;
+			secret: string;
+			callback: string;
+			scopes?: string[];
+			type: AuthTypes;
+			authURL?: string;
+			tokenURL?: string;
 		}
 	) {
 		this._passport.use(
