@@ -1,4 +1,4 @@
-export const authTypes = ["google"] as const;
+export const authTypes = ["google", "yandex"] as const;
 
 export type AuthTypes = (typeof authTypes)[number];
 
