@@ -2,7 +2,7 @@ import AuthUser from "database/classes/default/auth-user.class";
 import User from "database/classes/default/user.class";
 
 import passport, { Profile } from "passport";
-import { Strategy, VerifyCallback, VerifyFunction } from 'passport-oauth2';
+import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
 import { AuthTypes } from "types/auth/auth-user.types";
 
 import Api from "api/index.api";
@@ -15,26 +15,26 @@ const defaultPassports: [AuthTypes, string, string[]?][] = [
 ];
 
 class Authenticator {
-    private readonly _passport: passport.PassportStatic;
+	private readonly _passport: passport.PassportStatic;
 
-    public constructor(passport: passport.PassportStatic) {
-        this._passport = passport;
-    }
+	public constructor(passport: passport.PassportStatic) {
+		this._passport = passport;
+	}
 
-    public init = () => {
-        for (const passport of defaultPassports) {
-            const strategy = require(passport[1]).Strategy;
-            this.strategy(strategy, {
-                ...api.getApi(passport[0].toUpperCase() as Uppercase<AuthTypes>),
-                type: passport[0],
-                scopes: passport[2]
-            });
-        };
-    }
+	public init = () => {
+		for (const passport of defaultPassports) {
+			const strategy = require(passport[1]).Strategy;
+			this.strategy(strategy, {
+				...api.getApi(passport[0].toUpperCase() as Uppercase<AuthTypes>),
+				type: passport[0],
+				scopes: passport[2]
+			});
+		}
+	};
 
-    protected verify<Done extends (...data: any) => void = VerifyCallback>(
+	protected verify<Done extends (...data: any) => void = VerifyCallback>(
 		type: AuthTypes
-	)  {
+	) {
 		return async (
 			access_token: string,
 			refresh_token: string,
@@ -43,11 +43,11 @@ class Authenticator {
 		) => {
 			try {
 				const { id } = profile;
-	
+
 				const user = await new User({
 					username: profile.displayName || profile.name.givenName
 				}).init();
-	
+
 				const authUser = await new AuthUser({
 					access_token,
 					refresh_token,
@@ -55,27 +55,34 @@ class Authenticator {
 					type: type,
 					profile_id: user.id
 				}).init();
-	
+
 				return done(null, authUser);
 			} catch (error) {
 				console.log(error);
-	
+
 				return done(error, null);
 			}
-		}
+		};
 	}
 
-	protected strategy(strategy: new (options: {
-		clientID: string
-		clientSecret: string
-		callbackURL: string,
-		scope?: string[]
-	}, verify: VerifyFunction) => Strategy,
+	protected strategy(
+		strategy: new (
+			options: {
+				clientID: string;
+				clientSecret: string;
+				callbackURL: string;
+				scope?: string[];
+			},
+			verify: VerifyFunction
+		) => Strategy,
 		api: {
-			id: string, secret: string, callback: string, scopes?: string[],
-			type: AuthTypes,
-			authURL?: string,
-			tokenURL?: string,
+			id: string;
+			secret: string;
+			callback: string;
+			scopes?: string[];
+			type: AuthTypes;
+			authURL?: string;
+			tokenURL?: string;
 		}
 	) {
 		this._passport.use(
