@@ -12,11 +12,9 @@ type AuthTypes = "google" | "yandex";
 interface ChangeData<T extends unknown> {
     type: "user"|"post"|"comment";
     successed: boolean;
-
 	resource: T;
 	changed_resource?: T;
 	date: Date;
-    
 	error?: unknown;
 }
 ```
@@ -26,10 +24,8 @@ interface ChangeData<T extends unknown> {
 interface DeleteData<T extends unknown> {
     type: "user"|"post"|"comment";
     successed: boolean;
-	
 	resource: T;
     date: Date;
-
     error?: unknown;
 }
 ```
