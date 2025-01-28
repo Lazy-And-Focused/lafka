@@ -160,6 +160,6 @@ interface Post {
 #### methods
 | method       | data                | response |
 | ------------ | ------------------  | -------- |
-| get          | `null`              | [`GetData<Post>`](./types.doc.md#getdata) |
+| get          | `undefined`              | [`GetData<Post>`](./types.doc.md#getdata) |
 | put          | `{ access_token: string, user_id: string } & Partial<Post>`     | [`ChangeData<Post>`](./types.doc.md#changedata) |
 | delete       | `{ acess_token: string, user_id: string }` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
