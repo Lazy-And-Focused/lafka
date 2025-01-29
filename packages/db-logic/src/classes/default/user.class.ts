@@ -77,19 +77,22 @@ class User<T extends boolean = false> implements UserType {
 		this._created_at = now;
 	}
 
-	public readonly init = async () => {
+	public readonly init = async (): Promise<T extends true ? (this|null) : (this)> => {
 		if (this.initialized) return this;
 
 		const data = this._constructor_data;
 		const filter = data.id !== undefined
-			? { id: data.id }
-			: { username: data.username };
+			? { id: data.id, username: data.username }
+			: { id: undefined, username: data.username };
 
 		const status: StatusType<UserType[]> = await Database.users.getData({
 			filter
 		});
 
 		if (status.type === 0 || !status.data) {
+			if (filter.id && !filter.username)
+				return null as any;
+
 			const user = await Database.users.create({
 				...data,
 				avatar: undefined,
