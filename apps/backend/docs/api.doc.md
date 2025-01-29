@@ -20,7 +20,7 @@
 | `/user`         | /u                 |
 
 #### methods
-| method       | data            | response |
+| method       | body            | response |
 | ------------ | --------------- | -------- |
 | `get`        | `access_token`  | [`User`](./types.doc.md#user)   |
 | `post`       | `1234`          | `undefined` |
@@ -87,9 +87,9 @@ interface User {
 | ------------- | ------------------ |
 | `/user`       | `/u`               |
 #### methods
-| method       | data                | response |
+| method       | body                | response |
 | ------------ | ------------------  | -------- |
-| `get`        | `access_token: string`      | [`GetData<User>`](./types.doc.md#getdata) |
+| `get`        | `undefined`      | [`GetData<User>`](./types.doc.md#getdata) |
 | `delete`     | `access_token: string`      | [`DeleteData<User>`](./types.doc.md#deletedata) |
 | `put`        | `{ access_token: string } & Partial<User>`      | [`ChangeData<User>`](./types.doc.md/#changedata) |
 
@@ -140,7 +140,7 @@ interface Post {
 | ------------- | ------------------ |
 | `/posts`      | `/p`               |
 #### methods
-| method       | data                | response |
+| method       | body                | response |
 | ------------ | ------------------  | -------- |
 | post         | `{ acess_token: string, content: string, creator_id: string, name: string, type: string }` | [`CreateData<Post>`](./types.doc.md#createdata) |
 
@@ -150,7 +150,7 @@ interface Post {
 | ------------ | ------------------ | --------------------------   |
 | `id`         | `string`           | `id` поста на сайте          |
 #### methods
-| method       | data                | response |
+| method       | body                | response |
 | ------------ | ------------------  | -------- |
 | get          | `undefined`              | [`GetData<Post>`](./types.doc.md#getdata) |
 | put          | `{ access_token: string, user_id: string } & Partial<Post>`     | [`ChangeData<Post>`](./types.doc.md#changedata) |
@@ -186,7 +186,7 @@ interface Comment {
 | ------------- | ------------------ |
 | `/comments`   | `/c`               |
 #### methods
-| method       | data                | response |
+| method       | body                | response |
 | ------------ | ------------------  | -------- |
 | `post`       | `{ access_token: string, author_id: string, post_id: string, content: string }` | [`CreateData<Comment>`](./types.doc.md#changedata) |
 
@@ -196,7 +196,7 @@ interface Comment {
 | ------------ | ------------------ | --------------------------   |
 | `id`         | `string`           | `id` комментария на сайте    |
 #### methods
-| method       | data                | response |
+| method       | body                | response |
 | ------------ | ------------------  | -------- |
 | `get`        | `undefined`         | [`GetData<Comment>`](./types.doc.md#getdata) |
 | `put`        | `{ access_token: string, user_id: string } & Partial<Comment>` | [`ChangeData<Comment>`](./types.doc.md#changedata) |
