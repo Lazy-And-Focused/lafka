@@ -6,9 +6,7 @@ import { RouterModule } from "@nestjs/core";
 @Module({
 	imports: [
 		...modules,
-		...modules.map(module =>
-			RouterModule.register([{path: "api", module}])
-		)
+		...modules.map((module) => RouterModule.register([{ path: "api", module }]))
 	]
 })
 export class AppModule implements NestModule {
