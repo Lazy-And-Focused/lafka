@@ -27,7 +27,7 @@ type Data = "username" | "nickname" | "biography" | "avatar" | "links";
 type UserDataTypes = `_${Data}`;
 type UserPostTypes = `${PostTypes}_posts`;
 
-class User implements UserType {
+class User<T extends boolean = false> implements UserType {
 	private _id: string;
 	private _username: string;
 	private _nickname?: string;
@@ -53,18 +53,27 @@ class User implements UserType {
 	private readonly _constructor_data: CreatePickData<
 		UserType,
 		"username" | "created_at"
-	>;
+	> & { id?: string };
 
-	public constructor(data: CreatePickData<UserType, "username">) {
+	public constructor(
+		data: T extends true
+			? (Partial<UserType> & { id: string })
+			: (CreatePickData<UserType, "username"> & { id?: string })
+	) {
 		const now = new Date();
 
+		if (!data.username && !data.id)
+			throw new Error("id and username is not defined");
+
 		this._constructor_data = {
+			id: "",
+			username: "",
 			...data,
 			created_at: now
 		};
 
-		this._id = "";
-		this._username = data.username;
+		this._id = data.id || "";
+		this._username = data.username || "";
 		this._created_at = now;
 	}
 
@@ -72,9 +81,12 @@ class User implements UserType {
 		if (this.initialized) return this;
 
 		const data = this._constructor_data;
+		const filter = data.id !== undefined
+			? { id: data.id }
+			: { username: data.username };
 
 		const status: StatusType<UserType[]> = await Database.users.getData({
-			filter: { username: data.username }
+			filter
 		});
 
 		if (status.type === 0 || !status.data) {
