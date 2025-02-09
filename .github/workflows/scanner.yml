@@ -20,9 +20,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install ESLint
+      - name: Install ESLint & Prettier
         run: |
           npm install eslint@8.10.0
+          npm install prettier@latest
 
       - name: Run ESLint
         env:
@@ -32,22 +33,7 @@ jobs:
           --ext .js,.jsx,.ts,.tsx
         continue-on-error: true
 
-  prettier:
-    name: Prettier
-    runs-on: ubunti-latest
-
-    permissions:
-      contents: write
-      security-events: write
-      actions: read
-
-    steps:
-      - name: Install Prettier
-        run: |
-          npm install prettier@latest
-
       - name: Run Prettier
         run: npx prettier .
           --config .prettierrc
           --write
-        continue-on-error: true
