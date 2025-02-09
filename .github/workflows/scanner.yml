@@ -29,9 +29,9 @@ jobs:
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
         run: npx eslint .
-          --config eslint.config.js
+          --config .eslintrc.js
           --ext .js,.jsx,.ts,.tsx
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Run Prettier
         run: npx prettier .
