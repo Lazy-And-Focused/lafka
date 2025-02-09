@@ -32,6 +32,6 @@ jobs:
         continue-on-error: true
 
       - name: Prettier
-        run: prettier
+        run: prettier .
           --config .prettierrc
-          --write "./**/*{.js,.jsx,.ts,.tsx}"
+          --write "./**/backend/**"
