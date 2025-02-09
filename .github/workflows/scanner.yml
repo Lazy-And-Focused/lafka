@@ -21,7 +21,7 @@ jobs:
       - name: Install ESLint and Prettier
         run: |
           npm install eslint@8.10.0
-          npm install prettier
+          npm install prettier@3.4.2
 
       - name: Run ESLint
         env:
