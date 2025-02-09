@@ -33,5 +33,3 @@ jobs:
 
       - name: Prettier
         run: prettier .
-          --config .prettierrc
-          --write "./**/backend/**"
