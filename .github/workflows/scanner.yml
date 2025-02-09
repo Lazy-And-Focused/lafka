@@ -10,18 +10,19 @@ jobs:
   eslint:
     name: Scanner
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       security-events: write
       actions: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install ESLint and Prettier
+      - name: Install ESLint
         run: |
           npm install eslint@8.10.0
-          npm install prettier@3.4.2
 
       - name: Run ESLint
         env:
@@ -31,5 +32,22 @@ jobs:
           --ext .js,.jsx,.ts,.tsx
         continue-on-error: true
 
-      - name: Prettier
-        run: prettier .
+  prettier:
+    name: Prettier
+    runs-on: ubunti-latest
+
+    permissions:
+      contents: write
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Install Prettier
+        run: |
+          npm install prettier@latest
+
+      - name: Run Prettier
+        run: npx prettier .
+          --config .prettierrc
+          --write
+        continue-on-error: true
