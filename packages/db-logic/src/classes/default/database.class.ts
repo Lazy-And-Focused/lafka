@@ -7,7 +7,7 @@ import {
 	GetData,
 	UpdateOptions,
 	Status as DatabaseStatus
-} from "types/schema/mongodb.types";
+} from "lafka/types/schema/mongodb.types";
 
 import getData from "./helpers/database/get-data.helper";
 import getAllModels from "./helpers/database/get-all-models.helper";

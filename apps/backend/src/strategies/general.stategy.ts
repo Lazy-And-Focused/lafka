@@ -1,6 +1,6 @@
-import AuthUser from "database/classes/default/auth-user.class";
-import User from "database/classes/default/user.class";
-import Database from "database/database/models.database";
+import AuthUser from "lafka/database/classes/default/auth-user.class";
+import User from "lafka/database/classes/default/user.class";
+import Database from "lafka/database/database/models.database";
 
 const { auth_users: AuthUsers } = Database;
 

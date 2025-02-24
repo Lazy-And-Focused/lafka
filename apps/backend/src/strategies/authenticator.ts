@@ -1,9 +1,9 @@
-import AuthUser from "database/classes/default/auth-user.class";
-import User from "database/classes/default/user.class";
+import AuthUser from "lafka/database/classes/default/auth-user.class";
+import User from "lafka/database/classes/default/user.class";
 
 import passport, { Profile } from "passport";
 import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
-import { AuthTypes } from "types/auth/auth-user.types";
+import { AuthTypes } from "lafka/types/auth/auth-user.types";
 
 import Api from "api/index.api";
 

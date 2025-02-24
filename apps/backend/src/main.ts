@@ -1,4 +1,4 @@
-import connect from "database/database/index.database";
+import connect from "lafka/database/database/index.database";
 
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";

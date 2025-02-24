@@ -1,7 +1,7 @@
 import { Next, Req, Res } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 
-import { AuthTypes, authTypes } from "types/auth/auth-user.types";
+import { AuthTypes, authTypes } from "lafka/types/auth/auth-user.types";
 
 const abbreviations: Map<string, AuthTypes> = new Map().set("ya", "yandex");
 

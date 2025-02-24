@@ -1,8 +1,8 @@
-import type { AuthTypes, AuthUser as AuthUserType } from "types/auth/auth-user.types";
-import type { User } from "types/authors/user.types";
+import type { AuthTypes, AuthUser as AuthUserType } from "lafka/types/auth/auth-user.types";
+import type { User } from "lafka/types/authors/user.types";
 
 import Database from "database/models.database";
-import { ModelData } from "types/schema/mongodb.types";
+import { ModelData } from "lafka/types/schema/mongodb.types";
 
 const { auth_users: AuthUsers } = Database;
 

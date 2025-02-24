@@ -1,7 +1,7 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { ForumPost } from "types/posts/forum-post.types";
-import type { BlogPost } from "types/posts/blog-post.types";
+import type { ForumPost } from "lafka/types/posts/forum-post.types";
+import type { BlogPost } from "lafka/types/posts/blog-post.types";
 
 import { Tag } from "./tag.utility-schema";
 

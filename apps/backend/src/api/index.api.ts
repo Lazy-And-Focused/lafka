@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 
-import type { AuthTypes } from "types/auth/auth-user.types";
+import type { AuthTypes } from "lafka/types/auth/auth-user.types";
 
 config();
 

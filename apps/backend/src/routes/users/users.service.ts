@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 
-import Database from "database/database/models.database";
+import Database from "lafka/database/database/models.database";
 
-import type { User } from "types/authors/user.types";
-import type { ServiceResponse } from "types/service.types";
+import type { User } from "lafka/types/authors/user.types";
+import type { ServiceResponse } from "lafka/types/service.types";
 
 const { users } = Database;
 

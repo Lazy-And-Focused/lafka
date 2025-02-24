@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "workspaces": [
+    "apps/**",
+    "packages/**"
+  ],
   "scripts": {
     "build:packages": "pnpm run build:types && pnpm run build:database",
-    "build:types": "pnpm --filter @types/lafka build",
-    "build:database": "pnpm --filter db-logic build",
-    "dev:database": "pnpm --filter db-logic dev",
-    "start:backend": "pnpm --filter backend start"
+    "build:types": "pnpm --filter @lafka/types build",
+    "build:database": "pnpm --filter @lafka/db-logic build",
+    "dev:database": "pnpm --filter @lafka/db-logic dev",
+    "start:backend": "pnpm --filter backend start",
+    "start": ""
   },
   "keywords": [],
   "author": "LAF",

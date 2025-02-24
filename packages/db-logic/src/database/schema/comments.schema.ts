@@ -1,6 +1,6 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { Comment } from "types/content/comment.types";
+import type { Comment } from "lafka/types/content/comment.types";
 
 const schema = new Schema<Comment>({
 	id: {

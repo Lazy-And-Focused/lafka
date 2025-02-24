@@ -1,8 +1,12 @@
 {
-  "name": "db-logic",
+  "name": "@lafka/db-logic",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "types": "dist/database/models.database.d.ts",
+  "main": "dist/database/models.database.js",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
     "start:prod": "node dist/database/index.database.js",
@@ -18,7 +22,7 @@
     "mongoose": "^8.5.3"
   },
   "devDependencies": {
-    "@types/lafka": "workspace:^",
+    "@lafka/types": "workspace:^",
     "@types/node": "^20.10.5",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",

@@ -12,9 +12,9 @@
         "paths": {
             "database/*": ["src/database/*"],
             "classes/*": ["src/classes/*"],
-            "types/*": [
+            "lafka/types/*": [
                 "src/types/*",
-                "node_modules/@types/lafka/dist/*"
+                "node_modules/@lafka/types/dist/*"
             ]
         }
     },

@@ -18,9 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "database/*": ["node_modules/db-logic/dist/*"],
-      "types/*": [
-        "node_modules/@types/lafka/dist/*",
+      "lafka/database/*": ["node_modules/@lafka/db-logic/dist/*"],
+      "lafka/types/*": [
+        "node_modules/@lafka/types/dist/*",
         "src/types/*"
       ],
       "api/*": [ "src/api/*" ],

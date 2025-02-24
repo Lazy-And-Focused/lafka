@@ -1,6 +1,6 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { User } from "types/authors/user.types";
+import type { User } from "lafka/types/authors/user.types";
 import { Link } from "./link.utility-schema";
 
 const schema = new Schema<User>({

@@ -1,7 +1,7 @@
-import type { Comment as CommentType } from "types/content/comment.types";
+import type { Comment as CommentType } from "lafka/types/content/comment.types";
 
 import Database from "database/models.database";
-import { CreatePickData } from "types/schema/mongodb.types";
+import { CreatePickData } from "lafka/types/schema/mongodb.types";
 
 class Comment implements CommentType {
 	private _id: string;

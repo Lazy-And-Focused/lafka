@@ -1,16 +1,16 @@
-import { BlogPost } from "types/posts/blog-post.types";
-import { ForumPost } from "types/posts/forum-post.types";
+import { BlogPost } from "lafka/types/posts/blog-post.types";
+import { ForumPost } from "lafka/types/posts/forum-post.types";
 
-import { Link as LinkType } from "types/utility/utility.types";
-import { User as UserType } from "types/authors/user.types";
+import { Link as LinkType } from "lafka/types/utility/utility.types";
+import { User as UserType } from "lafka/types/authors/user.types";
 
 import Database from "database/models.database";
 import type {
 	CreateData,
 	CreatePickData,
 	Status as StatusType
-} from "types/schema/mongodb.types";
-import { Status, Error } from "types/schema/status.classes";
+} from "lafka/types/schema/mongodb.types";
+import { Status, Error } from "lafka/types/schema/status.classes";
 
 import Post from "./posts.class";
 
