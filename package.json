@@ -8,8 +8,9 @@
     "packages/**"
   ],
   "scripts": {
-    "build:packages": "pnpm run build:types && pnpm run build:database",
-    "build:types": "pnpm --filter @lafka/types build",
+    "build:all": "pnpm run build:packages && pnpm run build:apps",
+    "build:apps": "pnpm --filter ./apps/** build",
+    "build:packages": "pnpm --filter ./packages/** build",
     "build:database": "pnpm --filter @lafka/db-logic build",
     "dev:database": "pnpm --filter @lafka/db-logic dev",
     "start:backend": "pnpm --filter backend start",

@@ -1,5 +1,6 @@
-import { Controller, Get, Injectable, Param } from "@nestjs/common";
+import "lafka/types/authors/user.types";
 
+import { Controller, Get, Injectable, Param } from "@nestjs/common";
 import { UsersService } from "./users.service";
 
 @Injectable()
