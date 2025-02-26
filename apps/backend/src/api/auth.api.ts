@@ -3,13 +3,22 @@ import { NextFunction, Request, Response } from "express";
 
 import { AuthTypes, authTypes } from "lafka/types/auth/auth-user.types";
 
-const abbreviations: Map<string, AuthTypes> = new Map().set("ya", "yandex");
+const abbreviations: Map<string, AuthTypes> = new Map([
+	["ya", "yandex"]
+]);
 
 class AuthApi {
 	private readonly _method: string;
 
 	public constructor(method: string) {
 		this._method = method;
+	}
+
+	static get methods(): Record<"abbreviations"|"methods", readonly string[]> {
+		return {
+			abbreviations: Array.from(abbreviations.keys()),
+			methods: authTypes
+		};
 	}
 
 	private getMethod(): [

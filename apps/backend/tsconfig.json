@@ -27,6 +27,7 @@
       "routes/*": [ "src/routes/*" ],
       "middleware/*": [ "src/middleware/*" ],
       "strategies/*": [ "src/strategies/*" ],
+      "guards/*": [ "src/guards/*" ]
     }
   }
 }

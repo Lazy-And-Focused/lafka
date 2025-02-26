@@ -1,10 +1,12 @@
 import "lafka/types/authors/user.types";
 
-import { Controller, Get, Injectable, Param } from "@nestjs/common";
+import { Controller, Get, Injectable, Param, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
+import { AuthGuard } from "guards/auth/auth.guard";
 
 @Injectable()
 @Controller("users")
+@UseGuards(AuthGuard)
 export class UsersController {
     public constructor(private usersService: UsersService) {}
 

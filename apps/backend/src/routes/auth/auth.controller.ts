@@ -6,6 +6,17 @@ import AuthApi from "api/auth.api";
 @Injectable()
 @Controller("auth")
 export class AuthController {
+	@Get()
+	public printMethods() {
+		const { abbreviations, methods } = AuthApi.methods;
+		const toStr = (str: unknown) => JSON.stringify(str, undefined, 4);
+
+		return {
+			message: `Sorry, but you can't auth without method, try next methods:\n${toStr(methods)}\nAnd this abbreviations:\n${toStr(abbreviations)}`,
+			abbreviations, methods
+		};
+	}
+
 	@Get(":method")
 	public auth(
 		@Req() req: Request,
