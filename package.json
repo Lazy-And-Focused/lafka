@@ -13,6 +13,7 @@
     "build:packages": "pnpm --filter ./packages/** build",
     "build:database": "pnpm --filter @lafka/db-logic build",
     "dev:database": "pnpm --filter @lafka/db-logic dev",
+    "dev:backend": "pnpm --filter backend start:dev",
     "start:backend": "pnpm --filter backend start"
   },
   "keywords": [],
