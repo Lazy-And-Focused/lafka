@@ -93,7 +93,7 @@ fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then(async (data: GetData<Use
 });
 
 // find by id, successed: false
-fetch(api + "/users/1234567890", { method: "GET" }).then(data => {
+fetch(api + "/users/1234567890", { method: "GET" }).then(async data => {
   console.log(await data.json()) // { successed: false, type: "user", resource: null, error: "user not found" }
 });
 
