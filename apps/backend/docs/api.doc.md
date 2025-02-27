@@ -4,14 +4,14 @@
 <hr>
 
 ## Пример (root (если есть))
-### `/users/:id`
+### `/users/:data`
 
 - == Описание ==
 
 #### params
-| name         | type               | value                        |
-| ------------ | ------------------ | --------------------------   |
-| `id`         | `string`           | `id` пользователя на сайте   |
+| name         | type               | value                            | example |
+| ------------ | ------------------ | --------------------------       | ------- |
+| `data`         | `string`           | `data` пользователя на сайте   | `fetch(api + "/u/@FOCKUSTY")`, `fetch(api + "/u/12345")` |
 
 #### abbreviations
 | full          | abbreviation       |
@@ -44,7 +44,7 @@
 <hr>
 
 ## Пользователь
-### `/users/:id`
+### `/users/:data`
 
 - Предназначается для фетчинга пользователя с помощью запросов.
 
@@ -54,42 +54,123 @@
 
 ```ts
 interface User {
-	id: string;
+  id: string;
 
-	username: string;
-	nickname?: string;
-	avatar?: string;
+  username: string;
+  nickname?: string;
+  avatar?: string;
 
-	biography?: string;
-	links: Link[];
+  biography?: string;
+  links: Link[];
 
-	created_at: Date;
+  created_at: Date;
 
-	forum_posts: string[];
-	blog_posts: string[];
-	followed_forum_posts: string[];
-	followed_blog_posts: string[];
-	blocked_posts: string[];
+  forum_posts: string[];
+  blog_posts: string[];
+  followed_forum_posts: string[];
+  followed_blog_posts: string[];
+  blocked_posts: string[];
 
-	followers: string[];
-	following: string[];
+  followers: string[];
+  following: string[];
 }
 ```
 
 </details>
 
 #### params
-| name         | type               | value                        |
-| ------------ | ------------------ | --------------------------   |
-| `id`         | `string`           | `id` пользователя на сайте   |
+
+##### `data`: `string`
+- `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567`
+
+1. get
+```ts
+// find by username, successed: true
+fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then((data: GetData<User>) => {
+  console.log(data) // { successed: true, type: "user", resource: {...}, error: undefined } 
+});
+
+// find by id, successed: false
+fetch(api + "/users/1234567890", { method: "GET" }).then(data => {
+  console.log(data) // { successed: false, type: "user", resource: null, error: "user not found" }
+});
+
+/* 
+  returning GetData<User>
+  not required data in body
+  method - get
+*/
+```
+
+2. delete
+```ts
+// delete by username, successed: true
+fetch(api + "/users/@FOCKUSTY", {
+  method: "DELETE",
+  body: JSON.stringify({ access_token: MY_TOKEN })
+}).then(data => {
+  console.log(data) // { type: "user", successed: true, date: Date, resource: {...}, error: undefined }
+});
+
+// delete by id, successed: false
+fetch(api + "/u/1234", {
+  method: "DELETE",
+  body: JSON.stringify({ access_token: MY_TOKEN })
+}).then(data => {
+  console.log(data) // { type: "user", successed: false, date: Date, resource: {...}, error: "403" }
+});
+
+/* 
+  returning DeleteData<User>
+  required a access_token in body
+  method - delete
+*/
+```
+
+3. put
+```ts
+// put by username, successed: true
+fetch(api + "/u/@FOCKUSTY", {
+  method: "PUT",
+  body: JSON.stringify({
+    access_token: MY_TOKEN,
+    nickname: "fickus228",
+    biography: "The Hatter"
+  })
+}).then(data => {
+  console.log(data) // { type: "user", successed: true, date: Date, resource: {...}, changed_resource: {...}, error: undefined }
+});
+
+// put by id, successed: false
+fetch(api + "/u/1235", {
+  method: "PUT",
+  body: JSON.stringify({
+    access_token: MY_TOKEN,
+    nickname: "fickus228",
+    biography: "The Hatter"
+  })
+}).then(data => {
+  console.log(data) // { type: "user", successed: false, date: Date, resource: {...}, changed_resource: undefined, error: "403" }
+});
+
+/* 
+  returning ChangeData<User>
+  required a access_token in body, also Partial<User>
+  method - put
+*/
+```
+
+| name         | type               | value                        | expample 			|
+| ------------ | ------------------ | --------------------------   | ------------------ |
+| `data`       | `string`           | `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567` | `fetch(api + "/u/@FOCKUSTY")`, `fetch(api + "/users/12345")` |
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| `/user`       | `/u`               |
+| `/users`       | `/u`               |
 #### methods
 | method       | body                | response |
 | ------------ | ------------------  | -------- |
-| `get`        | `undefined`      | [`GetData<User>`](./types.doc.md#getdata) |
+| `get`        | `null`     		     | [`GetData<User>`](./types.doc.md#getdata) |
 | `delete`     | `access_token: string`      | [`DeleteData<User>`](./types.doc.md#deletedata) |
 | `put`        | `{ access_token: string } & Partial<User>`      | [`ChangeData<User>`](./types.doc.md/#changedata) |
 
@@ -104,32 +185,32 @@ interface User {
 
 ```ts
 interface Post {
-	id: string;
+  id: string;
 
-	name: string;
-	content: string;
-	description?: string;
-	comments: string[];
-	followers: number;
+  name: string;
+  content: string;
+  description?: string;
+  comments: string[];
+  followers: number;
 
-	created_at: Date;
-	changed_at?: Date;
+  created_at: Date;
+  changed_at?: Date;
 
-	creator_id: string;
+  creator_id: string;
 
-	type: "forum" | "blog";
-	view_status: 0 | 1;
+  type: "forum" | "blog";
+  view_status: 0 | 1;
 
-	// Forum post:
+  // Forum post:
 
-	tags: Tag[] | null;
-	status: PostStatus | null;
+  tags: Tag[] | null;
+  status: PostStatus | null;
 
-	// Blog post:
+  // Blog post:
 
-	likes: number | null;
-	dislikes: number | null;
-	reposts: number | null;
+  likes: number | null;
+  dislikes: number | null;
+  reposts: number | null;
 }
 ```
 
@@ -144,7 +225,7 @@ interface Post {
 | ------------ | ------------------  | -------- |
 | post         | `{ acess_token: string, content: string, creator_id: string, name: string, type: string }` | [`CreateData<Post>`](./types.doc.md#createdata) |
 
-### `/:id`
+### `/:data`
 #### params
 | name         | type               | value                        |
 | ------------ | ------------------ | --------------------------   |
@@ -165,17 +246,17 @@ interface Post {
 
 ```ts
 interface Comment {
-	id: string;
+  id: string;
 
-	content: string;
+  content: string;
 
-	created_at: Date;
-	changed_at?: Date;
+  created_at: Date;
+  changed_at?: Date;
 
-	author_id: string;
-	post_id: string;
+  author_id: string;
+  post_id: string;
 
-	reply?: string;
+  reply?: string;
 }
 ```
 
