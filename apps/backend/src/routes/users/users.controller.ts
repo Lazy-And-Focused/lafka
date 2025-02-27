@@ -5,7 +5,7 @@ import { UsersService } from "./users.service";
 import { AuthGuard } from "guards/auth/auth.guard";
 
 @Injectable()
-@Controller("users")
+@Controller(["users", "u"])
 @UseGuards(AuthGuard)
 export class UsersController {
     public constructor(private usersService: UsersService) {}
