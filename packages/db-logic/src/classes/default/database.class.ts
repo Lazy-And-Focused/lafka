@@ -13,7 +13,7 @@ import getData from "./helpers/database/get-data.helper";
 import getAllModels from "./helpers/database/get-all-models.helper";
 import deleteModel from "./helpers/database/delete-model.helper";
 
-class Database<T, K = Partial<T>> {
+class Database<T extends { id: string }, K = Partial<T>> {
 	private readonly _model: Model<T>;
 
 	public constructor(model: Model<T>) {
@@ -24,8 +24,14 @@ class Database<T, K = Partial<T>> {
 		return this._model;
 	}
 
+	public findLast = async (): Promise<T> => {
+		return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!
+	}
+
 	public generateId = async (): Promise<string> => {
-		return `${(await this._model.collection.count()) + 1}`;
+		const id = await this._model.countDocuments();
+
+		return `${(id === 0 ? 0 : (+(await this.findLast()).id)) + 1}`;
 	};
 
 	public create = async (doc: CreateData<T> & K) => {

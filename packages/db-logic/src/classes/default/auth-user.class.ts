@@ -13,11 +13,13 @@ class AuthUser implements AuthUserType {
 	private readonly _access_token: string;
 	private readonly _refresh_token?: string;
 	private readonly _type: AuthTypes;
+	private readonly _created_at: Date;
 
-	public constructor(data: ModelData<AuthUserType> & { profile_id?: string }) {
+	public constructor(data: ModelData<Omit<AuthUserType, "created_at">> & { profile_id?: string }) {
 		this._id = "";
 		this._profile_id = data.profile_id || "null";
 		this._service_id = data.service_id;
+		this._created_at = new Date();
 
 		this._access_token = data.access_token;
 		this._refresh_token = data.refresh_token;
@@ -68,6 +70,7 @@ class AuthUser implements AuthUserType {
 		} else {
 			await AuthUsers.create({
 				service_id: this._service_id,
+				created_at: this._created_at,
 				access_token: this._access_token,
 				refresh_token: this._refresh_token,
 				profile_id: this._profile_id,
@@ -99,6 +102,10 @@ class AuthUser implements AuthUserType {
 
 	public get service_id(): string {
 		return this._service_id;
+	}
+
+	public get created_at(): Date {
+		return this._created_at;
 	}
 
 	public get access_token(): string {

@@ -81,9 +81,9 @@ class User<T extends boolean = false> implements UserType {
 		if (this.initialized) return this;
 
 		const data = this._constructor_data;
-		const filter = data.id !== undefined
-			? { id: data.id }
-			: { id: undefined, username: data.username };
+		const filter = !!data.id
+			? { id: data.id, username: data.username }
+			: { username: data.username };
 
 		const status: StatusType<UserType[]> = await Database.users.getData({
 			filter: { ...filter }

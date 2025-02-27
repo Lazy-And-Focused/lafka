@@ -15,6 +15,12 @@ const schema = new Schema<AuthUser>({
 		unique: true
 	},
 
+	created_at: {
+		type: mongoose.SchemaTypes.Date,
+		required: true,
+		unique: false
+	},
+
 	profile_id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,
