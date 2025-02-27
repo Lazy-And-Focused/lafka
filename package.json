@@ -8,13 +8,12 @@
     "packages/**"
   ],
   "scripts": {
-    "build:all": "pnpm run build:packages && pnpm run build:apps",
+    "build:all": "pnpm --filter {./**} build",
     "build:apps": "pnpm --filter ./apps/** build",
     "build:packages": "pnpm --filter ./packages/** build",
     "build:database": "pnpm --filter @lafka/db-logic build",
     "dev:database": "pnpm --filter @lafka/db-logic dev",
-    "start:backend": "pnpm --filter backend start",
-    "start": ""
+    "start:backend": "pnpm --filter backend start"
   },
   "keywords": [],
   "author": "LAF",
