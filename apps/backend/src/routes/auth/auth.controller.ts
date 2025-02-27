@@ -3,8 +3,10 @@ import { NextFunction, Request, Response } from "express";
 
 import AuthApi from "api/auth.api";
 
+import { AUTH_CONTROLLER, AUTH_ROUTES } from "./auth.routes";
+
 @Injectable()
-@Controller("auth")
+@Controller(AUTH_CONTROLLER)
 export class AuthController {
 	@Get()
 	public printMethods() {
@@ -17,7 +19,7 @@ export class AuthController {
 		};
 	}
 
-	@Get(":method")
+	@Get(AUTH_ROUTES.GET)
 	public auth(
 		@Req() req: Request,
 		@Res() res: Response,
@@ -26,7 +28,7 @@ export class AuthController {
 		return new AuthApi(req.params.method).auth(req, res, next);
 	}
 
-	@Get(":method/callback")
+	@Get(AUTH_ROUTES.GET_CALLBACK)
 	public callback(
 		@Req() req: Request,
 		@Res() res: Response,

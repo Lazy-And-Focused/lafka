@@ -5,13 +5,15 @@ import { UsersService } from "./users.service";
 import { AuthGuard } from "guards/auth/auth.guard";
 import { Public } from "decorators/public.decorator";
 
+import { USERS_ROUTES, USERS_CONTROLLER } from "./users.routes";
+
 @Injectable()
-@Controller(["users", "u"])
+@Controller(USERS_CONTROLLER)
 @UseGuards(AuthGuard)
 export class UsersController {
     public constructor(private usersService: UsersService) {}
 
-    @Get(":data")
+    @Get(USERS_ROUTES.GET)
     @Public()
     public async get(@Param("data") data: string) {
         const formatted = UsersService.formatGetData(data);
