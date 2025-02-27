@@ -3,6 +3,7 @@ import "lafka/types/authors/user.types";
 import { Controller, Get, Injectable, Param, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { AuthGuard } from "guards/auth/auth.guard";
+import { Public } from "decorators/public.decorator";
 
 @Injectable()
 @Controller(["users", "u"])
@@ -11,6 +12,7 @@ export class UsersController {
     public constructor(private usersService: UsersService) {}
 
     @Get(":data")
+    @Public()
     public async get(@Param("data") data: string) {
         const formatted = UsersService.formatGetData(data);
 

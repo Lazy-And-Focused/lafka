@@ -27,7 +27,8 @@
       "routes/*": [ "src/routes/*" ],
       "middleware/*": [ "src/middleware/*" ],
       "strategies/*": [ "src/strategies/*" ],
-      "guards/*": [ "src/guards/*" ]
+      "guards/*": [ "src/guards/*" ],
+      "decorators/*": [ "src/decorators/*" ]
     }
   }
 }
