@@ -88,13 +88,13 @@ interface User {
 
 ```ts
 // find by username, successed: true
-fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then((data: GetData<User>) => {
-  console.log(data) // { successed: true, type: "user", resource: {...}, error: undefined } 
+fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then(async (data: GetData<User>) => {
+  console.log(await data.json()) // { successed: true, type: "user", resource: {...}, error: undefined } 
 });
 
 // find by id, successed: false
 fetch(api + "/users/1234567890", { method: "GET" }).then(data => {
-  console.log(data) // { successed: false, type: "user", resource: null, error: "user not found" }
+  console.log(await data.json()) // { successed: false, type: "user", resource: null, error: "user not found" }
 });
 
 /* 
@@ -114,16 +114,16 @@ fetch(api + "/users/1234567890", { method: "GET" }).then(data => {
 fetch(api + "/users/@FOCKUSTY", {
   method: "DELETE",
   body: JSON.stringify({ access_token: MY_TOKEN })
-}).then(data => {
-  console.log(data) // { type: "user", successed: true, date: Date, resource: {...}, error: undefined }
+}).then(async data => {
+  console.log(await data.json()) // { type: "user", successed: true, date: Date, resource: {...}, error: undefined }
 });
 
 // delete by id, successed: false
 fetch(api + "/u/1234", {
   method: "DELETE",
   body: JSON.stringify({ access_token: MY_TOKEN })
-}).then(data => {
-  console.log(data) // { type: "user", successed: false, date: Date, resource: {...}, error: "403" }
+}).then(async data => {
+  console.log(await data.json()) // { type: "user", successed: false, date: Date, resource: {...}, error: "403" }
 });
 
 /* 
@@ -147,8 +147,8 @@ fetch(api + "/u/@FOCKUSTY", {
     nickname: "fickus228",
     biography: "The Hatter"
   })
-}).then(data => {
-  console.log(data) // { type: "user", successed: true, date: Date, resource: {...}, changed_resource: {...}, error: undefined }
+}).then(async data => {
+  console.log(await data.json()) // { type: "user", successed: true, date: Date, resource: {...}, changed_resource: {...}, error: undefined }
 });
 
 // put by id, successed: false
@@ -159,8 +159,8 @@ fetch(api + "/u/1235", {
     nickname: "fickus228",
     biography: "The Hatter"
   })
-}).then(data => {
-  console.log(data) // { type: "user", successed: false, date: Date, resource: {...}, changed_resource: undefined, error: "403" }
+}).then(async data => {
+  console.log(await data.json()) // { type: "user", successed: false, date: Date, resource: {...}, changed_resource: undefined, error: "403" }
 });
 
 /* 
