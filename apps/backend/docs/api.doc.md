@@ -83,7 +83,9 @@ interface User {
 ##### `data`: `string`
 - `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567`
 
-1. get
+<details>
+<summary>GET</summary>
+
 ```ts
 // find by username, successed: true
 fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then((data: GetData<User>) => {
@@ -102,7 +104,11 @@ fetch(api + "/users/1234567890", { method: "GET" }).then(data => {
 */
 ```
 
-2. delete
+</details>
+
+<details>
+<summary>DELETE</summary>
+
 ```ts
 // delete by username, successed: true
 fetch(api + "/users/@FOCKUSTY", {
@@ -127,7 +133,11 @@ fetch(api + "/u/1234", {
 */
 ```
 
-3. put
+</details>
+
+<details>
+<summary>PUT</summary>
+
 ```ts
 // put by username, successed: true
 fetch(api + "/u/@FOCKUSTY", {
@@ -159,6 +169,8 @@ fetch(api + "/u/1235", {
   method - put
 */
 ```
+
+</details>
 
 | name         | type               | value                        | expample 			|
 | ------------ | ------------------ | --------------------------   | ------------------ |
