@@ -7,8 +7,29 @@ import type { ServiceResponse } from "lafka/types/service.types";
 
 const { users } = Database;
 
+const keyGetSymbols = ["@"];
+const keyGetSymbolsMap = new Map<string, string>([
+    ["@", "username"],
+    ["", "id"]
+]);
+
 @Injectable()
 export class UsersService {
+    public static formatGetData(data: string) {
+        if (!keyGetSymbols.includes(data[0])) {
+            if (isNaN(+data[0]))
+                return new Error(`argument must be username (@username) or id (id)`);
+
+            return {"id": data}
+        };
+
+        const type = keyGetSymbolsMap.get(data[0]);
+
+        if (!type) return new Error(`argument must be username (@username) or id (id)`);
+
+        return { [type]: data.slice(1) };
+    }
+
     public async getUser(data: Partial<User>|string): Promise<ServiceResponse<User>> {
         try {
             const user = await users.model.findOne(typeof data === "string" ? {id: data} : data);
