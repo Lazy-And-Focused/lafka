@@ -83,8 +83,8 @@ interface User {
 ##### `data`: `string`
 - `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567`
 
-1. <details>
-<summary>GET</summary>
+<details>
+<summary>1. GET</summary>
 
 ```ts
 // find by username, successed: true
@@ -106,8 +106,8 @@ fetch(api + "/users/1234567890", { method: "GET" }).then(data => {
 
 </details>
 
-2. <details>
-<summary>DELETE</summary>
+<details>
+<summary>2. DELETE</summary>
 
 ```ts
 // delete by username, successed: true
@@ -135,8 +135,8 @@ fetch(api + "/u/1234", {
 
 </details>
 
-3. <details>
-<summary>PUT</summary>
+<details>
+<summary>3. PUT</summary>
 
 ```ts
 // put by username, successed: true
