@@ -36,7 +36,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 	private readonly _model: Model<T>;
 	protected readonly _database: Models;
 
-	public constructor(model: Model<T>, redis: Redis, models: Models) {
+	public constructor(model: Model<T>, models: Models) {
 		this._database = models;
 		this._model = model;
 	}

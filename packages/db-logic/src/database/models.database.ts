@@ -62,17 +62,17 @@ class Database {
 		this._redis = redis;
 
 		this._classes = {
-			auth_users: (data: authUsersConstructor) => new authUsersClass(data, redis),
-			comments: (data: commentsConstructor) => new commentsClass(data, redis),
-			posts: (data: postsConstructor) => new postsClass(data, redis),
-			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data, redis),
-			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model, redis, this)
+			auth_users: (data: authUsersConstructor) => new authUsersClass(data, this),
+			comments: (data: commentsConstructor) => new commentsClass(data, this),
+			posts: (data: postsConstructor) => new postsClass(data, this),
+			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data, this),
+			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model, this)
 		};
 
-		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema, redis, this);
-		this._comments = new DatabaseClass<Comment>(CommentsSchema, redis, this);
-		this._posts = new DatabaseClass(PostsSchema, redis, this);
-		this._users = new DatabaseClass(UsersSchema, redis, this);
+		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema, this);
+		this._comments = new DatabaseClass<Comment>(CommentsSchema, this);
+		this._posts = new DatabaseClass(PostsSchema, this);
+		this._users = new DatabaseClass(UsersSchema, this);
 	}
 
 	public get redis() {

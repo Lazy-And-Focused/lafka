@@ -44,9 +44,9 @@ class Post implements PostType {
 
 	public constructor(
 		data: postsConstructor,
-		redis: Redis
+		database: Database
 	) {
-		this._database = new Database(redis);
+		this._database = database;
 
 		const now = new Date();
 

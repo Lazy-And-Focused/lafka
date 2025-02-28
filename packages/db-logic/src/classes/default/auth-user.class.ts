@@ -3,8 +3,6 @@ import type { User } from "lafka/types/authors/user.types";
 
 import Database, { authUsersConstructor } from "database/models.database";
 
-import Redis from "lafka/redis/modesl.database";
-
 class AuthUser implements AuthUserType {
 	private readonly _id: string;
 	private readonly _profile_id: string;
@@ -16,8 +14,8 @@ class AuthUser implements AuthUserType {
 
 	private readonly _database: Database;
 
-	public constructor(data: authUsersConstructor, redis: Redis) {
-		this._database = new Database(redis);
+	public constructor(data: authUsersConstructor, database: Database) {
+		this._database = database
 		
 		this._id = "";
 		this._profile_id = data.profile_id || "null";

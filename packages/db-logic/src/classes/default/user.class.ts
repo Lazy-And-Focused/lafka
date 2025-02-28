@@ -59,9 +59,9 @@ class User<T extends boolean = false> implements UserType {
 
 	public constructor(
 		data: userConstructor<T>,
-		redis: Redis
+		database: Database
 	) {
-		this._database = new Database(redis);
+		this._database = database;
 
 		const now = new Date();
 

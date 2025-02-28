@@ -2,8 +2,6 @@ import type { Comment as CommentType } from "lafka/types/content/comment.types";
 
 import Database, { commentsConstructor } from "database/models.database";
 
-import Redis from "lafka/redis/modesl.database";
-
 class Comment implements CommentType {
 	private _id: string;
 	private _created_at: Date;
@@ -23,9 +21,9 @@ class Comment implements CommentType {
 	
 	public constructor(
 		data: commentsConstructor,
-		redis: Redis
+		database: Database
 	) {
-		this._database = new Database(redis);
+		this._database = database
 		const now = new Date();
 
 		this._id = "";
