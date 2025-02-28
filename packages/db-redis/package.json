@@ -1,5 +1,5 @@
 {
-  "name": "@lafka/redis",
+  "name": "@lafka/db-redis",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
