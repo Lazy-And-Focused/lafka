@@ -66,13 +66,13 @@ class Database {
 			comments: (data: commentsConstructor) => new commentsClass(data, this),
 			posts: (data: postsConstructor) => new postsClass(data, this),
 			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data, this),
-			database: <T extends { id: string }, K = Partial<T>, N extends ModelNames = ModelNames>(model: Model<T>) => new DatabaseClass<T, K, N>(model, this)
+			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model, this)
 		};
 
-		this._auth_users = new DatabaseClass<AuthUser, Partial<AuthUser>, "auth_users">(AuthUserSchema, this);
-		this._comments = new DatabaseClass<Comment, Partial<Comment>, "comments">(CommentsSchema, this);
-		this._posts = new DatabaseClass<ForumPost&BlogPost, Partial<ForumPost&BlogPost>, "posts">(PostsSchema, this);
-		this._users = new DatabaseClass<User, Partial<User>, "users">(UsersSchema, this);
+		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema, this);
+		this._comments = new DatabaseClass<Comment>(CommentsSchema, this);
+		this._posts = new DatabaseClass<ForumPost&BlogPost>(PostsSchema, this);
+		this._users = new DatabaseClass<User>(UsersSchema, this);
 	}
 
 	public get redis() {

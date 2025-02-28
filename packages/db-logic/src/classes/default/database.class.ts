@@ -17,8 +17,8 @@ import getData from "./helpers/database/get-data.helper";
 import getAllModels from "./helpers/database/get-all-models.helper";
 import deleteModel from "./helpers/database/delete-model.helper";
 
-export interface DatabaseType<T extends { id: string }, K = Partial<T>, N extends ModelNames = ModelNames> {
-	name: N;
+export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
+	name: ModelNames;
 	model: Model<T>;
 	id: Promise<string>;
 	
@@ -32,7 +32,7 @@ export interface DatabaseType<T extends { id: string }, K = Partial<T>, N extend
 	deleteModel: () => Promise<DatabaseStatus>;
 }
 
-class Database<T extends { id: string }, K = Partial<T>, N extends ModelNames = ModelNames> implements DatabaseType<T, K, N> {
+class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType<T, K> {
 	private readonly _model: Model<T>;
 	protected readonly _database: Models;
 
@@ -41,12 +41,18 @@ class Database<T extends { id: string }, K = Partial<T>, N extends ModelNames = 
 		this._model = model;
 	}
 
-	get name(): N {
-		return this._model.modelName as N;
+	public get name(): ModelNames {
+		return this._model.modelName as ModelNames;
 	}
 
-	get model() {
+	public get model() {
 		return this._model;
+	}
+
+	public get redis() {
+		if (this.name === "auth_users") return "Redis auth_users not exists";
+		
+		return this._database.redis[this.name];
 	}
 
 	public findLast = async (): Promise<T> => {
