@@ -1,0 +1,27 @@
+{
+  "name": "@lafka/redis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "fock-logger": "catalog:",
+    "redis": "catalog:",
+    "redis-om": "catalog:"
+  },
+  "devDependencies": {
+    "@lafka/types": "workspace:^",
+    "@types/node": "catalog:",
+    "nodemon": "catalog:",
+    "ts-node": "catalog:",
+    "tsc-alias": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "typescript": "catalog:"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.0"
+}
