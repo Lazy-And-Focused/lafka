@@ -75,6 +75,10 @@ class Database {
 		this._users = new DatabaseClass(UsersSchema, redis);
 	}
 
+	public get redis() {
+		return this._redis;
+	}
+
 	public get classes() {
 		return this._classes;
 	}
