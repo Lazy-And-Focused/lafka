@@ -1,44 +1,99 @@
-import DatabaseClass from "../classes/default/database.class";
+import DatabaseClass, { DatabaseType } from "../classes/default/database.class";
+import authUsersClass from "../classes/default/auth-user.class";
+import commentsClass from "../classes/default/comment.class";
+import postsClass from "../classes/default/posts.class";
+import userClass from "../classes/default/user.class";
 
 import AuthUserSchema from "./schema/auth-user.schema";
 import CommentsSchema from "./schema/comments.schema";
 import PostsSchema from "./schema/posts.schema";
 import UsersSchema from "./schema/user.schema";
 
+import type { CreatePickData, ModelData } from "lafka/types/schema/mongodb.types";
 import type { AuthUser } from "lafka/types/auth/auth-user.types";
 import type { User } from "lafka/types/authors/user.types";
 import type { Comment } from "lafka/types/content/comment.types";
 import type { BlogPost } from "lafka/types/posts/blog-post.types";
 import type { ForumPost } from "lafka/types/posts/forum-post.types";
 
-class Database {
-	private readonly _auth_users = new DatabaseClass<AuthUser>(AuthUserSchema);
-	private readonly _comments = new DatabaseClass<Comment>(CommentsSchema);
+import Redis from "lafka/redis/modesl.database";
+import { Model } from "mongoose";
 
-	private readonly _posts = new DatabaseClass<
+export type authUsersConstructor = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
+export type commentsConstructor = CreatePickData<Comment, "author_id" | "post_id" | "content"> & {
+	id?: string;
+};
+
+export type postsConstructor = CreatePickData<
+	ForumPost & BlogPost,
+	"content" | "creator_id" | "name" | "type"
+> & { _id?: string };
+
+export type userConstructorData = CreatePickData<
+	User, "username" | "created_at"
+> & { id?: string };
+export type userConstructor<T extends boolean> =
+	T extends true
+		? (Partial<User> & { id: string })
+		: (CreatePickData<User, "username"> & { id?: string });
+
+class Database {
+	private readonly _redis: Redis;
+
+	private readonly _auth_users: DatabaseType<AuthUser, Partial<AuthUser>>;
+	private readonly _comments: DatabaseType<Comment>;
+
+	private readonly _posts: DatabaseType<
 		BlogPost & ForumPost,
 		Pick<BlogPost & ForumPost, "content" | "creator_id" | "name" | "type">
-	>(PostsSchema);
+	>;
 
-	private readonly _users = new DatabaseClass<User, Pick<User, "username">>(
-		UsersSchema
-	);
+	private readonly _users: DatabaseType<User, Pick<User, "username">>
 
-	get auth_users() {
+	private readonly _classes: {
+		auth_users: (data: authUsersConstructor) => authUsersClass,
+		comments: (data: commentsConstructor) => commentsClass,
+		posts: (data: postsConstructor) => postsClass,
+		user: <T extends boolean = false>(data: userConstructor<T>) => userClass<T>,
+		database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => DatabaseClass<T, K>
+	};
+
+	public constructor(redis: Redis) {
+		this._redis = redis;
+
+		this._classes = {
+			auth_users: (data: authUsersConstructor) => new authUsersClass(data, redis),
+			comments: (data: commentsConstructor) => new commentsClass(data, redis),
+			posts: (data: postsConstructor) => new postsClass(data, redis),
+			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data, redis),
+			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model, redis)
+		};
+
+		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema, redis);
+		this._comments = new DatabaseClass<Comment>(CommentsSchema, redis);
+		this._posts = new DatabaseClass(PostsSchema, redis);
+		this._users = new DatabaseClass(UsersSchema, redis);
+	}
+
+	public get classes() {
+		return this._classes;
+	}
+
+	public get auth_users() {
 		return this._auth_users;
 	}
 
-	get comments() {
+	public get comments() {
 		return this._comments;
 	}
 
-	get posts() {
+	public get posts() {
 		return this._posts;
 	}
 
-	get users() {
+	public get users() {
 		return this._users;
 	}
 }
 
-export default new Database();
+export default Database;

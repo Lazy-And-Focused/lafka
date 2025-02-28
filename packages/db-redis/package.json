@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": ""
+    "build": "tsc & tsc-alias"
   },
   "dependencies": {
     "fock-logger": "catalog:",

@@ -1,4 +1,4 @@
-import Database from "../../database/models.database";
+import Database, { postsConstructor } from "../../database/models.database";
 
 import type { BlogPost } from "lafka/types/posts/blog-post.types";
 import type { ForumPost } from "lafka/types/posts/forum-post.types";
@@ -7,6 +7,8 @@ import type { PostStatus, Tag } from "lafka/types/utility/utility.types";
 import type { CreateData, CreatePickData } from "lafka/types/schema/mongodb.types";
 import type { Comment as CommentType } from "lafka/types/content/comment.types";
 import Comment from "./comment.class";
+
+import Redis from "lafka/redis/modesl.database";
 
 class Post implements PostType {
 	private _id: string;
@@ -36,17 +38,18 @@ class Post implements PostType {
 
 	private initialized: boolean = false;
 
-	private readonly _constructor_data: CreatePickData<
-		ForumPost & BlogPost,
-		"content" | "creator_id" | "name" | "type" | "created_at"
-	> & { id?: string };
+	private readonly _constructor_data: postsConstructor & { id?: string };
+	private readonly _redis: Redis;
+
+	private readonly _database: Database;
 
 	public constructor(
-		data: CreatePickData<
-			ForumPost & BlogPost,
-			"content" | "creator_id" | "name" | "type"
-		> & { _id?: string }
+		data: postsConstructor,
+		redis: Redis
 	) {
+		this._redis = redis;
+		this._database = new Database(redis);
+
 		const now = new Date();
 
 		this._name = data.name;
@@ -75,7 +78,7 @@ class Post implements PostType {
 
 			this.initialized = true;
 
-			const post = await Database.posts.create({
+			const post = await this._database.posts.create({
 				content: data.content,
 				creator_id: data.creator_id,
 				name: data.name,
@@ -101,7 +104,7 @@ class Post implements PostType {
 		};
 
 		if (data.id) {
-			const status = await Database.posts.getData({
+			const status = await this._database.posts.getData({
 				filter: { id: data.id }
 			});
 
@@ -144,7 +147,7 @@ class Post implements PostType {
 	};
 
 	private readonly getDatabasePost = async (id?: string) => {
-		return await Database.posts.model.findOne({ id: id || this._id });
+		return await this._database.posts.model.findOne({ id: id || this._id });
 	};
 
 	private readonly changed = () => {
@@ -167,7 +170,7 @@ class Post implements PostType {
 		const created = await new Comment({
 			post_id: this._id,
 			...comment
-		}).init();
+		}, this._redis).init();
 
 		return {
 			response: this.addComments([created.id]),
@@ -180,7 +183,7 @@ class Post implements PostType {
 
 		this._tags.push(...tags);
 
-		return await Database.posts.update({
+		return await this._database.posts.update({
 			filter: { id: this._id },
 			update: { $push: { tags: tags } }
 		});
@@ -191,7 +194,7 @@ class Post implements PostType {
 
 		this._likes += likes;
 
-		return await Database.posts.update({
+		return await this._database.posts.update({
 			filter: { id: this._id },
 			update: { likes: this._likes }
 		});
@@ -202,7 +205,7 @@ class Post implements PostType {
 
 		this._dislikes += dislikes;
 
-		return await Database.posts.update({
+		return await this._database.posts.update({
 			filter: { id: this._id },
 			update: { dislikes: this._dislikes }
 		});
@@ -213,7 +216,7 @@ class Post implements PostType {
 
 		this._reposts += reposts;
 
-		return await Database.posts.update({
+		return await this._database.posts.update({
 			filter: { id: this._id },
 			update: { reposts: this._reposts }
 		});

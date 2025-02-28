@@ -6,17 +6,37 @@ import {
 	FindOptions,
 	GetData,
 	UpdateOptions,
-	Status as DatabaseStatus
+	Status as DatabaseStatus,
+	CreateModelData,
+	UpdateModelData
 } from "lafka/types/schema/mongodb.types";
 
 import getData from "./helpers/database/get-data.helper";
 import getAllModels from "./helpers/database/get-all-models.helper";
 import deleteModel from "./helpers/database/delete-model.helper";
 
-class Database<T extends { id: string }, K = Partial<T>> {
-	private readonly _model: Model<T>;
+import Redis from "lafka/redis/modesl.database";
 
-	public constructor(model: Model<T>) {
+export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
+	model: Model<T>;
+	id: Promise<string>;
+	
+	findLast: () => Promise<T>;
+	generateId: () => Promise<string>;
+	
+	create: (doc: CreateData<T> & K) => CreateModelData<T>;
+	update: (options: UpdateOptions<T>) => UpdateModelData;
+	
+	getData: (options: FindOptions<T>) => Promise<DatabaseStatus<GetData<T>>>;
+	deleteModel: () => Promise<DatabaseStatus>;
+}
+
+class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType<T, K> {
+	private readonly _model: Model<T>;
+	private readonly _redis: Redis;
+
+	public constructor(model: Model<T>, redis: Redis) {
+		this._redis = redis;
 		this._model = model;
 	}
 

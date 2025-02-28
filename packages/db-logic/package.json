@@ -17,9 +17,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lafka/db-redis": "workspace:^",
     "fock-logger": "catalog:",
     "mongodb": "catalog:",
-    "mongoose": "catalog:"
+    "mongoose": "catalog:",
+    "redis": "catalog:",
+    "redis-om": "catalog:"
   },
   "devDependencies": {
     "@lafka/types": "workspace:^",

@@ -1,7 +1,8 @@
 import type { Comment as CommentType } from "lafka/types/content/comment.types";
 
-import Database from "database/models.database";
-import { CreatePickData } from "lafka/types/schema/mongodb.types";
+import Database, { commentsConstructor } from "database/models.database";
+
+import Redis from "lafka/redis/modesl.database";
 
 class Comment implements CommentType {
 	private _id: string;
@@ -14,17 +15,19 @@ class Comment implements CommentType {
 	private _reply?: string;
 	private _changed_at?: Date;
 
-	private readonly _constructor_data: CreatePickData<
-		CommentType,
-		"author_id" | "post_id" | "content" | "created_at"
-	> & { id?: string };
 	private initialized: boolean = false;
 
+	private readonly _redis: Redis;
+	private readonly _constructor_data: commentsConstructor & { created_at: Date };
+
+	private readonly _database: Database;
+	
 	public constructor(
-		data: CreatePickData<CommentType, "author_id" | "post_id" | "content"> & {
-			id?: string;
-		}
+		data: commentsConstructor,
+		redis: Redis
 	) {
+		this._redis = redis;
+		this._database = new Database(redis);
 		const now = new Date();
 
 		this._id = "";
@@ -48,7 +51,7 @@ class Comment implements CommentType {
 
 			this.initialized = true;
 
-			const comment = await Database.comments.create({
+			const comment = await this._database.comments.create({
 				author_id: data.author_id,
 				content: data.content,
 				created_at: data.created_at,
@@ -61,7 +64,7 @@ class Comment implements CommentType {
 		};
 
 		if (data.id) {
-			const comment = await Database.comments.model.findOne({ id: data.id });
+			const comment = await this._database.comments.model.findOne({ id: data.id });
 
 			if (comment) {
 				this.initialized = true;
@@ -75,10 +78,7 @@ class Comment implements CommentType {
 	};
 
 	private paste(
-		data: CreatePickData<
-			CommentType,
-			"author_id" | "post_id" | "content" | "created_at"
-		>,
+		data: commentsConstructor & { created_at: Date },
 		comment: CommentType
 	) {
 		this._id = comment.id;

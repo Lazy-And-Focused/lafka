@@ -6,7 +6,9 @@ import type {
 	UpdateQuery,
 	UpdateWithAggregationPipeline,
 	Document,
-	Require_id
+	Require_id,
+	Default__v,
+	UpdateWriteOpResult
 } from "mongoose";
 
 export type Filter<T> = FilterQuery<T>;
@@ -14,6 +16,9 @@ export type Update<T> = UpdateQuery<T> | UpdateWithAggregationPipeline;
 export type Projection<T> = ProjectionType<T> | null | undefined;
 export type Options<T> = QueryOptions<T> | null | undefined;
 export type GetData<T> = IfAny<T, any, Document<unknown, {}, T> & Require_id<T>>[];
+
+export type UpdateModelData = Promise<UpdateWriteOpResult>;
+export type CreateModelData<T> = Promise<IfAny<T, any, Document<unknown, {}, T> & Default__v<Require_id<T>>>>
 
 export type UpdateOptions<T, K = T> = {
 	filter: Filter<T>;

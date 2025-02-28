@@ -1,10 +1,9 @@
 import type { AuthTypes, AuthUser as AuthUserType } from "lafka/types/auth/auth-user.types";
 import type { User } from "lafka/types/authors/user.types";
 
-import Database from "database/models.database";
-import { ModelData } from "lafka/types/schema/mongodb.types";
+import Database, { authUsersConstructor } from "database/models.database";
 
-const { auth_users: AuthUsers } = Database;
+import Redis from "lafka/redis/modesl.database";
 
 class AuthUser implements AuthUserType {
 	private readonly _id: string;
@@ -15,7 +14,14 @@ class AuthUser implements AuthUserType {
 	private readonly _type: AuthTypes;
 	private readonly _created_at: Date;
 
-	public constructor(data: ModelData<Omit<AuthUserType, "created_at">> & { profile_id?: string }) {
+	private readonly _redis: Redis;
+
+	private readonly _database: Database;
+
+	public constructor(data: authUsersConstructor, redis: Redis) {
+		this._database = new Database(redis);
+		this._redis = redis;
+		
 		this._id = "";
 		this._profile_id = data.profile_id || "null";
 		this._service_id = data.service_id;
@@ -29,7 +35,7 @@ class AuthUser implements AuthUserType {
 	public async init() {
 		if (this._profile_id !== "null") {
 			const user = (
-				await Database.auth_users.getData({
+				await this._database.auth_users.getData({
 					filter: {
 						profile_id: this._profile_id,
 						type: this._type
@@ -51,13 +57,13 @@ class AuthUser implements AuthUserType {
 		}
 
 		const user = (
-			await Database.auth_users.getData({
+			await this._database.auth_users.getData({
 				filter: { service_id: this._service_id, type: this._type }
 			})
 		).data;
 
 		if (user && user[0]) {
-			await AuthUsers.update({
+			await this._database.auth_users.update({
 				filter: { service_id: this._service_id, type: this._type },
 				update: {
 					service_id: this._service_id,
@@ -68,7 +74,7 @@ class AuthUser implements AuthUserType {
 
 			return this;
 		} else {
-			await AuthUsers.create({
+			await this._database.auth_users.create({
 				service_id: this._service_id,
 				created_at: this._created_at,
 				access_token: this._access_token,
@@ -82,14 +88,14 @@ class AuthUser implements AuthUserType {
 	}
 
 	public async updateProfileId(id: string): Promise<User | null> {
-		const user = await AuthUsers.model.findOne({ id: id || this._id });
+		const user = await this._database.auth_users.model.findOne({ id: id || this._id });
 
 		if (!user) return null;
 
 		user.profile_id = id;
 		await user.save();
 
-		return ((await Database.users.getData({ filter: { _id: id } })).data as any)[0];
+		return ((await this._database.users.getData({ filter: { _id: id } })).data as any)[0];
 	}
 
 	public get id(): string {

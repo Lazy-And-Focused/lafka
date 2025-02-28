@@ -4,7 +4,7 @@ import { ForumPost } from "lafka/types/posts/forum-post.types";
 import { Link as LinkType } from "lafka/types/utility/utility.types";
 import { User as UserType } from "lafka/types/authors/user.types";
 
-import Database from "database/models.database";
+import Database, { userConstructor, userConstructorData } from "database/models.database";
 import type {
 	CreateData,
 	CreatePickData,
@@ -13,6 +13,8 @@ import type {
 import { Status, Error } from "lafka/types/schema/status.classes";
 
 import Post from "./posts.class";
+
+import Redis from "lafka/redis/modesl.database";
 
 enum CreatePost {
 	forum = "_forum_posts",
@@ -50,16 +52,19 @@ class User<T extends boolean = false> implements UserType {
 	private _following: string[] = [];
 
 	private initialized: boolean = false;
-	private readonly _constructor_data: CreatePickData<
-		UserType,
-		"username" | "created_at"
-	> & { id?: string };
+
+	private readonly _constructor_data: userConstructorData;
+	private readonly _redis: Redis;
+
+	private readonly _database: Database;
 
 	public constructor(
-		data: T extends true
-			? (Partial<UserType> & { id: string })
-			: (CreatePickData<UserType, "username"> & { id?: string })
+		data: userConstructor<T>,
+		redis: Redis
 	) {
+		this._redis = redis;
+		this._database = new Database(redis);
+
 		const now = new Date();
 
 		if (!data.username && !data.id)
@@ -85,7 +90,7 @@ class User<T extends boolean = false> implements UserType {
 			? { id: data.id, username: data.username }
 			: { username: data.username };
 
-		const status: StatusType<UserType[]> = await Database.users.getData({
+		const status: StatusType<UserType[]> = await this._database.users.getData({
 			filter: { ...filter }
 		});
 
@@ -93,7 +98,7 @@ class User<T extends boolean = false> implements UserType {
 			if (filter.id && !filter.username)
 				return null as any;
 
-			const user = await Database.users.create({
+			const user = await this._database.users.create({
 				...data,
 				avatar: undefined,
 				nickname: undefined,
@@ -114,7 +119,7 @@ class User<T extends boolean = false> implements UserType {
 			const user = status.data[0];
 			const updateData = this.paste(data, user);
 
-			Database.users.update({
+			this._database.users.update({
 				filter: { username: data.username },
 				update: {
 					username: updateData._username,
@@ -161,7 +166,7 @@ class User<T extends boolean = false> implements UserType {
 	};
 
 	private readonly getDatabaseUser = async (id?: string) => {
-		return await Database.users.model.findOne({ id: id || this._id });
+		return await this._database.users.model.findOne({ id: id || this._id });
 	};
 
 	private async addPosts(posts: string[], type: PostTypes) {
@@ -225,7 +230,7 @@ class User<T extends boolean = false> implements UserType {
 	public async createPost(
 		post: CreatePickData<ForumPost & BlogPost, "content" | "name" | "type">
 	) {
-		const created = await new Post({ ...post, creator_id: this._id }).init();
+		const created = await new Post({ ...post, creator_id: this._id }, this._redis).init();
 
 		return {
 			response: await this.addPosts([created.id], post.type),
