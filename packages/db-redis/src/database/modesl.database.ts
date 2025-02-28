@@ -10,25 +10,33 @@ import commentsSchema from "./schemas/comments.schema";
 import postsSchema from "./schemas/posts.schema";
 
 class Redis {
+    private readonly _redis: RedisClientConnection;
+    
     private readonly _users: Repository<Readonly<User>>;
     private readonly _comments: Repository<Readonly<Comment>>;
     private readonly _posts: Repository<Readonly<BlogPost&ForumPost>>;
 
     public constructor(redis: RedisClientConnection) {
+        this._redis = redis;
+
         this._users = new Repository(userSchema, redis);
         this._comments = new Repository(commentsSchema, redis);
         this._posts = new Repository(postsSchema, redis);
     }
 
-    get posts() {
+    public get redis(): RedisClientConnection {
+        return this._redis;
+    }
+
+    public get posts() {
         return this._posts;
     }
     
-    get comments() {
+    public get comments() {
         return this._comments;
     }
 
-    get users() {
+    public get users() {
         return this._users;
     }
 }
