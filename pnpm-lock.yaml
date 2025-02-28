@@ -4,6 +4,48 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@types/node':
+      specifier: ^20.10.5
+      version: 20.17.14
+    axios:
+      specifier: ^1.7.9
+      version: 1.7.9
+    dotenv:
+      specifier: ^16.4.7
+      version: 16.4.7
+    fock-logger:
+      specifier: 2.3.1
+      version: 2.3.1
+    mongodb:
+      specifier: ^6.8.0
+      version: 6.12.0
+    mongoose:
+      specifier: ^8.5.3
+      version: 8.9.5
+    nodemon:
+      specifier: ^3.1.9
+      version: 3.1.9
+    redis:
+      specifier: ^4.7.0
+      version: 4.7.0
+    redis-om:
+      specifier: ^0.4.7
+      version: 0.4.7
+    ts-node:
+      specifier: ^10.9.2
+      version: 10.9.2
+    tsc-alias:
+      specifier: ^1.8.10
+      version: 1.8.10
+    tsconfig-paths:
+      specifier: ^4.2.0
+      version: 4.2.0
+    typescript:
+      specifier: ^5.3.3
+      version: 5.7.3
+
 importers:
 
   .: {}
@@ -23,7 +65,7 @@ importers:
         specifier: ^10.0.0
         version: 10.4.15(@nestjs/common@10.4.15(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)
       axios:
-        specifier: ^1.7.9
+        specifier: 'catalog:'
         version: 1.7.9
       connect-mongo:
         specifier: ^5.1.0
@@ -120,7 +162,7 @@ importers:
         specifier: ^6.0.0
         version: 6.21.0(eslint@9.18.0(jiti@1.21.7))(typescript@5.7.3)
       dotenv:
-        specifier: ^16.4.7
+        specifier: 'catalog:'
         version: 16.4.7
       eslint:
         specifier: ^9.18.0
@@ -150,13 +192,13 @@ importers:
         specifier: ^9.4.3
         version: 9.5.2(typescript@5.7.3)(webpack@5.97.1)
       ts-node:
-        specifier: ^10.9.1
+        specifier: 'catalog:'
         version: 10.9.2(@types/node@20.17.14)(typescript@5.7.3)
       tsconfig-paths:
-        specifier: ^4.2.0
+        specifier: 'catalog:'
         version: 4.2.0
       typescript:
-        specifier: ^5.1.3
+        specifier: 'catalog:'
         version: 5.7.3
 
   apps/frontend:
@@ -202,44 +244,78 @@ importers:
   packages/db-logic:
     dependencies:
       fock-logger:
-        specifier: ^2.0.5
-        version: 2.0.5
+        specifier: 'catalog:'
+        version: 2.3.1
       mongodb:
-        specifier: ^6.8.0
+        specifier: 'catalog:'
         version: 6.12.0
       mongoose:
-        specifier: ^8.5.3
+        specifier: 'catalog:'
         version: 8.9.5
     devDependencies:
       '@lafka/types':
         specifier: workspace:^
         version: link:../types
       '@types/node':
-        specifier: ^20.10.5
+        specifier: 'catalog:'
         version: 20.17.14
       nodemon:
-        specifier: ^3.1.9
+        specifier: 'catalog:'
         version: 3.1.9
       ts-node:
-        specifier: ^10.9.2
+        specifier: 'catalog:'
         version: 10.9.2(@types/node@20.17.14)(typescript@5.7.3)
       tsc-alias:
-        specifier: ^1.8.10
+        specifier: 'catalog:'
         version: 1.8.10
       tsconfig-paths:
-        specifier: ^4.2.0
+        specifier: 'catalog:'
         version: 4.2.0
       typescript:
-        specifier: ^5.3.3
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/db-redis:
+    dependencies:
+      fock-logger:
+        specifier: 'catalog:'
+        version: 2.3.1
+      redis:
+        specifier: 'catalog:'
+        version: 4.7.0
+      redis-om:
+        specifier: 'catalog:'
+        version: 0.4.7
+    devDependencies:
+      '@lafka/types':
+        specifier: workspace:^
+        version: link:../types
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.17.14
+      nodemon:
+        specifier: 'catalog:'
+        version: 3.1.9
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@20.17.14)(typescript@5.7.3)
+      tsc-alias:
+        specifier: 'catalog:'
+        version: 1.8.10
+      tsconfig-paths:
+        specifier: 'catalog:'
+        version: 4.2.0
+      typescript:
+        specifier: 'catalog:'
         version: 5.7.3
 
   packages/types:
     devDependencies:
       tsc-alias:
-        specifier: ^1.8.10
+        specifier: 'catalog:'
         version: 1.8.10
       typescript:
-        specifier: ^5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
 
 packages:
@@ -703,6 +779,18 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
+  '@jsep-plugin/assignment@1.3.0':
+    resolution: {integrity: sha512-VVgV+CXrhbMI3aSusQyclHkenWSAm95WaiKrMxRFam3JSUiIaQjoMIw2sEs/OX4XifnqeQUN4DYbJjlA8EfktQ==}
+    engines: {node: '>= 10.16.0'}
+    peerDependencies:
+      jsep: ^0.4.0||^1.0.0
+
+  '@jsep-plugin/regex@1.0.4':
+    resolution: {integrity: sha512-q7qL4Mgjs1vByCaTnDFcBnV9HS7GVPJX5vyVoCgZHNSC9rjwIlmbXG5sUuorR5ndfHAIlJ8pVStxvjXHbNvtUg==}
+    engines: {node: '>= 10.16.0'}
+    peerDependencies:
+      jsep: ^0.4.0||^1.0.0
+
   '@ljharb/through@2.3.13':
     resolution: {integrity: sha512-/gKJun8NNiWGZJkGzI/Ragc53cOdcLNdzjLaIa+GEjguQs0ulsurx8WN0jijdK9yPqDvziX995sMRLyLt1uZMQ==}
     engines: {node: '>= 0.4'}
@@ -863,6 +951,35 @@ packages:
   '@pkgr/core@0.1.1':
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+
+  '@redis/bloom@1.2.0':
+    resolution: {integrity: sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==}
+    peerDependencies:
+      '@redis/client': ^1.0.0
+
+  '@redis/client@1.6.0':
+    resolution: {integrity: sha512-aR0uffYI700OEEH4gYnitAnv3vzVGXCFvYfdpu/CJKvk4pHfLPEy/JSZyrpQ+15WhXe1yJRXLtfQ84s4mEXnPg==}
+    engines: {node: '>=14'}
+
+  '@redis/graph@1.1.1':
+    resolution: {integrity: sha512-FEMTcTHZozZciLRl6GiiIB4zGm5z5F3F6a6FZCyrfxdKOhFlGkiAqlexWMBzCi4DcRoyiOsuLfW+cjlGWyExOw==}
+    peerDependencies:
+      '@redis/client': ^1.0.0
+
+  '@redis/json@1.0.7':
+    resolution: {integrity: sha512-6UyXfjVaTBTJtKNG4/9Z8PSpKE6XgSyEb8iwaqDcy+uKrd/DGYHTWkUdnQDyzm727V7p21WUMhsqz5oy65kPcQ==}
+    peerDependencies:
+      '@redis/client': ^1.0.0
+
+  '@redis/search@1.2.0':
+    resolution: {integrity: sha512-tYoDBbtqOVigEDMAcTGsRlMycIIjwMCgD8eR2t0NANeQmgK/lvxNAvYyb6bZDD4frHRhIHkJu2TBRvB0ERkOmw==}
+    peerDependencies:
+      '@redis/client': ^1.0.0
+
+  '@redis/time-series@1.1.0':
+    resolution: {integrity: sha512-c1Q99M5ljsIuc4YdaCwfUEXsofakb9c8+Zse2qxTadu8TalLXuAESzLvFAvNVbkmSlvlzIQOLpBCmWI9wTOt+g==}
+    peerDependencies:
+      '@redis/client': ^1.0.0
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -1400,6 +1517,7 @@ packages:
   bson@6.10.1:
     resolution: {integrity: sha512-P92xmHDQjSKPLHqFxefqMxASNq/aWJMEZugpCjf+AF/pgcUpMMQCg7t7+ewko0/u8AapvF3luf/FoehddEK+sA==}
     engines: {node: '>=16.20.1'}
+    deprecated: a critical bug affecting only useBigInt64=true deserialization usage is fixed in bson@6.10.3
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -1506,6 +1624,10 @@ packages:
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
+
+  cluster-key-slot@1.1.2:
+    resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
+    engines: {node: '>=0.10.0'}
 
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
@@ -2101,8 +2223,8 @@ packages:
     engines: {node: '>=7.6.0'}
     hasBin: true
 
-  fock-logger@2.0.5:
-    resolution: {integrity: sha512-I5/VRchMo9ZiVIUWh4uvc9bruaCMlzLcr39VUy2rvj4uKEcna8Nuq8Jx958XnhsKiWxqtiVvtvxR5U7TttcCgg==}
+  fock-logger@2.3.1:
+    resolution: {integrity: sha512-rCC75O0czlTNnnO1rKZlRJkzAvF9lHcAZWpFZFlwVcNAoc2Azmp1ydbfsCIZvu1TxwvLDqhovEaa5pUvefdpOQ==}
     engines: {node: '>=7.6.0'}
 
   follow-redirects@1.15.9:
@@ -2168,6 +2290,10 @@ packages:
 
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
+
+  generic-pool@3.9.0:
+    resolution: {integrity: sha512-hymDOu5B53XvN4QT9dBmZxPX4CWhBPPLguTZ9MMFeFa/Kg0xWVfylOVNlJji/E7yTZWFd/q9GO5TxDLq156D7g==}
+    engines: {node: '>= 4'}
 
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -2671,6 +2797,10 @@ packages:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
 
+  jsep@1.4.0:
+    resolution: {integrity: sha512-B7qPcEVE3NVkmSJbaYxvv4cHkVW7DQsZz13pUMrfS8z8Q/BuShN+gcTXrUlPiGqM2/t/EEaI030bpxMqY8gMlw==}
+    engines: {node: '>= 10.16.0'}
+
   jsesc@3.1.0:
     resolution: {integrity: sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==}
     engines: {node: '>=6'}
@@ -2709,9 +2839,17 @@ packages:
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
+  jsonpath-plus@10.3.0:
+    resolution: {integrity: sha512-8TNmfeTCk2Le33A3vRRwtuworG/L5RrgMvdjhKZxvyShO+mBu2fP50OWUjRLNtvw344DdDarFh9buFAZs5ujeA==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
+
+  just-clone@6.2.0:
+    resolution: {integrity: sha512-1IynUYEc/HAwxhi3WDpIpxJbZpMCvvrrmZVqvj9EhpvbH8lls7HhdhiByjL7DkAaWlLIzpC0Xc/VPvy/UxLNjA==}
 
   kareem@2.6.3:
     resolution: {integrity: sha512-C3iHfuGUXK2u8/ipq9LfjFfXFxAZMQJJq7vLS45r3D9Y2xQ/m4S8zaR4zMLFWh9AsNPXmcFfUDhTEO8UIC/V6Q==}
@@ -3393,6 +3531,13 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
+  redis-om@0.4.7:
+    resolution: {integrity: sha512-s0N+RNkW0qNeMhTbaxYZqhbBR8W/nOdMsGm25EOls0jxLHvMj9O7nD2mSgpwYycxc1/wUkePAMnp9y6u3VH9fw==}
+    engines: {node: '>= 14'}
+
+  redis@4.7.0:
+    resolution: {integrity: sha512-zvmkHEAdGMn+hMRXuMBtu4Vo5P6rHQjLoHftu+lBqq8ZTA3RCVC/WzD790bkKKiNFp7d5/9PcSD19fJyyRvOdQ==}
+
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
@@ -3942,6 +4087,10 @@ packages:
     resolution: {integrity: sha512-u3xV3X7uzvi5b1MncmZo3i2Aw222Zk1keqLA1YkHldREkAhAqi65wuPfe7lHx8H/Wzy+8CE7S7uS3jekIM5s8g==}
     engines: {node: '>=8'}
 
+  ulid@2.3.0:
+    resolution: {integrity: sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw==}
+    hasBin: true
+
   unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
@@ -4083,6 +4232,9 @@ packages:
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
+
+  yallist@4.0.0:
+    resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
   yaml@2.7.0:
     resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
@@ -4683,6 +4835,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@jsep-plugin/assignment@1.3.0(jsep@1.4.0)':
+    dependencies:
+      jsep: 1.4.0
+
+  '@jsep-plugin/regex@1.0.4(jsep@1.4.0)':
+    dependencies:
+      jsep: 1.4.0
+
   '@ljharb/through@2.3.13':
     dependencies:
       call-bind: 1.0.8
@@ -4841,6 +5001,32 @@ snapshots:
     optional: true
 
   '@pkgr/core@0.1.1': {}
+
+  '@redis/bloom@1.2.0(@redis/client@1.6.0)':
+    dependencies:
+      '@redis/client': 1.6.0
+
+  '@redis/client@1.6.0':
+    dependencies:
+      cluster-key-slot: 1.1.2
+      generic-pool: 3.9.0
+      yallist: 4.0.0
+
+  '@redis/graph@1.1.1(@redis/client@1.6.0)':
+    dependencies:
+      '@redis/client': 1.6.0
+
+  '@redis/json@1.0.7(@redis/client@1.6.0)':
+    dependencies:
+      '@redis/client': 1.6.0
+
+  '@redis/search@1.2.0(@redis/client@1.6.0)':
+    dependencies:
+      '@redis/client': 1.6.0
+
+  '@redis/time-series@1.1.0(@redis/client@1.6.0)':
+    dependencies:
+      '@redis/client': 1.6.0
 
   '@rtsao/scc@1.1.0': {}
 
@@ -5637,6 +5823,8 @@ snapshots:
 
   clone@1.0.4: {}
 
+  cluster-key-slot@1.1.2: {}
+
   co@4.6.0: {}
 
   collect-v8-coverage@1.0.2: {}
@@ -6388,7 +6576,7 @@ snapshots:
       node: 22.13.0
       yargs: 17.7.2
 
-  fock-logger@2.0.5:
+  fock-logger@2.3.1:
     dependencies:
       f-formatter: 0.3.1
       fock-builder: 0.2.1
@@ -6464,6 +6652,8 @@ snapshots:
       is-callable: 1.2.7
 
   functions-have-names@1.2.3: {}
+
+  generic-pool@3.9.0: {}
 
   gensync@1.0.0-beta.2: {}
 
@@ -7193,6 +7383,8 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
+  jsep@1.4.0: {}
+
   jsesc@3.1.0: {}
 
   json-buffer@3.0.1: {}
@@ -7221,12 +7413,20 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
+  jsonpath-plus@10.3.0:
+    dependencies:
+      '@jsep-plugin/assignment': 1.3.0(jsep@1.4.0)
+      '@jsep-plugin/regex': 1.0.4(jsep@1.4.0)
+      jsep: 1.4.0
+
   jsx-ast-utils@3.3.5:
     dependencies:
       array-includes: 3.1.8
       array.prototype.flat: 1.3.3
       object.assign: 4.1.7
       object.values: 1.2.1
+
+  just-clone@6.2.0: {}
 
   kareem@2.6.3: {}
 
@@ -7859,6 +8059,22 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  redis-om@0.4.7:
+    dependencies:
+      jsonpath-plus: 10.3.0
+      just-clone: 6.2.0
+      redis: 4.7.0
+      ulid: 2.3.0
+
+  redis@4.7.0:
+    dependencies:
+      '@redis/bloom': 1.2.0(@redis/client@1.6.0)
+      '@redis/client': 1.6.0
+      '@redis/graph': 1.1.1(@redis/client@1.6.0)
+      '@redis/json': 1.0.7(@redis/client@1.6.0)
+      '@redis/search': 1.2.0(@redis/client@1.6.0)
+      '@redis/time-series': 1.1.0(@redis/client@1.6.0)
 
   reflect-metadata@0.2.2: {}
 
@@ -8520,6 +8736,8 @@ snapshots:
     dependencies:
       '@lukeed/csprng': 1.1.0
 
+  ulid@2.3.0: {}
+
   unbox-primitive@1.1.0:
     dependencies:
       call-bound: 1.0.3
@@ -8696,6 +8914,8 @@ snapshots:
   y18n@5.0.8: {}
 
   yallist@3.1.1: {}
+
+  yallist@4.0.0: {}
 
   yaml@2.7.0: {}
 
