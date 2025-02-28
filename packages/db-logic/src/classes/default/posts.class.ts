@@ -39,7 +39,6 @@ class Post implements PostType {
 	private initialized: boolean = false;
 
 	private readonly _constructor_data: postsConstructor & { id?: string };
-	private readonly _redis: Redis;
 
 	private readonly _database: Database;
 
@@ -47,7 +46,6 @@ class Post implements PostType {
 		data: postsConstructor,
 		redis: Redis
 	) {
-		this._redis = redis;
 		this._database = new Database(redis);
 
 		const now = new Date();
@@ -167,10 +165,10 @@ class Post implements PostType {
 	public async createComment(
 		comment: CreatePickData<CommentType, "author_id" | "content">
 	) {
-		const created = await new Comment({
+		const created = await this._database.classes.comments({
 			post_id: this._id,
 			...comment
-		}, this._redis).init();
+		}).init();
 
 		return {
 			response: this.addComments([created.id]),

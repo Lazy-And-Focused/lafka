@@ -17,7 +17,6 @@ class Comment implements CommentType {
 
 	private initialized: boolean = false;
 
-	private readonly _redis: Redis;
 	private readonly _constructor_data: commentsConstructor & { created_at: Date };
 
 	private readonly _database: Database;
@@ -26,7 +25,6 @@ class Comment implements CommentType {
 		data: commentsConstructor,
 		redis: Redis
 	) {
-		this._redis = redis;
 		this._database = new Database(redis);
 		const now = new Date();
 

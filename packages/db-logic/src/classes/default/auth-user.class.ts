@@ -14,13 +14,10 @@ class AuthUser implements AuthUserType {
 	private readonly _type: AuthTypes;
 	private readonly _created_at: Date;
 
-	private readonly _redis: Redis;
-
 	private readonly _database: Database;
 
 	public constructor(data: authUsersConstructor, redis: Redis) {
 		this._database = new Database(redis);
-		this._redis = redis;
 		
 		this._id = "";
 		this._profile_id = data.profile_id || "null";

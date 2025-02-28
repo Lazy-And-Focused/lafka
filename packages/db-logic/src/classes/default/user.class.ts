@@ -54,7 +54,6 @@ class User<T extends boolean = false> implements UserType {
 	private initialized: boolean = false;
 
 	private readonly _constructor_data: userConstructorData;
-	private readonly _redis: Redis;
 
 	private readonly _database: Database;
 
@@ -62,7 +61,6 @@ class User<T extends boolean = false> implements UserType {
 		data: userConstructor<T>,
 		redis: Redis
 	) {
-		this._redis = redis;
 		this._database = new Database(redis);
 
 		const now = new Date();
@@ -230,7 +228,7 @@ class User<T extends boolean = false> implements UserType {
 	public async createPost(
 		post: CreatePickData<ForumPost & BlogPost, "content" | "name" | "type">
 	) {
-		const created = await new Post({ ...post, creator_id: this._id }, this._redis).init();
+		const created = await this._database.classes.posts({ ...post, creator_id: this._id }).init();
 
 		return {
 			response: await this.addPosts([created.id], post.type),

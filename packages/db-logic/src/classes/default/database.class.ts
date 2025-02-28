@@ -1,4 +1,5 @@
 import type { Model } from "mongoose";
+import Models from "database/models.database";
 
 import {
 	CreateData,
@@ -33,10 +34,10 @@ export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
 
 class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType<T, K> {
 	private readonly _model: Model<T>;
-	private readonly _redis: Redis;
+	protected readonly _database: Models;
 
 	public constructor(model: Model<T>, redis: Redis) {
-		this._redis = redis;
+		this._database = new Models(redis);
 		this._model = model;
 	}
 
