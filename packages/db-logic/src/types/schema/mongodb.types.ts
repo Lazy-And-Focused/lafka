@@ -11,6 +11,8 @@ import type {
 	UpdateWriteOpResult
 } from "mongoose";
 
+export type ModelNames = "auth_users"|"posts"|"comments"|"users";
+
 export type Filter<T> = FilterQuery<T>;
 export type Update<T> = UpdateQuery<T> | UpdateWithAggregationPipeline;
 export type Projection<T> = ProjectionType<T> | null | undefined;

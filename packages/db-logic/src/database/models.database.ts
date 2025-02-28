@@ -9,7 +9,7 @@ import CommentsSchema from "./schema/comments.schema";
 import PostsSchema from "./schema/posts.schema";
 import UsersSchema from "./schema/user.schema";
 
-import type { CreatePickData, ModelData } from "lafka/types/schema/mongodb.types";
+import type { CreatePickData, ModelData, ModelNames } from "lafka/types/schema/mongodb.types";
 import type { AuthUser } from "lafka/types/auth/auth-user.types";
 import type { User } from "lafka/types/authors/user.types";
 import type { Comment } from "lafka/types/content/comment.types";
@@ -66,13 +66,13 @@ class Database {
 			comments: (data: commentsConstructor) => new commentsClass(data, this),
 			posts: (data: postsConstructor) => new postsClass(data, this),
 			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data, this),
-			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model, this)
+			database: <T extends { id: string }, K = Partial<T>, N extends ModelNames = ModelNames>(model: Model<T>) => new DatabaseClass<T, K, N>(model, this)
 		};
 
-		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema, this);
-		this._comments = new DatabaseClass<Comment>(CommentsSchema, this);
-		this._posts = new DatabaseClass(PostsSchema, this);
-		this._users = new DatabaseClass(UsersSchema, this);
+		this._auth_users = new DatabaseClass<AuthUser, Partial<AuthUser>, "auth_users">(AuthUserSchema, this);
+		this._comments = new DatabaseClass<Comment, Partial<Comment>, "comments">(CommentsSchema, this);
+		this._posts = new DatabaseClass<ForumPost&BlogPost, Partial<ForumPost&BlogPost>, "posts">(PostsSchema, this);
+		this._users = new DatabaseClass<User, Partial<User>, "users">(UsersSchema, this);
 	}
 
 	public get redis() {

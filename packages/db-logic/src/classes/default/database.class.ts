@@ -1,4 +1,4 @@
-import type { Model } from "mongoose";
+import { Model } from "mongoose";
 import Models from "database/models.database";
 
 import {
@@ -9,16 +9,16 @@ import {
 	UpdateOptions,
 	Status as DatabaseStatus,
 	CreateModelData,
-	UpdateModelData
+	UpdateModelData,
+	ModelNames
 } from "lafka/types/schema/mongodb.types";
 
 import getData from "./helpers/database/get-data.helper";
 import getAllModels from "./helpers/database/get-all-models.helper";
 import deleteModel from "./helpers/database/delete-model.helper";
 
-import Redis from "lafka/redis/modesl.database";
-
-export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
+export interface DatabaseType<T extends { id: string }, K = Partial<T>, N extends ModelNames = ModelNames> {
+	name: N;
 	model: Model<T>;
 	id: Promise<string>;
 	
@@ -32,13 +32,17 @@ export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
 	deleteModel: () => Promise<DatabaseStatus>;
 }
 
-class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType<T, K> {
+class Database<T extends { id: string }, K = Partial<T>, N extends ModelNames = ModelNames> implements DatabaseType<T, K, N> {
 	private readonly _model: Model<T>;
 	protected readonly _database: Models;
 
 	public constructor(model: Model<T>, models: Models) {
 		this._database = models;
 		this._model = model;
+	}
+
+	get name(): N {
+		return this._model.modelName as N;
 	}
 
 	get model() {
