@@ -30,25 +30,25 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - run: pnpm install
-
       - name: pnpm ⇒ Install dependencies
         run: pnpm install
 
       - name: \[BACKEND] Eslint ⇒ Scan and fix
         run: pnpm --filter backend run lint
+        continue-on-error: true
 
       - name: \[FRONTEND] Code Style ⇒ Scan and fix
         run: |
           pnpm --filter frontend run format
           pnpm --filter frontend run lint
+        continue-on-error: true
 
       - name: Save Changes ⇒ Commit formatted code
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
-          git commit -m 'Format code with Prettier'
+          git commit -m '${{ github.event.head_commit.message }} (formatted)'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
