@@ -1,1 +1,3 @@
-export default import("prettier-laf-config").default;
+import PrettierConfigLaf from "prettier-config-laf";
+
+export default PrettierConfigLaf;

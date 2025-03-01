@@ -16,7 +16,7 @@ export default function Home() {
         </div>
 
         <div className='body'>
-          <p className='title' role='heading'>
+          <p className='title' role='heading' aria-level={2}>
             Пример поста
           </p>
           <p className='short'>

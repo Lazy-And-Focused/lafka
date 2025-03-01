@@ -1,4 +1,4 @@
-import { PrettierLafConfiguration } from 'prettier-laf-config';
+import { PrettierLafConfiguration } from 'prettier-config-laf';
 
 /** @type {import("prettier").Config} */
 const config = {
