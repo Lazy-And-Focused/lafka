@@ -1,19 +1,19 @@
-import { Controller, Get, Injectable, Param } from "@nestjs/common";
+import { Controller, Get, Injectable, Param } from '@nestjs/common';
 
-import { UsersService } from "./users.service";
+import { UsersService } from './users.service';
 
 @Injectable()
-@Controller("users")
+@Controller('users')
 export class UsersController {
-    public constructor(private usersService: UsersService) {}
+  public constructor(private usersService: UsersService) {}
 
-    @Get(":id")
-    public async get(@Param("id") id: string) {
-        const data = await this.usersService.getUser(id);
+  @Get(':id')
+  public async get(@Param('id') id: string) {
+    const data = await this.usersService.getUser(id);
 
-        return {
-            ...data,
-            type: "user"
-        };
-    }
-};
+    return {
+      ...data,
+      type: 'user',
+    };
+  }
+}

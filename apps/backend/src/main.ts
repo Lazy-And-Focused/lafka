@@ -1,29 +1,29 @@
-import connect from "database/database/index.database";
+import connect from 'database/database/index.database';
 
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
-import Passport from "./strategies";
+import Passport from './strategies';
 
-import Session from "./app/session.app";
-import Api from "api/index.api";
+import Session from './app/session.app';
+import Api from 'api/index.api';
 
 const passport = new Passport();
 const api = new Api();
 
 async function bootstrap() {
-	await connect(api.env.MONGO_URL);
+  await connect(api.env.MONGO_URL);
 
-	const app = await NestFactory.create(AppModule, {
-		cors: { origin: [api.env.CLIENT_URL], credentials: true }
-	});
+  const app = await NestFactory.create(AppModule, {
+    cors: { origin: [api.env.CLIENT_URL], credentials: true },
+  });
 
-	new Session("AVlzkjbsazvhxczvoiz", app).create();
+  new Session('AVlzkjbsazvhxczvoiz', app).create();
 
-	app.use(passport.session());
-	app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(passport.initialize());
 
-	await app.listen(3001);
+  await app.listen(3001);
 }
 
 bootstrap();
