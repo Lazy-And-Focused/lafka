@@ -12,9 +12,9 @@ import {
 	PickTypeInObject
 } from "lafka/types/mongodb.types";
 
-import getData from "./helpers/database/get-data.helper";
-import getAllModels from "./helpers/database/get-all-models.helper";
-import deleteModel from "./helpers/database/delete-model.helper";
+import getData from "./helpers/get-data.helper";
+import getAllModels from "./helpers/get-all-models.helper";
+import deleteModel from "./helpers/delete-model.helper";
 
 export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
 	name: Models;

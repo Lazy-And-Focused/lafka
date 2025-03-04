@@ -8,7 +8,7 @@ import type {
 } from "lafka/types/mongodb.types";
 import { Status, Error } from "lafka/types/status.classes";
 
-import Post from "./posts.class";
+import Post from "./post.class";
 
 enum CreatePost {
 	forum = "forum_posts",

@@ -1,17 +1,8 @@
-import DatabaseClass, { DatabaseType } from "../classes/default/database.class";
-import authUsersClass from "../classes/default/auth-user.class";
-import commentsClass from "../classes/default/comment.class";
-import postsClass from "../classes/default/posts.class";
-import userClass from "../classes/default/user.class";
-
-import AuthUserSchema from "./schemas/auth-user.schema";
-import CommentsSchema from "./schemas/comments.schema";
-import PostsSchema from "./schemas/posts.schema";
-import UsersSchema from "./schemas/user.schema";
+import { Classes } from "../classes";
+import { Schemas } from "./schemas";
 
 import type { CreatePickData, ModelData } from "lafka/types/mongodb.types";
 import { LAFka } from "lafka/types";
-import { Model } from "mongoose";
 
 type AuthUser = LAFka.AuthUser;
 type BlogPost = LAFka.BlogPost;
@@ -40,37 +31,22 @@ export namespace Constructors {
 }
 
 class Database {
-	private readonly _auth_users: DatabaseType<AuthUser, Partial<AuthUser>>;
-	private readonly _comments: DatabaseType<Comment>;
+	private readonly _auth_users: Classes.DatabaseType<AuthUser, Partial<AuthUser>>;
+	private readonly _comments: Classes.DatabaseType<Comment>;
 
-	private readonly _posts: DatabaseType<
+	private readonly _posts: Classes.DatabaseType<
 		BlogPost & ForumPost,
 		Pick<BlogPost & ForumPost, "content" | "creator_id" | "name" | "type">
 	>;
 
-	private readonly _users: DatabaseType<User, Pick<User, "username">>;
-
-	private readonly _classes: {
-		auth_users: (data: Constructors.auth_users) => authUsersClass,
-		comments: (data: Constructors.comments) => commentsClass,
-		posts: (data: Constructors.posts) => postsClass,
-		user: <T extends boolean = false>(data: Constructors.users<T>) => userClass<T>,
-		database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => DatabaseClass<T, K>
-	};
+	private readonly _users: Classes.DatabaseType<User, Pick<User, "username">>;
+	private readonly _classes = Classes;
 
 	public constructor() {
-		this._classes = {
-			auth_users: (data: Constructors.auth_users) => new authUsersClass(data),
-			comments: (data: Constructors.comments) => new commentsClass(data),
-			posts: (data: Constructors.posts) => new postsClass(data),
-			user: <T extends boolean = false>(data: Constructors.users<T>) => new userClass<T>(data),
-			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model)
-		};
-
-		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema);
-		this._comments = new DatabaseClass<Comment>(CommentsSchema);
-		this._posts = new DatabaseClass<ForumPost&BlogPost>(PostsSchema);
-		this._users = new DatabaseClass<User>(UsersSchema);
+		this._auth_users = new Classes.Database<AuthUser>(Schemas.databases.auth_users);
+		this._comments = new Classes.Database<Comment>(Schemas.databases.comments);
+		this._posts = new Classes.Database<ForumPost&BlogPost>(Schemas.databases.posts);
+		this._users = new Classes.Database<User>(Schemas.databases.users);
 	}
 
 	public get classes() {

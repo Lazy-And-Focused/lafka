@@ -1,4 +1,4 @@
-import Database, { Constructors } from "../../database/models.database";
+import Database, { Constructors } from "../database/models.database";
 
 import { LAFka } from "lafka/types";
 
