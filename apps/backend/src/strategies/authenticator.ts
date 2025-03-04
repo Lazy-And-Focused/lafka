@@ -1,5 +1,4 @@
-import AuthUser from "lafka/database/classes/default/auth-user.class";
-import User from "lafka/database/classes/default/user.class";
+import Classes from "lafka/database";
 
 import passport, { Profile } from "passport";
 import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
@@ -44,11 +43,11 @@ class Authenticator {
 			try {
 				const { id } = profile;
 
-				const user = await new User({
+				const user = await new Classes.User({
 					username: profile.displayName || profile.name.givenName
 				}).init();
 
-				const authUser = await new AuthUser({
+				const authUser = await new Classes.AuthUser({
 					access_token,
 					refresh_token,
 					service_id: id,

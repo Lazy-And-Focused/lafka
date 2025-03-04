@@ -1,9 +1,9 @@
 import { Next, Req, Res } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 
-import { AuthTypes, authTypes } from "lafka/types/auth/auth-user.types";
+import { LAFka } from "lafka/types";
 
-const abbreviations: Map<string, AuthTypes> = new Map([
+const abbreviations: Map<string, LAFka.AuthTypes> = new Map([
 	["ya", "yandex"]
 ]);
 
@@ -17,7 +17,7 @@ class AuthApi {
 	static get methods(): Record<"abbreviations"|"methods", readonly string[]> {
 		return {
 			abbreviations: Array.from(abbreviations.keys()),
-			methods: authTypes
+			methods: LAFka.authTypes
 		};
 	}
 
@@ -25,7 +25,7 @@ class AuthApi {
 		boolean,
 		{ [key: string]: unknown; method: string; body: any }
 	] {
-		if (!authTypes.includes(this._method as any)) {
+		if (!LAFka.authTypes.includes(this._method as any)) {
 			if (abbreviations.get(this._method))
 				return [true, { body: null, method: abbreviations.get(this._method) }];
 
@@ -35,7 +35,7 @@ class AuthApi {
 					body: {
 						msg:
 							"Sorry, but method " + this._method + " not found. Try next:",
-						methods: authTypes
+						methods: LAFka.authTypes
 					},
 					method: this._method
 				}

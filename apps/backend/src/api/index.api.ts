@@ -1,13 +1,13 @@
 import { config } from "dotenv";
 
-import type { AuthTypes } from "lafka/types/auth/auth-user.types";
+import { LAFka } from "lafka/types";
 
 config();
 
 class Api {
 	public readonly env = process.env;
 
-	public getApi(type: Uppercase<AuthTypes>) {
+	public getApi(type: Uppercase<LAFka.AuthTypes>) {
 		return {
 			id: this.env[type + "_CLIENT_ID"],
 			secret: this.env[type + "_CLIENT_SECRET"],

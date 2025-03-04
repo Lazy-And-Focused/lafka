@@ -1,11 +1,10 @@
 import { Injectable } from "@nestjs/common";
 
-import Database from "lafka/database/database/models.database";
-
-import type { User } from "lafka/types/authors/user.types";
+import { Models } from "lafka/database";
+import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
 
-const { users } = Database;
+const { users } = new Models();
 
 const keyGetSymbols = ["@"];
 const keyGetSymbolsMap = new Map<string, string>([
@@ -30,7 +29,7 @@ export class UsersService {
         return { [type]: data.slice(1) };
     }
 
-    public async getUser(data: Partial<User>|string): Promise<ServiceResponse<User>> {
+    public async getUser(data: Partial<LAFka.User>|string): Promise<ServiceResponse<LAFka.User>> {
         try {
             const user = await users.model.findOne(typeof data === "string" ? {id: data} : data);
 

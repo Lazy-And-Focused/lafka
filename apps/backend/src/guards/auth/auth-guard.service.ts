@@ -1,9 +1,9 @@
 import { Request } from "express";
 
-import Database from "lafka/database/database/models.database";
+import { Models } from "lafka/database";
 import { AuthUser } from "lafka/types/auth/auth-user.types";
 
-const { auth_users, users } = Database;
+const { auth_users, users } = new Models();
 
 class Service {
     public async validateRequest(req: Request) {
