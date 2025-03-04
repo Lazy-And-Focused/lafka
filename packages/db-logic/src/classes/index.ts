@@ -6,7 +6,7 @@ import userClass from "../classes/user.class";
 import DatabaseClass, { DatabaseType as DatabaseTypeT } from "./database.class";
 
 export namespace Classes {
-    export class Auth_user extends authUserClass {};
+    export class AuthUser extends authUserClass {};
     export class Comment extends commentClass {};
     export class Post extends postClass {};
     export class User<T extends boolean = false> extends userClass<T> {};
