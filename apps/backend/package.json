@@ -68,7 +68,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
-    "typescript-eslint": "^8.25.0"
+    "typescript-eslint": "^8.25.0",
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
     "typescript": "catalog:"
