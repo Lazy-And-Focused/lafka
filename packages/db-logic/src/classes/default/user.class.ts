@@ -121,9 +121,9 @@ class User<T extends boolean = false> implements UserType {
 	private async addPosts(posts: string[], type: PostTypes) {
 		this._data[CreatePost[type]].push(...posts);
 
-		return await this._users.update({
+		return await this._users.push({
 			filter: { id: this._data.id },
-			update: { [CreatePost[type]]: this._data[CreatePost[type]] }
+			update: { [CreatePost[type]]: posts }
 		});
 	}
 
@@ -160,23 +160,23 @@ class User<T extends boolean = false> implements UserType {
 	}
 
 	public readonly updateData = async (data: string | LinkType[], type: Data) => {
-/* 		const user = await this.getDatabaseUser();
-
-		if (!user) return new Error("user not found");
-		const userType = ("_" + type) as UserDataTypes;
-
-		if (typeof data === "string" && type !== "links" && userType !== "_links") {
-			user[type] = data;
-			this[userType] = data;
-		} else if (Array.isArray(data) && type === "links" && userType === "_links") {
-			user[type] = data;
-			this[userType] = data;
+		if (typeof data === "string" && type !== "links") {
+			this._data[type] === data;
+			await this._users.update({
+				filter: { id: this._data.id },
+				update: { [type]: data }
+			});
+		} else if (Array.isArray(data) && type === "links") {
+			this._data[type].push(...data);
+			await this._users.push({
+				filter: { id: this._data.id },
+				update: { [type]: data }
+			});
 		} else {
 			return new Error("type mismatch");
 		}
 
-		await user.save();
-		return new Status({ type: 1, text: type + " updated" }); */
+		return new Status({ type: 1, text: type + " updated" });
 	};
 
 	public async createPost(

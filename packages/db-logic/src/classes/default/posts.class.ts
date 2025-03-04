@@ -87,9 +87,9 @@ class Post implements PostType {
 	private readonly addComments = async (comments: string[]) => {
 		this._data.comments.push(...comments);
 
-		return await this._posts.update({
+		return await this._posts.push({
 			filter: { id: this._data.id },
-			update: { $push: { comments: comments } }
+			update: { comments: comments }
 		});
 	};
 
@@ -112,9 +112,9 @@ class Post implements PostType {
 
 		this._data.tags.push(...tags);
 
-		return await this._posts.update({
+		return await this._posts.push({
 			filter: { id: this._data.id },
-			update: { $push: { tags: tags } }
+			update: { tags: tags }
 		});
 	};
 
