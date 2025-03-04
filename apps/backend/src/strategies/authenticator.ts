@@ -1,9 +1,8 @@
-import AuthUser from 'database/classes/default/auth-user.class';
-import User from 'database/classes/default/user.class';
+import Classes from "lafka/database";
 
-import passport, { Profile } from 'passport';
-import { Strategy, VerifyCallback, VerifyFunction } from 'passport-oauth2';
-import { AuthTypes } from 'types/auth/auth-user.types';
+import passport, { Profile } from "passport";
+import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
+import { AuthTypes } from "lafka/types/auth/auth-user.types";
 
 import Api from 'api/index.api';
 
@@ -44,17 +43,17 @@ class Authenticator {
       try {
         const { id } = profile;
 
-        const user = await new User({
-          username: profile.displayName || profile.name.givenName,
-        }).init();
+				const user = await new Classes.User({
+					username: profile.displayName || profile.name.givenName
+				}).init();
 
-        const authUser = await new AuthUser({
-          access_token,
-          refresh_token,
-          service_id: id,
-          type: type,
-          profile_id: user.id,
-        }).init();
+				const authUser = await new Classes.AuthUser({
+					access_token,
+					refresh_token,
+					service_id: id,
+					type: type,
+					profile_id: user.id
+				}).init();
 
         return done(null, authUser);
       } catch (error) {

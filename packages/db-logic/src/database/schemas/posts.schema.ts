@@ -1,11 +1,9 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { ForumPost } from "types/posts/forum-post.types";
-import type { BlogPost } from "types/posts/blog-post.types";
-
+import { LAFka } from "lafka/types";
 import { Tag } from "./tag.utility-schema";
 
-const schema = new Schema<ForumPost & BlogPost>({
+const schema = new Schema<LAFka.BlogAndForumPost>({
 	id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,

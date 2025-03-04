@@ -1,8 +1,12 @@
 {
-  "name": "@types/lafka",
+  "name": "@lafka/types",
   "version": "0.0.1",
   "description": "types for lafka",
-  "main": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc & tsc-alias"
   },
@@ -12,7 +16,7 @@
   "author": "LAF",
   "license": "MIT",
   "devDependencies": {
-    "tsc-alias": "^1.8.10",
-    "typescript": "^5.7.3"
+    "tsc-alias": "catalog:",
+    "typescript": "catalog:"
   }
 }

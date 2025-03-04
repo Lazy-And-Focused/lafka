@@ -1,8 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import { LAFka } from "lafka/types";
 
-import { AuthUser } from "types/auth/auth-user.types";
-
-const schema = new Schema<AuthUser>({
+const schema = new Schema<LAFka.AuthUser>({
 	id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,
@@ -13,6 +12,12 @@ const schema = new Schema<AuthUser>({
 		type: mongoose.SchemaTypes.String,
 		required: true,
 		unique: true
+	},
+
+	created_at: {
+		type: mongoose.SchemaTypes.Date,
+		required: true,
+		unique: false
 	},
 
 	profile_id: {

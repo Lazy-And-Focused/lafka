@@ -1,11 +1,15 @@
 {
-  "name": "db-logic",
+  "name": "@lafka/db-logic",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "types": "dist/database/models.database.d.ts",
+  "main": "dist/database/models.database.js",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
-    "start:prod": "node dist/database/index.database.js",
+    "start:prod": "node dist/database/start.database.js",
     "start": "pnpm run build && pnpm run start:prod",
     "build": "tsc && tsc-alias"
   },
@@ -13,17 +17,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fock-logger": "^2.0.5",
-    "mongodb": "^6.8.0",
-    "mongoose": "^8.5.3"
+    "fock-logger": "catalog:",
+    "mongodb": "catalog:",
+    "mongoose": "catalog:"
   },
   "devDependencies": {
-    "@types/lafka": "workspace:^",
-    "@types/node": "^20.10.5",
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "tsc-alias": "^1.8.10",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.3.3"
+    "@lafka/types": "workspace:^",
+    "@types/node": "catalog:",
+    "nodemon": "catalog:",
+    "ts-node": "catalog:",
+    "tsc-alias": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "typescript": "catalog:"
   }
 }

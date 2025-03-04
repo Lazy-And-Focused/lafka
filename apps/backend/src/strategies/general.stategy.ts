@@ -1,8 +1,6 @@
-import AuthUser from 'database/classes/default/auth-user.class';
-import User from 'database/classes/default/user.class';
-import Database from 'database/database/models.database';
+import { Models } from "lafka/database";
 
-const { auth_users: AuthUsers } = Database;
+const { auth_users: AuthUsers } = new Models();
 
 import passport from 'passport';
 import Authenticator from './authenticator';

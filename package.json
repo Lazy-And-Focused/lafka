@@ -9,11 +9,18 @@
   "license": "MIT",
   "keywords": [],
   "main": "index.js",
+  "workspaces": [
+    "apps/**",
+    "packages/**"
+  ],
   "scripts": {
-    "build:packages": "pnpm run build:types && pnpm run build:database",
-    "build:types": "pnpm --filter @types/lafka build",
-    "build:database": "pnpm --filter db-logic build",
-    "dev:database": "pnpm --filter db-logic dev",
+    "build:all": "pnpm --filter {./**} build",
+    "build:apps": "pnpm --filter ./apps/** build",
+    "build:packages": "pnpm --filter ./packages/** build",
+    "build:database": "pnpm --filter @lafka/db-logic build",
+    "start:database": "pnpm --filter @lafka/db-logic start",
+    "dev:database": "pnpm --filter @lafka/db-logic dev",
+    "dev:backend": "pnpm --filter backend start:dev",
     "start:backend": "pnpm --filter backend start"
   },
   "engines": {

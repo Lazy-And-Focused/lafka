@@ -8,6 +8,7 @@ interface AuthUser {
 	service_id: string;
 	access_token: string;
 	refresh_token?: string;
+	created_at: Date;
 	type: AuthTypes;
 }
 

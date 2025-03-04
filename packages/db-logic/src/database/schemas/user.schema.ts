@@ -1,9 +1,9 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { User } from "types/authors/user.types";
+import type { LAFka } from "lafka/types";
 import { Link } from "./link.utility-schema";
 
-const schema = new Schema<User>({
+const schema = new Schema<LAFka.User>({
 	id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,

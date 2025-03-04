@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-import type { Status as DatabaseStatus } from "types/schema/mongodb.types";
-import { Error } from "types/schema/status.classes";
+import type { Status as DatabaseStatus, Models } from "lafka/types/mongodb.types";
+import { Error } from "lafka/types/status.classes";
 
-const getAllModels = async (): Promise<DatabaseStatus> => {
+const getAllModels = async (): Promise<DatabaseStatus<Models[]>> => {
 	try {
-		const models: string[] = mongoose.modelNames();
+		const models = mongoose.modelNames() as Models[];
 
 		if (!models)
 			return {
