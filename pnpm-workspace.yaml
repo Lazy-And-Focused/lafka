@@ -3,13 +3,18 @@ packages:
   - "packages/*"
 
 catalog:
+  eslint: "^9.0.0"
+  eslint-config-prettier: ^9
+  eslint-plugin-prettier: ^5
+  prettier: ^3.0.0
+
   "@types/node": "^20.10.5"
   "dotenv": "^16.4.7"
   "nodemon": "^3.1.9"
   "ts-node": "^10.9.2"
   "tsc-alias": "^1.8.10"
   "tsconfig-paths": "^4.2.0"
-  "typescript": "^5.3.3"
+  "typescript": "5.7.3"
 
   "axios": "^1.7.9"
 

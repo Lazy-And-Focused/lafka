@@ -1,5 +1,5 @@
-import { Next, Req, Res } from "@nestjs/common";
-import { NextFunction, Request, Response } from "express";
+import { Next, Req, Res } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 
 import { LAFka } from "lafka/types";
 
@@ -8,11 +8,11 @@ const abbreviations: Map<string, LAFka.AuthTypes> = new Map([
 ]);
 
 class AuthApi {
-	private readonly _method: string;
+  private readonly _method: string;
 
-	public constructor(method: string) {
-		this._method = method;
-	}
+  public constructor(method: string) {
+    this._method = method;
+  }
 
 	static get methods(): Record<"abbreviations"|"methods", readonly string[]> {
 		return {
@@ -41,35 +41,34 @@ class AuthApi {
 				}
 			];
 		}
+    return [true, { body: null, method: this._method }];
+  }
 
-		return [true, { body: null, method: this._method }];
-	}
+  public auth(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ): unknown {
+    const [successed, { method, body }] = this.getMethod();
 
-	public auth(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Next() next: NextFunction
-	): unknown {
-		const [successed, { method, body }] = this.getMethod();
+    if (!successed) return res.send(body);
 
-		if (!successed) return res.send(body);
+    return require('passport').authenticate(method)(req, res, next);
+  }
 
-		return require("passport").authenticate(method)(req, res, next);
-	}
+  public callback(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ): unknown {
+    const [successed, { method, body }] = this.getMethod();
 
-	public callback(
-		@Req() req: Request,
-		@Res() res: Response,
-		@Next() next: NextFunction
-	): unknown {
-		const [successed, { method, body }] = this.getMethod();
+    if (!successed) return res.send(body);
 
-		if (!successed) return res.send(body);
+    require('passport').authenticate(method)(req, res, next);
 
-		require("passport").authenticate(method)(req, res, next);
-
-		return "Hi!";
-	}
+    return 'Hi!';
+  }
 }
 
 export default AuthApi;

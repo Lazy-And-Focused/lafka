@@ -11,7 +11,7 @@ import { USERS_ROUTES, USERS_CONTROLLER } from "./users.routes";
 @Controller(USERS_CONTROLLER)
 @UseGuards(AuthGuard)
 export class UsersController {
-    public constructor(private usersService: UsersService) {}
+  public constructor(private usersService: UsersService) {}
 
     @Get(USERS_ROUTES.GET)
     @Public()

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 
 import { Models } from "lafka/database";
 import type { LAFka } from "lafka/types";
@@ -33,20 +33,19 @@ export class UsersService {
         try {
             const user = await users.model.findOne(typeof data === "string" ? {id: data} : data);
 
-            if (!user)
-                return { successed: false, error: "User not found" };
+      if (!user) return { successed: false, error: 'User not found' };
 
-            return {
-                successed: true,
-                resource: user
-            };
-        } catch (error) {
-            console.error(error);
+      return {
+        successed: true,
+        resource: user,
+      };
+    } catch (error) {
+      console.error(error);
 
-            return {
-                successed: false,
-                error
-            } 
-        }
+      return {
+        successed: false,
+        error,
+      };
     }
-};
+  }
+}

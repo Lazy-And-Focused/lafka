@@ -1,11 +1,10 @@
-import { config } from "dotenv";
-
+import { config } from 'dotenv';
 import { LAFka } from "lafka/types";
 
 config();
 
 class Api {
-	public readonly env = process.env;
+  public readonly env = process.env;
 
 	public getApi(type: Uppercase<LAFka.AuthTypes>) {
 		return {

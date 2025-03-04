@@ -2,6 +2,12 @@
   "name": "lafka",
   "version": "1.0.0",
   "description": "",
+  "author": {
+    "name": "Lazy-And-Focused",
+    "url": "https://laf-info.netlify.app/"
+  },
+  "license": "MIT",
+  "keywords": [],
   "main": "index.js",
   "workspaces": [
     "apps/**",
@@ -17,8 +23,18 @@
     "dev:backend": "pnpm --filter backend start:dev",
     "start:backend": "pnpm --filter backend start"
   },
-  "keywords": [],
-  "author": "LAF",
-  "license": "MIT",
-  "packageManager": "pnpm@10.5.2+sha256.79a98daa90248b50815e31460790f118c56fe099113370826caa0153be6daba5"
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=10.4.0"
+  },
+  "packageManager": "pnpm@10.4.0",
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "sharp"
+    ],
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "node"
+    ]
+  }
 }

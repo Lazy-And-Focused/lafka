@@ -1,7 +1,7 @@
-import { Controller, Get, Injectable, Next, Req, Res } from "@nestjs/common";
-import { NextFunction, Request, Response } from "express";
+import { Controller, Get, Injectable, Next, Req, Res } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 
-import AuthApi from "api/auth.api";
+import AuthApi from 'api/auth.api';
 
 import { AUTH_CONTROLLER, AUTH_ROUTES } from "./auth.routes";
 
