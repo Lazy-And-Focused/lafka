@@ -15,9 +15,6 @@
             "lafka/types/*": [
                 "src/types/*",
                 "node_modules/@lafka/types/dist/*"
-            ],
-            "lafka/redis/*": [
-                "node_modules/@lafka/db-redis/dist/*"
             ]
         }
     },
