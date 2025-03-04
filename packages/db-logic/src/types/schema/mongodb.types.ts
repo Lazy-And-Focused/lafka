@@ -28,7 +28,6 @@ export type Projection<T> = ProjectionType<T> | null | undefined;
 export type Options<T> = QueryOptions<T> | null | undefined;
 export type GetData<T> = IfAny<T, any, Document<unknown, {}, T> & Require_id<T>>[];
 
-export type UpdateModelData = Promise<UpdateWriteOpResult>;
 export type CreateModelData<T> = Promise<IfAny<T, any, Document<unknown, {}, T> & Default__v<Require_id<T>>>>;
 
 export type UpdateOptions<T, K = T> = {
