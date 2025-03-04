@@ -1,15 +1,15 @@
-import type { Comment as CommentType } from "lafka/types/content/comment.types";
+import { LAFka } from "lafka/types";
 
-import Database, { commentsConstructor } from "database/models.database";
+import Database, { Constructors } from "database/models.database";
 
-class Comment implements CommentType {
+class Comment implements LAFka.Comment {
 	private readonly _comments = new Database().comments;
 
 	private initialized: boolean = false;
-	private _data: CommentType;
+	private _data: LAFka.Comment;
 
 	public constructor(
-		data: commentsConstructor
+		data: Constructors.comments
 	) {
 		const now = new Date();
 
@@ -51,8 +51,8 @@ class Comment implements CommentType {
 	};
 
 	private paste(
-		data: commentsConstructor & { created_at: Date },
-		comment: CommentType
+		data: Constructors.comments & { created_at: Date },
+		comment: LAFka.Comment
 	) {
 		this._data = {
 			...data,

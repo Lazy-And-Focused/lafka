@@ -1,16 +1,12 @@
-import { BlogPost } from "lafka/types/posts/blog-post.types";
-import { ForumPost } from "lafka/types/posts/forum-post.types";
+import { LAFka } from "lafka/types";
 
-import { Link as LinkType } from "lafka/types/utility/utility.types";
-import { User as UserType } from "lafka/types/authors/user.types";
-
-import Database, { userConstructor } from "database/models.database";
+import Database, { Constructors } from "database/models.database";
 import type {
 	CreateData,
 	CreatePickData,
 	Status as StatusType
-} from "lafka/types/schema/mongodb.types";
-import { Status, Error } from "lafka/types/schema/status.classes";
+} from "lafka/types/mongodb.types";
+import { Status, Error } from "lafka/types/status.classes";
 
 import Post from "./posts.class";
 
@@ -25,14 +21,14 @@ enum CreatePost {
 type PostTypes = "forum" | "blog" | "followed_forum" | "followed_blog" | "blocked";
 type Data = "username" | "nickname" | "biography" | "avatar" | "links";
 
-class User<T extends boolean = false> implements UserType {
+class User<T extends boolean = false> implements LAFka.User {
 	private readonly _users = new Database().users;
 	
-	private _data: UserType;
+	private _data: LAFka.User;
 	private initialized: boolean = false;
 
 	public constructor(
-		data: userConstructor<T>
+		data: Constructors.users<T>
 	) {
 		if (!data.username && !data.id)
 			throw new Error("id and username is not defined");
@@ -64,7 +60,7 @@ class User<T extends boolean = false> implements UserType {
 			? { id: data.id, username: data.username }
 			: { username: data.username };
 
-		const status: StatusType<UserType[]> = await this._users.getData({
+		const status: StatusType<LAFka.User[]> = await this._users.getData({
 			filter: { ...filter }
 		});
 
@@ -103,7 +99,7 @@ class User<T extends boolean = false> implements UserType {
 		return this;
 	};
 
-	private readonly paste = (data: CreateData<UserType>, user: UserType) => {
+	private readonly paste = (data: CreateData<LAFka.User>, user: LAFka.User) => {
 		this._data = {
 			...data,
 			...user
@@ -159,7 +155,7 @@ class User<T extends boolean = false> implements UserType {
 		return new Status({ type: 1, text: action + "ing!" });
 	}
 
-	public readonly updateData = async (data: string | LinkType[], type: Data) => {
+	public readonly updateData = async (data: string | LAFka.Link[], type: Data) => {
 		if (typeof data === "string" && type !== "links") {
 			this._data[type] === data;
 			await this._users.update({
@@ -180,7 +176,7 @@ class User<T extends boolean = false> implements UserType {
 	};
 
 	public async createPost(
-		post: CreatePickData<ForumPost & BlogPost, "content" | "name" | "type">
+		post: CreatePickData<LAFka.BlogAndForumPost, "content" | "name" | "type">
 	) {
 		const created = await new Post({ ...post, creator_id: this._data.id }).init();
 
@@ -214,7 +210,7 @@ class User<T extends boolean = false> implements UserType {
 		return this._data.biography || "";
 	}
 
-	public get links(): LinkType[] {
+	public get links(): LAFka.Link[] {
 		return this._data.links;
 	}
 

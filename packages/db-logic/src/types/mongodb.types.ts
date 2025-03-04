@@ -1,27 +1,19 @@
 import type {
+	Default__v,
+	Document,
 	FilterQuery,
 	IfAny,
 	ProjectionType,
 	QueryOptions,
-	UpdateQuery,
-	UpdateWithAggregationPipeline,
-	Document,
 	Require_id,
-	Default__v,
-	UpdateWriteOpResult
+	UpdateQuery,
+	UpdateWithAggregationPipeline
 } from "mongoose";
 
-export { DeleteResult } from "mongoose"
+import { Schemas } from "../database/schemas";
+export { DeleteResult } from "mongoose";
 
-const modelNames = [
-	"auth_users",
-	"posts",
-	"comments",
-	"users"
-] as const;
-
-export type ModelNames = typeof modelNames[number];
-
+export type Models = Schemas.Models;
 export type Filter<T> = FilterQuery<T>;
 export type Update<T> = UpdateQuery<T> | UpdateWithAggregationPipeline;
 export type Projection<T> = ProjectionType<T> | null | undefined;

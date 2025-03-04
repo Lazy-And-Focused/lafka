@@ -7,17 +7,17 @@ import {
 	UpdateOptions,
 	Status as DatabaseStatus,
 	CreateModelData,
-	ModelNames,
+	Models,
 	DeleteResult,
 	PickTypeInObject
-} from "lafka/types/schema/mongodb.types";
+} from "lafka/types/mongodb.types";
 
 import getData from "./helpers/database/get-data.helper";
 import getAllModels from "./helpers/database/get-all-models.helper";
 import deleteModel from "./helpers/database/delete-model.helper";
 
 export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
-	name: ModelNames;
+	name: Models;
 	model: Model<T>;
 	id: Promise<string>;
 	
@@ -40,8 +40,8 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 		this._model = model;
 	}
 
-	public get name(): ModelNames {
-		return this._model.modelName as ModelNames;
+	public get name(): Models {
+		return this._model.modelName as Models;
 	}
 
 	public get model() {

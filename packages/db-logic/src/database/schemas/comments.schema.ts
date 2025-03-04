@@ -1,8 +1,7 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
+import { LAFka } from "lafka/types";
 
-import type { Comment } from "lafka/types/content/comment.types";
-
-const schema = new Schema<Comment>({
+const schema = new Schema<LAFka.Comment>({
 	id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,

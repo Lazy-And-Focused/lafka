@@ -1,8 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import { LAFka } from "lafka/types";
 
-import { AuthUser } from "lafka/types/auth/auth-user.types";
-
-const schema = new Schema<AuthUser>({
+const schema = new Schema<LAFka.AuthUser>({
 	id: {
 		type: mongoose.SchemaTypes.String,
 		required: true,

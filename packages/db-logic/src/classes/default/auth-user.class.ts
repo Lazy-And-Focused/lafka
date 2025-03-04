@@ -1,18 +1,17 @@
-import type { AuthTypes, AuthUser as AuthUserType } from "lafka/types/auth/auth-user.types";
-import type { User } from "lafka/types/authors/user.types";
+import { LAFka } from "lafka/types";
 
-import Database, { authUsersConstructor } from "database/models.database";
+import Database, { Constructors } from "database/models.database";
 
-class AuthUser implements AuthUserType {
-	private _data: AuthUserType;
+class AuthUser implements LAFka.AuthUser {
+	private _data: LAFka.AuthUser;
 	private readonly _filter_options: {
 		profile: {
 			profile_id: string,
-			type: AuthTypes
+			type: LAFka.AuthTypes
 		},
 		service: {
 			service_id: string,
-			type: AuthTypes
+			type: LAFka.AuthTypes
 		}
 	};
 	private readonly _tokens: {
@@ -22,7 +21,7 @@ class AuthUser implements AuthUserType {
 	
 	private readonly _database: Database = new Database();
 
-	public constructor(data: authUsersConstructor) {
+	public constructor(data: Constructors.auth_users) {
 		this._data = {
 			id: "",
 			created_at: new Date(),
@@ -93,7 +92,7 @@ class AuthUser implements AuthUserType {
 		}
 	}
 
-	public async updateProfileId(id: string): Promise<User | null> {
+	public async updateProfileId(id: string): Promise<LAFka.User | null> {
 		await this._database.auth_users.update({
 			filter: { id: this._data.id },
 			update: { profile_id: id }
@@ -132,7 +131,7 @@ class AuthUser implements AuthUserType {
 		return this._data.refresh_token;
 	}
 
-	public get type(): AuthTypes {
+	public get type(): LAFka.AuthTypes {
 		return this._data.type;
 	}
 }

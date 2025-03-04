@@ -1,22 +1,19 @@
-import Database, { postsConstructor } from "../../database/models.database";
+import Database, { Constructors } from "../../database/models.database";
 
-import type { BlogPost } from "lafka/types/posts/blog-post.types";
-import type { ForumPost } from "lafka/types/posts/forum-post.types";
-import type { Post as PostType } from "lafka/types/posts/post.types";
-import type { PostStatus, Tag } from "lafka/types/utility/utility.types";
-import type { CreateData, CreatePickData } from "lafka/types/schema/mongodb.types";
-import type { Comment as CommentType } from "lafka/types/content/comment.types";
+import { LAFka } from "lafka/types";
+
+import type { CreateData, CreatePickData } from "lafka/types/mongodb.types";
 
 import Comment from "./comment.class";
 
-class Post implements PostType {
-	private _data: BlogPost&ForumPost;
+class Post implements LAFka.Post {
+	private _data: LAFka.BlogAndForumPost;
 	private initialized: boolean = false;
 
 	private readonly _posts = new Database().posts;
 
 	public constructor(
-		data: postsConstructor
+		data: Constructors.posts
 	) {
 		this._data = {
 			id: "",
@@ -69,8 +66,8 @@ class Post implements PostType {
 	};
 
 	private readonly paste = (
-		data: CreateData<BlogPost & ForumPost> & { id?: string },
-		post: BlogPost & ForumPost
+		data: CreateData<LAFka.BlogAndForumPost> & { id?: string },
+		post: LAFka.BlogAndForumPost
 	) => {
 		this._data = {
 			...data,
@@ -94,7 +91,7 @@ class Post implements PostType {
 	};
 
 	public async createComment(
-		comment: CreatePickData<CommentType, "author_id" | "content">
+		comment: CreatePickData<LAFka.Comment, "author_id" | "content">
 	) {
 		const created = await new Comment({
 			post_id: this._data.id,
@@ -107,7 +104,7 @@ class Post implements PostType {
 		};
 	}
 
-	public readonly addTags = async (tags: Tag[]) => {
+	public readonly addTags = async (tags: LAFka.Tag[]) => {
 		if (this._data.type !== "forum") return "this is a blog post";
 
 		this._data.tags.push(...tags);
@@ -243,13 +240,13 @@ class Post implements PostType {
 		return this._data.reposts;
 	}
 
-	public get tags(): Tag[] {
+	public get tags(): LAFka.Tag[] {
 		if (this._data.type != "forum") return [];
 
 		return this._data.tags;
 	}
 
-	public get status(): PostStatus {
+	public get status(): LAFka.PostStatus {
 		if (this._data.type !== "forum") return "blocked";
 
 		return this._data.status;

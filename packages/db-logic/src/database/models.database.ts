@@ -4,37 +4,40 @@ import commentsClass from "../classes/default/comment.class";
 import postsClass from "../classes/default/posts.class";
 import userClass from "../classes/default/user.class";
 
-import AuthUserSchema from "./schema/auth-user.schema";
-import CommentsSchema from "./schema/comments.schema";
-import PostsSchema from "./schema/posts.schema";
-import UsersSchema from "./schema/user.schema";
+import AuthUserSchema from "./schemas/auth-user.schema";
+import CommentsSchema from "./schemas/comments.schema";
+import PostsSchema from "./schemas/posts.schema";
+import UsersSchema from "./schemas/user.schema";
 
-import type { CreatePickData, ModelData, ModelNames } from "lafka/types/schema/mongodb.types";
-import type { AuthUser } from "lafka/types/auth/auth-user.types";
-import type { User } from "lafka/types/authors/user.types";
-import type { Comment } from "lafka/types/content/comment.types";
-import type { BlogPost } from "lafka/types/posts/blog-post.types";
-import type { ForumPost } from "lafka/types/posts/forum-post.types";
-
+import type { CreatePickData, ModelData } from "lafka/types/mongodb.types";
+import { LAFka } from "lafka/types";
 import { Model } from "mongoose";
 
-export type authUsersConstructor = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
-export type commentsConstructor = CreatePickData<Comment, "author_id" | "post_id" | "content"> & {
-	id?: string;
-};
+type AuthUser = LAFka.AuthUser;
+type BlogPost = LAFka.BlogPost;
+type Comment = LAFka.Comment;
+type ForumPost = LAFka.ForumPost;
+type User = LAFka.User;
 
-export type postsConstructor = CreatePickData<
-	ForumPost & BlogPost,
-	"content" | "creator_id" | "name" | "type"
-> & { _id?: string };
+export namespace Constructors {
+	export type auth_users = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
+	export type comments = CreatePickData<Comment, "author_id" | "post_id" | "content"> & {
+		id?: string;
+	};
 
-export type userConstructorData = CreatePickData<
-	User, "username" | "created_at"
-> & { id?: string };
-export type userConstructor<T extends boolean> =
-	T extends true
+	export type posts = CreatePickData<
+		ForumPost & BlogPost,
+		"content" | "creator_id" | "name" | "type"
+	> & { _id?: string };
+
+	export type users_data = CreatePickData<
+		User, "username" | "created_at"
+	> & { id?: string };
+
+	export type users<T> = T extends true
 		? (Partial<User> & { id: string })
-		: (CreatePickData<User, "username"> & { id?: string });
+		: (CreatePickData<User, "username"> & { id?: string })
+}
 
 class Database {
 	private readonly _auth_users: DatabaseType<AuthUser, Partial<AuthUser>>;
@@ -48,19 +51,19 @@ class Database {
 	private readonly _users: DatabaseType<User, Pick<User, "username">>;
 
 	private readonly _classes: {
-		auth_users: (data: authUsersConstructor) => authUsersClass,
-		comments: (data: commentsConstructor) => commentsClass,
-		posts: (data: postsConstructor) => postsClass,
-		user: <T extends boolean = false>(data: userConstructor<T>) => userClass<T>,
+		auth_users: (data: Constructors.auth_users) => authUsersClass,
+		comments: (data: Constructors.comments) => commentsClass,
+		posts: (data: Constructors.posts) => postsClass,
+		user: <T extends boolean = false>(data: Constructors.users<T>) => userClass<T>,
 		database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => DatabaseClass<T, K>
 	};
 
 	public constructor() {
 		this._classes = {
-			auth_users: (data: authUsersConstructor) => new authUsersClass(data),
-			comments: (data: commentsConstructor) => new commentsClass(data),
-			posts: (data: postsConstructor) => new postsClass(data),
-			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data),
+			auth_users: (data: Constructors.auth_users) => new authUsersClass(data),
+			comments: (data: Constructors.comments) => new commentsClass(data),
+			posts: (data: Constructors.posts) => new postsClass(data),
+			user: <T extends boolean = false>(data: Constructors.users<T>) => new userClass<T>(data),
 			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model)
 		};
 
