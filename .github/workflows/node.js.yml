@@ -16,10 +16,6 @@ jobs:
   scan_and_fix:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
-
     steps:
       - uses: actions/checkout@v4
 
@@ -28,19 +24,19 @@ jobs:
           version: 10.4.0
 
       - uses: actions/setup-node@v4
-        name: Node.js ⇒ ${{ matrix.node-version }}
+        name: Node.js ⇒ 20.x
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
           cache: "pnpm"
 
       - name: pnpm ⇒ Install dependencies
         run: pnpm install
 
-      - name: \[BACKEND] Eslint ⇒ Scan and fix
+      - name: "[BACKEND] Eslint ⇒ Scan and fix"
         run: pnpm --filter backend run lint
         continue-on-error: true
 
-      - name: \[FRONTEND] Code Style ⇒ Scan and fix
+      - name: "[FRONTEND] Code Style ⇒ Scan and fix"
         run: |
           pnpm --filter frontend run format
           pnpm --filter frontend run lint
