@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import type { Status as DatabaseStatus } from "lafka/types/schema/mongodb.types";
 import { Error } from "lafka/types/schema/status.classes";
 
-const deleteModel = async (name: string): Promise<DatabaseStatus> => {
+const deleteModel = async (name: string): Promise<DatabaseStatus<mongoose.Mongoose>> => {
 	try {
 		const data = mongoose.deleteModel(name);
 

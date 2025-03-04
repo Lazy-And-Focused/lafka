@@ -4,7 +4,7 @@ import { ForumPost } from "lafka/types/posts/forum-post.types";
 import { Link as LinkType } from "lafka/types/utility/utility.types";
 import { User as UserType } from "lafka/types/authors/user.types";
 
-import Database, { userConstructor, userConstructorData } from "database/models.database";
+import Database, { userConstructor } from "database/models.database";
 import type {
 	CreateData,
 	CreatePickData,
@@ -14,81 +14,57 @@ import { Status, Error } from "lafka/types/schema/status.classes";
 
 import Post from "./posts.class";
 
-import Redis from "lafka/redis/modesl.database";
-
 enum CreatePost {
-	forum = "_forum_posts",
-	blog = "_blog_posts",
-	followed_forum = "_followed_forum_posts",
-	followed_blog = "_followed_blog_posts",
-	blocked = "_blocked_posts"
+	forum = "forum_posts",
+	blog = "blog_posts",
+	followed_forum = "followed_forum_posts",
+	followed_blog = "followed_blog_posts",
+	blocked = "blocked_posts"
 }
 
 type PostTypes = "forum" | "blog" | "followed_forum" | "followed_blog" | "blocked";
 type Data = "username" | "nickname" | "biography" | "avatar" | "links";
-type UserDataTypes = `_${Data}`;
-type UserPostTypes = `${PostTypes}_posts`;
 
 class User<T extends boolean = false> implements UserType {
-	private _id: string;
-	private _username: string;
-	private _nickname?: string;
-	private _avatar?: string;
-
-	private _biography?: string;
-	private _links: LinkType[] = [];
-
-	private _created_at: Date;
-
-	private _forum_posts: string[] = [];
-	private _blog_posts: string[] = [];
-
-	private _followed_forum_posts: string[] = [];
-	private _followed_blog_posts: string[] = [];
-
-	private _blocked_posts: string[] = [];
-
-	private _followers: string[] = [];
-	private _following: string[] = [];
-
+	private readonly _users = new Database().users;
+	
+	private _data: UserType;
 	private initialized: boolean = false;
 
-	private readonly _constructor_data: userConstructorData;
-
-	private readonly _database: Database;
-
 	public constructor(
-		data: userConstructor<T>,
-		database: Database
+		data: userConstructor<T>
 	) {
-		this._database = database;
-
-		const now = new Date();
-
 		if (!data.username && !data.id)
 			throw new Error("id and username is not defined");
 
-		this._constructor_data = {
+		this._data = {
 			id: "",
 			username: "",
-			...data,
-			created_at: now
-		};
-
-		this._id = data.id || "";
-		this._username = data.username || "";
-		this._created_at = now;
+			created_at: new Date(),
+			blocked_posts: [],
+			blog_posts: [],
+			followed_blog_posts: [],
+			followed_forum_posts: [],
+			followers: [],
+			following: [],
+			forum_posts: [],
+			links: [],
+			avatar: undefined,
+			nickname: undefined,
+			biography: undefined,
+			...data
+		}
 	}
 
 	public readonly init = async (): Promise<T extends true ? (this|null) : (this)> => {
 		if (this.initialized) return this;
 
-		const data = this._constructor_data;
+		const data = this._data;
 		const filter = !!data.id
 			? { id: data.id, username: data.username }
 			: { username: data.username };
 
-		const status: StatusType<UserType[]> = await this._database.users.getData({
+		const status: StatusType<UserType[]> = await this._users.getData({
 			filter: { ...filter }
 		});
 
@@ -96,42 +72,28 @@ class User<T extends boolean = false> implements UserType {
 			if (filter.id && !filter.username)
 				return null as any;
 
-			const user = await this._database.users.create({
-				...data,
-				avatar: undefined,
-				nickname: undefined,
-				biography: undefined,
-				links: [],
-				created_at: data.created_at,
-				blog_posts: [],
-				forum_posts: [],
-				followed_blog_posts: [],
-				followed_forum_posts: [],
-				blocked_posts: [],
-				followers: [],
-				following: []
-			});
+			const user = await this._users.create(data);
 
 			this.paste(data, user);
 		} else {
 			const user = status.data[0];
 			const updateData = this.paste(data, user);
 
-			this._database.users.update({
+			this._users.update({
 				filter: { username: data.username },
 				update: {
-					username: updateData._username,
-					avatar: updateData._avatar,
-					nickname: updateData._nickname,
-					biography: updateData._biography,
-					links: updateData._links,
-					blog_posts: updateData._blog_posts,
-					forum_posts: updateData._forum_posts,
-					followed_blog_posts: updateData._followed_blog_posts,
-					followed_forum_posts: updateData._followed_forum_posts,
-					blocked_posts: updateData._blocked_posts,
-					followers: updateData._followers,
-					following: updateData._following
+					created_at: updateData._data.created_at,
+					blocked_posts: updateData._data.blocked_posts,
+					blog_posts: updateData._data.blog_posts,
+					followed_blog_posts: updateData._data.followed_blog_posts,
+					followed_forum_posts: updateData._data.followed_forum_posts,
+					followers: updateData._data.followers,
+					following: updateData._data.following,
+					forum_posts: updateData._data.forum_posts,
+					links: updateData._data.links,
+					avatar: updateData._data.avatar,
+					nickname: updateData._data.nickname,
+					biography: updateData._data.biography
 				}
 			});
 		}
@@ -142,42 +104,27 @@ class User<T extends boolean = false> implements UserType {
 	};
 
 	private readonly paste = (data: CreateData<UserType>, user: UserType) => {
-		this._id = user.id;
-		this._avatar = data.avatar || user.avatar;
-		this._nickname = data.nickname || user.nickname;
-		this._biography = data.biography || user.biography;
-		this._links = data.links || user.links;
-
-		this._created_at = data.created_at || user.created_at;
-
-		this._blog_posts = data.blog_posts || user.blog_posts;
-		this._forum_posts = data.forum_posts || user.forum_posts;
-		this._followed_blog_posts = data.followed_blog_posts || user.followed_blog_posts;
-		this._followed_forum_posts =
-			data.followed_forum_posts || user.followed_forum_posts;
-
-		this._blocked_posts = data.blocked_posts || user.blocked_posts;
-		this._followers = data.followers || user.followers;
-		this._following = data.following || user.following;
+		this._data = {
+			...data,
+			...user
+		};
 
 		return this;
 	};
 
 	private readonly getDatabaseUser = async (id?: string) => {
-		return await this._database.users.model.findOne({ id: id || this._id });
+		const { data } = await this._users.getData({filter: {id: id||this._data.id}});
+
+		return data ? data[0] : null;
 	};
 
 	private async addPosts(posts: string[], type: PostTypes) {
-		this[CreatePost[type]].push(...posts);
+		this._data[CreatePost[type]].push(...posts);
 
-		const databaseType = (type + "_posts") as UserPostTypes;
-		const user = await this.getDatabaseUser();
-
-		if (!user) return new Error("user not found");
-
-		user[databaseType].push(...posts);
-
-		return await user.save();
+		return await this._users.update({
+			filter: { id: this._data.id },
+			update: { [CreatePost[type]]: this._data[CreatePost[type]] }
+		});
 	}
 
 	private async followController(
@@ -190,23 +137,30 @@ class User<T extends boolean = false> implements UserType {
 		if (!followingUser || !user) return new Error("user not found");
 
 		if (action === "follow") {
-			followingUser.followers.push(this._id);
+			followingUser.followers.push(this._data.id);
 			user.following.push(following);
 		} else {
 			followingUser.followers = followingUser.followers.filter(
-				(id) => id !== this._id
+				(id) => id !== this._data.id
 			);
 			user.following = user.following.filter((id) => id !== following);
 		}
 
-		followingUser.save();
-		user.save();
+		this._users.update({
+			filter: { id: followingUser.id },
+			update: { followers: followingUser.followers }
+		});
+
+		this._users.update({
+			filter: { id: user.id },
+			update: { followers: user.following }
+		});
 
 		return new Status({ type: 1, text: action + "ing!" });
 	}
 
 	public readonly updateData = async (data: string | LinkType[], type: Data) => {
-		const user = await this.getDatabaseUser();
+/* 		const user = await this.getDatabaseUser();
 
 		if (!user) return new Error("user not found");
 		const userType = ("_" + type) as UserDataTypes;
@@ -222,13 +176,13 @@ class User<T extends boolean = false> implements UserType {
 		}
 
 		await user.save();
-		return new Status({ type: 1, text: type + " updated" });
+		return new Status({ type: 1, text: type + " updated" }); */
 	};
 
 	public async createPost(
 		post: CreatePickData<ForumPost & BlogPost, "content" | "name" | "type">
 	) {
-		const created = await this._database.classes.posts({ ...post, creator_id: this._id }).init();
+		const created = await new Post({ ...post, creator_id: this._data.id }).init();
 
 		return {
 			response: await this.addPosts([created.id], post.type),
@@ -245,59 +199,59 @@ class User<T extends boolean = false> implements UserType {
 	}
 
 	public get id(): string {
-		return this._id;
+		return this._data.id;
 	}
 
 	public get username(): string {
-		return this._username;
+		return this._data.username;
 	}
 
 	public get nickname(): string | undefined {
-		return this._nickname || undefined;
+		return this._data.nickname || undefined;
 	}
 
 	public get biography(): string {
-		return this._biography || "";
+		return this._data.biography || "";
 	}
 
 	public get links(): LinkType[] {
-		return this._links;
+		return this._data.links;
 	}
 
 	public get avatar(): string | undefined {
-		return this._avatar;
+		return this._data.avatar;
 	}
 
 	public get created_at(): Date {
-		return this._created_at;
+		return this._data.created_at;
 	}
 
 	public get forum_posts(): string[] {
-		return this._forum_posts;
+		return this._data.forum_posts;
 	}
 
 	public get blog_posts(): string[] {
-		return this._blog_posts;
+		return this._data.blog_posts;
 	}
 
 	public get followed_forum_posts(): string[] {
-		return this._followed_forum_posts;
+		return this._data.followed_forum_posts;
 	}
 
 	public get followed_blog_posts(): string[] {
-		return this._followed_blog_posts;
+		return this._data.followed_blog_posts;
 	}
 
 	public get blocked_posts(): string[] {
-		return this._blocked_posts;
+		return this._data.blocked_posts;
 	}
 
 	public get followers(): string[] {
-		return this._followers;
+		return this._data.followers;
 	}
 
 	public get following(): string[] {
-		return this._following;
+		return this._data.following;
 	}
 }
 

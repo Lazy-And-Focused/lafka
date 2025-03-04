@@ -6,109 +6,60 @@ import type { Post as PostType } from "lafka/types/posts/post.types";
 import type { PostStatus, Tag } from "lafka/types/utility/utility.types";
 import type { CreateData, CreatePickData } from "lafka/types/schema/mongodb.types";
 import type { Comment as CommentType } from "lafka/types/content/comment.types";
+
 import Comment from "./comment.class";
 
-import Redis from "lafka/redis/modesl.database";
-
 class Post implements PostType {
-	private _id: string;
-	private _created_at: Date;
-	private _creator_id: string;
-
-	private _type: "forum" | "blog";
-
-	private _name: string;
-	private _content: string;
-	private _description?: string;
-
-	private _comments: string[] = [];
-
-	private _followers: number = 0;
-
-	private _changed_at?: Date;
-
-	private _view_status: 0 | 1 = 1;
-
-	private _likes: number = 0;
-	private _dislikes: number = 0;
-	private _reposts: number = 0;
-
-	private _tags: Tag[] = [];
-	private _status: PostStatus = "open";
-
+	private _data: BlogPost&ForumPost;
 	private initialized: boolean = false;
 
-	private readonly _constructor_data: postsConstructor & { id?: string };
-
-	private readonly _database: Database;
+	private readonly _posts = new Database().posts;
 
 	public constructor(
-		data: postsConstructor,
-		database: Database
+		data: postsConstructor
 	) {
-		this._database = database;
+		this._data = {
+			id: "",
+			created_at: new Date(),
 
-		const now = new Date();
+			likes: 0,
+			dislikes: 0,
+			reposts: 0,
 
-		this._name = data.name;
-		this._content = data.content;
-		this._description = data.description;
+			followers: 0,
+			comments: [],
 
-		this._creator_id = data.creator_id;
-		this._type = data.type;
+			view_status: 1,
 
-		this._id = "";
-		this._created_at = now;
+			tags: [],
+			status: "open",
 
-		this._constructor_data = {
 			...data,
-			created_at: now
-		};
+		}
 	}
 
 	public readonly init = async () => {
 		if (this.initialized) return this;
 
-		const data = this._constructor_data;
+		const data = this._data;
 
 		const create = async () => {
 			if (this.initialized) return this;
-
 			this.initialized = true;
 
-			const post = await this._database.posts.create({
-				content: data.content,
-				creator_id: data.creator_id,
-				name: data.name,
-				type: data.type,
-
-				created_at: data.created_at,
-				changed_at: undefined,
-				description: this.description,
-				view_status: 1,
-				followers: 0,
-
-				comments: [],
-
-				dislikes: 0,
-				likes: 0,
-				reposts: 0,
-
-				tags: [],
-				status: "open"
-			});
+			const post = await this._posts.create(data);
 
 			return this.paste(data, post);
 		};
 
 		if (data.id) {
-			const status = await this._database.posts.getData({
+			const { data: gettedPost } = await this._posts.getData({
 				filter: { id: data.id }
 			});
 
-			if (status.data) {
+			if (gettedPost) {
 				this.initialized = true;
-				return this.paste(data, status.data[0]);
+				return this.paste(data, gettedPost[0]);
 			}
 		}
 
@@ -121,52 +72,32 @@ class Post implements PostType {
 		data: CreateData<BlogPost & ForumPost> & { id?: string },
 		post: BlogPost & ForumPost
 	) => {
-		this._id = data.id || post.id;
-
-		this._name = data.name || post.name;
-		this._content = data.content || post.content;
-		this._description = data.description || post.description;
-		this._comments = data.comments || post.comments;
-		this._followers = data.followers || post.followers;
-		this._creator_id = data.creator_id || post.creator_id;
-		this._changed_at = data.changed_at || post.changed_at;
-		this._view_status = data.view_status || post.view_status;
-
-		if (this._type === "blog") {
-			this._likes = data.likes || post.likes;
-			this._dislikes = data.dislikes || post.dislikes;
-			this._reposts = data.reposts || post.reposts;
-		} else {
-			this._tags = data.tags || post.tags;
-			this._status = data.status || post.status;
-		}
+		this._data = {
+			...data,
+			...post
+		};
 
 		return this;
 	};
 
-	private readonly getDatabasePost = async (id?: string) => {
-		return await this._database.posts.model.findOne({ id: id || this._id });
-	};
-
 	private readonly changed = () => {
-		this._changed_at = new Date();
+		this._data.changed_at = new Date();
 	};
 
 	private readonly addComments = async (comments: string[]) => {
-		this._comments.push(...comments);
-		const post = await this.getDatabasePost();
+		this._data.comments.push(...comments);
 
-		if (!post) return new Error("post not found");
-
-		post.comments.push(...comments);
-		return await post.save();
+		return await this._posts.update({
+			filter: { id: this._data.id },
+			update: { $push: { comments: comments } }
+		});
 	};
 
 	public async createComment(
 		comment: CreatePickData<CommentType, "author_id" | "content">
 	) {
-		const created = await this._database.classes.comments({
-			post_id: this._id,
+		const created = await new Comment({
+			post_id: this._data.id,
 			...comment
 		}).init();
 
@@ -177,151 +108,151 @@ class Post implements PostType {
 	}
 
 	public readonly addTags = async (tags: Tag[]) => {
-		if (this._type !== "forum") return "this is a blog post";
+		if (this._data.type !== "forum") return "this is a blog post";
 
-		this._tags.push(...tags);
+		this._data.tags.push(...tags);
 
-		return await this._database.posts.update({
-			filter: { id: this._id },
+		return await this._posts.update({
+			filter: { id: this._data.id },
 			update: { $push: { tags: tags } }
 		});
 	};
 
 	public addLikes = async (likes: number) => {
-		if (this._type != "blog") return "this is a forum posts";
+		if (this._data.type != "blog") return "this is a forum posts";
 
-		this._likes += likes;
+		this._data.likes += likes;
 
-		return await this._database.posts.update({
-			filter: { id: this._id },
-			update: { likes: this._likes }
+		return await this._posts.update({
+			filter: { id: this._data.id },
+			update: { likes: this._data.likes }
 		});
 	};
 
 	public addDislikes = async (dislikes: number) => {
-		if (this._type != "blog") return "this is a forum posts";
+		if (this._data.type != "blog") return "this is a forum posts";
 
-		this._dislikes += dislikes;
+		this._data.dislikes += dislikes;
 
-		return await this._database.posts.update({
-			filter: { id: this._id },
-			update: { dislikes: this._dislikes }
+		return await this._posts.update({
+			filter: { id: this._data.id },
+			update: { dislikes: this._data.dislikes }
 		});
 	};
 
 	public addReposts = async (reposts: number) => {
-		if (this._type != "blog") return "this is a forum posts";
+		if (this._data.type != "blog") return "this is a forum posts";
 
-		this._reposts += reposts;
+		this._data.reposts += reposts;
 
-		return await this._database.posts.update({
-			filter: { id: this._id },
-			update: { reposts: this._reposts }
+		return await this._posts.update({
+			filter: { id: this._data.id },
+			update: { reposts: this._data.reposts }
 		});
 	};
 
 	public set name(data: string) {
 		this.changed();
 
-		this._name = data;
+		this._data.name = data;
 	}
 
 	public set content(data: string) {
 		this.changed();
 
-		this._content = data;
+		this._data.content = data;
 	}
 
 	public set description(data: string) {
 		this.changed();
 
-		this._description = data;
+		this._data.description = data;
 	}
 
 	public set followers(followers: number) {
-		this._followers = followers;
+		this._data.followers = followers;
 	}
 
 	public get id(): string {
-		return this._id;
+		return this._data.id;
 	}
 
 	public get created_at() {
-		return this._created_at;
+		return this._data.created_at;
 	}
 
 	public get changed_at() {
-		return this._changed_at;
+		return this._data.changed_at;
 	}
 
 	public get creator_id() {
-		return this._creator_id;
+		return this._data.creator_id;
 	}
 
 	public get view_status() {
-		return this._view_status;
+		return this._data.view_status;
 	}
 
 	public get name(): string {
-		return this._name;
+		return this._data.name;
 	}
 
 	public get content(): string {
-		return this._content;
+		return this._data.content;
 	}
 
 	public get description(): string | undefined {
-		return this._description;
+		return this._data.description;
 	}
 
 	public get comments(): string[] {
-		return this._comments;
+		return this._data.comments;
 	}
 
 	public get followers(): number {
-		return this._followers;
+		return this._data.followers;
 	}
 
 	public get createdAt(): Date {
-		return this._created_at;
+		return this._data.created_at;
 	}
 
 	public get changedAt(): Date | undefined {
-		return this._changed_at;
+		return this._data.changed_at;
 	}
 
 	public get type(): "forum" | "blog" {
-		return this._type;
+		return this._data.type;
 	}
 
 	public get likes(): number {
-		if (this._type != "blog") return 0;
+		if (this._data.type != "blog") return 0;
 
-		return this._likes;
+		return this._data.likes;
 	}
 
 	public get dislikes(): number {
-		if (this._type != "blog") return 0;
+		if (this._data.type != "blog") return 0;
 
-		return this._dislikes;
+		return this._data.dislikes;
 	}
 
 	public get reposts(): number {
-		if (this._type != "blog") return 0;
+		if (this._data.type != "blog") return 0;
 
-		return this._reposts;
+		return this._data.reposts;
 	}
 
 	public get tags(): Tag[] {
-		if (this._type != "forum") return [];
+		if (this._data.type != "forum") return [];
 
-		return this._tags;
+		return this._data.tags;
 	}
 
 	public get status(): PostStatus {
-		if (this._type !== "forum") return "blocked";
+		if (this._data.type !== "forum") return "blocked";
 
-		return this._status;
+		return this._data.status;
 	}
 }
 

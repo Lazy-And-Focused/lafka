@@ -16,7 +16,6 @@ import type { Comment } from "lafka/types/content/comment.types";
 import type { BlogPost } from "lafka/types/posts/blog-post.types";
 import type { ForumPost } from "lafka/types/posts/forum-post.types";
 
-import Redis from "lafka/redis/modesl.database";
 import { Model } from "mongoose";
 
 export type authUsersConstructor = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
@@ -38,8 +37,6 @@ export type userConstructor<T extends boolean> =
 		: (CreatePickData<User, "username"> & { id?: string });
 
 class Database {
-	private readonly _redis: Redis;
-
 	private readonly _auth_users: DatabaseType<AuthUser, Partial<AuthUser>>;
 	private readonly _comments: DatabaseType<Comment>;
 
@@ -48,7 +45,7 @@ class Database {
 		Pick<BlogPost & ForumPost, "content" | "creator_id" | "name" | "type">
 	>;
 
-	private readonly _users: DatabaseType<User, Pick<User, "username">>
+	private readonly _users: DatabaseType<User, Pick<User, "username">>;
 
 	private readonly _classes: {
 		auth_users: (data: authUsersConstructor) => authUsersClass,
@@ -58,25 +55,19 @@ class Database {
 		database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => DatabaseClass<T, K>
 	};
 
-	public constructor(redis: Redis) {
-		this._redis = redis;
-
+	public constructor() {
 		this._classes = {
-			auth_users: (data: authUsersConstructor) => new authUsersClass(data, this),
-			comments: (data: commentsConstructor) => new commentsClass(data, this),
-			posts: (data: postsConstructor) => new postsClass(data, this),
-			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data, this),
-			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model, this)
+			auth_users: (data: authUsersConstructor) => new authUsersClass(data),
+			comments: (data: commentsConstructor) => new commentsClass(data),
+			posts: (data: postsConstructor) => new postsClass(data),
+			user: <T extends boolean = false>(data: userConstructor<T>) => new userClass<T>(data),
+			database: <T extends { id: string }, K = Partial<T>>(model: Model<T>) => new DatabaseClass<T, K>(model)
 		};
 
-		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema, this);
-		this._comments = new DatabaseClass<Comment>(CommentsSchema, this);
-		this._posts = new DatabaseClass<ForumPost&BlogPost>(PostsSchema, this);
-		this._users = new DatabaseClass<User>(UsersSchema, this);
-	}
-
-	public get redis() {
-		return this._redis;
+		this._auth_users = new DatabaseClass<AuthUser>(AuthUserSchema);
+		this._comments = new DatabaseClass<Comment>(CommentsSchema);
+		this._posts = new DatabaseClass<ForumPost&BlogPost>(PostsSchema);
+		this._users = new DatabaseClass<User>(UsersSchema);
 	}
 
 	public get classes() {

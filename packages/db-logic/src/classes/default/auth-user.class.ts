@@ -4,121 +4,136 @@ import type { User } from "lafka/types/authors/user.types";
 import Database, { authUsersConstructor } from "database/models.database";
 
 class AuthUser implements AuthUserType {
-	private readonly _id: string;
-	private readonly _profile_id: string;
-	private readonly _service_id: string;
-	private readonly _access_token: string;
-	private readonly _refresh_token?: string;
-	private readonly _type: AuthTypes;
-	private readonly _created_at: Date;
+	private _data: AuthUserType;
+	private readonly _filter_options: {
+		profile: {
+			profile_id: string,
+			type: AuthTypes
+		},
+		service: {
+			service_id: string,
+			type: AuthTypes
+		}
+	};
+	private readonly _tokens: {
+		access_token: string
+		refresh_token?: string
+	};
+	
+	private readonly _database: Database = new Database();
 
-	private readonly _database: Database;
+	public constructor(data: authUsersConstructor) {
+		this._data = {
+			id: "",
+			created_at: new Date(),
+			...data,
+		}
 
-	public constructor(data: authUsersConstructor, database: Database) {
-		this._database = database
-		
-		this._id = "";
-		this._profile_id = data.profile_id || "null";
-		this._service_id = data.service_id;
-		this._created_at = new Date();
+		this._tokens = {
+			access_token: data.access_token,
+			refresh_token: data.refresh_token
+		};
 
-		this._access_token = data.access_token;
-		this._refresh_token = data.refresh_token;
-		this._type = data.type;
+		this._filter_options = {
+			profile: {
+				profile_id: data.profile_id || "null",
+				type: data.type
+			},
+			service: {
+				service_id: data.profile_id || "null",
+				type: data.type
+			}
+		};
 	}
 
 	public async init() {
-		if (this._profile_id !== "null") {
-			const user = (
-				await this._database.auth_users.getData({
-					filter: {
-						profile_id: this._profile_id,
-						type: this._type
-					}
-				})
-			).data;
+		const userData = this._data;
 
-			if (user && user[0] && user.length === 1) {
-				user[0].access_token = this._access_token;
-				user[0].refresh_token = this._refresh_token;
-				await user[0].save();
+		if (userData.profile_id !== "null") {
+			const { data } = (
+				await this._database.auth_users.getData({
+					filter: this._filter_options.profile
+				})
+			);
+
+			if (data && data[0] && data.length === 1) {
+				await this._database.auth_users.update({
+					filter: data[0],
+					update: this._tokens
+				});
 
 				return this;
-			} else if (user && user.length > 1) {
-				for (const u of user) {
-					u.deleteOne();
+			} else if (data && data.length > 1) {
+				for (const u of data) {
+					this._database.auth_users.delete({id: u.id})
 				}
 			}
 		}
 
-		const user = (
+		const { data } = (
 			await this._database.auth_users.getData({
-				filter: { service_id: this._service_id, type: this._type }
+				filter: this._filter_options.service
 			})
-		).data;
+		);
 
-		if (user && user[0]) {
+		if (data && data[0]) {
 			await this._database.auth_users.update({
-				filter: { service_id: this._service_id, type: this._type },
+				filter: this._filter_options.service,
 				update: {
-					service_id: this._service_id,
-					access_token: this._access_token,
-					refresh_token: this._refresh_token
+					service_id: userData.service_id,
+					...this._tokens
 				}
 			});
 
 			return this;
 		} else {
-			await this._database.auth_users.create({
-				service_id: this._service_id,
-				created_at: this._created_at,
-				access_token: this._access_token,
-				refresh_token: this._refresh_token,
-				profile_id: this._profile_id,
-				type: this._type
-			});
+			await this._database.auth_users.create({...userData});
 
 			return this;
 		}
 	}
 
 	public async updateProfileId(id: string): Promise<User | null> {
-		const user = await this._database.auth_users.model.findOne({ id: id || this._id });
+		await this._database.auth_users.update({
+			filter: { id: this._data.id },
+			update: { profile_id: id }
+		});
 
-		if (!user) return null;
+		this._data.profile_id = id;
 
-		user.profile_id = id;
-		await user.save();
+		const { data } = await this._database.users.getData({filter: { id: this.profile_id }})
 
-		return ((await this._database.users.getData({ filter: { _id: id } })).data as any)[0];
+		return data	
+			? data[0]
+			: null;
 	}
 
 	public get id(): string {
-		return this._id;
+		return this._data.id;
 	}
 
 	public get profile_id(): string {
-		return this._profile_id;
+		return this._data.profile_id;
 	}
 
 	public get service_id(): string {
-		return this._service_id;
+		return this._data.service_id;
 	}
 
 	public get created_at(): Date {
-		return this._created_at;
+		return this._data.created_at;
 	}
 
 	public get access_token(): string {
-		return this._access_token;
+		return this._data.access_token;
 	}
 
 	public get refresh_token(): string | undefined {
-		return this._refresh_token;
+		return this._data.refresh_token;
 	}
 
 	public get type(): AuthTypes {
-		return this._type;
+		return this._data.type;
 	}
 }
 

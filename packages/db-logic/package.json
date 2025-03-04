@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
-    "start:prod": "node dist/database/index.database.js",
+    "start:prod": "node dist/database/start.database.js",
     "start": "pnpm run build && pnpm run start:prod",
     "build": "tsc && tsc-alias"
   },
@@ -17,12 +17,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lafka/db-redis": "workspace:^",
     "fock-logger": "catalog:",
     "mongodb": "catalog:",
-    "mongoose": "catalog:",
-    "redis": "catalog:",
-    "redis-om": "catalog:"
+    "mongoose": "catalog:"
   },
   "devDependencies": {
     "@lafka/types": "workspace:^",
