@@ -11,7 +11,7 @@ import type {
 } from "mongoose";
 
 import { Schemas } from "../database/schemas";
-export { DeleteResult } from "mongoose";
+export { DeleteResult } from ".pnpm/mongodb@6.13.1/node_modules/mongodb"
 
 export type Models = Schemas.Models;
 export type Filter<T> = FilterQuery<T>;

@@ -66,7 +66,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 	};
 
 	public update = async (options: UpdateOptions<T>) => {
-		return await this._model.updateOne(options.filter, options.update);
+		return await this._model.updateOne(options.filter, options.update || {});
 	};
 
 	public push = async(options: {filter: Filter<T>, update: Partial<PickTypeInObject<T, any[]>>}) => {
@@ -80,7 +80,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 	};
 
 	public delete = async (filter: Filter<T>) => {
-		return await this._model.deleteOne(filter);
+		return await this._model.deleteOne({...filter});
 	};
 
 	public getData = async (
