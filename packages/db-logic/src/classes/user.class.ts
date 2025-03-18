@@ -69,8 +69,9 @@ class User<T extends boolean = false> implements LAFka.User {
 				return null as any;
 
 			const user = await this._users.create(data);
+			this.initialized = true;
 
-			this.paste(data, user);
+			return this.paste(data, user);
 		} else {
 			const user = status.data[0];
 			const updateData = this.paste(data, user);
@@ -78,6 +79,7 @@ class User<T extends boolean = false> implements LAFka.User {
 			this._users.update({
 				filter: { username: data.username },
 				update: {
+					id: updateData._data.id,
 					created_at: updateData._data.created_at,
 					blocked_posts: updateData._data.blocked_posts,
 					blog_posts: updateData._data.blog_posts,
@@ -92,17 +94,18 @@ class User<T extends boolean = false> implements LAFka.User {
 					biography: updateData._data.biography
 				}
 			});
+			this.initialized = true;
+
+			return updateData;
 		}
-
-		this.initialized = true;
-
-		return this;
 	};
 
 	private readonly paste = (data: CreateData<LAFka.User>, user: LAFka.User) => {
 		this._data = {
 			...data,
-			...user
+			...user,
+
+			id: user.id
 		};
 
 		return this;
