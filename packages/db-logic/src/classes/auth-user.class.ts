@@ -1,6 +1,7 @@
 import { LAFka } from "lafka/types";
 
 import Database, { Constructors } from "database/models.database";
+import { CreateData } from "lafka/types/mongodb.types";
 
 class AuthUser implements LAFka.AuthUser {
 	private _data: LAFka.AuthUser;
@@ -61,7 +62,7 @@ class AuthUser implements LAFka.AuthUser {
 					update: this._tokens
 				});
 
-				return this;
+				return this.paste(this._data, data[0]);
 			} else if (data && data.length > 1) {
 				for (const u of data) {
 					this._database.auth_users.delete({id: u.id})
@@ -84,14 +85,25 @@ class AuthUser implements LAFka.AuthUser {
 				}
 			});
 
-			return this;
+			return this.paste(this._data, data[0]);
 		} else {
-			await this._database.auth_users.create({...userData});
+			const created = await this._database.auth_users.create({...userData});
 
-			return this;
+			return this.paste(this._data, created);
 		}
 	}
 
+	private readonly paste = (data: CreateData<LAFka.AuthUser>, user: LAFka.AuthUser) => {
+		this._data = {
+			...data,
+			...user,
+
+			id: user.id
+		};
+
+		return this;
+	};
+	
 	public async updateProfileId(id: string): Promise<LAFka.User | null> {
 		await this._database.auth_users.update({
 			filter: { id: this._data.id },

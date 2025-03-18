@@ -56,7 +56,9 @@ class Comment implements LAFka.Comment {
 	) {
 		this._data = {
 			...data,
-			...comment
+			...comment,
+
+			id: comment.id
 		};
 
 		return this;

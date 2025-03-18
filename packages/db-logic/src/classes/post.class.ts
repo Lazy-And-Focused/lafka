@@ -71,7 +71,9 @@ class Post implements LAFka.Post {
 	) => {
 		this._data = {
 			...data,
-			...post
+			...post,
+
+			id: post.id
 		};
 
 		return this;
