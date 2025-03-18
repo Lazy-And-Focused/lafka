@@ -18,10 +18,14 @@
     "build:apps": "pnpm --filter ./apps/** build",
     "build:packages": "pnpm --filter ./packages/** build",
     "build:database": "pnpm --filter @lafka/db-logic build",
+
     "start:database": "pnpm --filter @lafka/db-logic start",
+    "start:frontend": "pnpm --filter frontend start",
+    "start:backend": "pnpm --filter backend start",
+
     "dev:database": "pnpm --filter @lafka/db-logic dev",
-    "dev:backend": "pnpm --filter backend start:dev",
-    "start:backend": "pnpm --filter backend start"
+    "dev:frontend": "pnpm --filter frontend start:dev",
+    "dev:backend": "pnpm --filter backend start"
   },
   "engines": {
     "node": ">=20.11.0",
