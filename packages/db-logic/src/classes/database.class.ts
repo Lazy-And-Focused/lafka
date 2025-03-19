@@ -12,6 +12,8 @@ import {
 	PickTypeInObject
 } from "lafka/types/mongodb.types";
 
+import { Schemas } from "../database/schemas/index";
+
 import getData from "./helpers/get-data.helper";
 import getAllModels from "./helpers/get-all-models.helper";
 import deleteModel from "./helpers/delete-model.helper";
@@ -48,13 +50,15 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 		return this._model;
 	}
 
-	public static parse = <T extends { id: string}>(data: T): Omit<T & {_id?: string, _doc?: unknown}, "_id"|"_doc"> => {
-		const output = (data as T & {_id?: string, _doc?: unknown});
+	public static parse = <T extends { id: string}>(data: T, type: Schemas.Models): T => {
+		const output: {[key: string]: unknown} = {};
+		const keys = Schemas.modelKeys[type];
 		
-		delete output._id;
-		delete output._doc;
-		
-		return output;
+		keys.forEach((k: string) => {
+			output[k] = (data as {[key: string]: unknown})[k];
+		});
+
+		return output as T;
 	}
 
 	public findLast = async (): Promise<Readonly<T>> => {
