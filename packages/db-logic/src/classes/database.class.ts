@@ -48,6 +48,15 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 		return this._model;
 	}
 
+	public parse = (data: T): Omit<T & {_id?: string, _doc?: unknown}, "_id"|"_doc"> => {
+		const output = (data as T & {_id?: string, _doc?: unknown});
+		
+		delete output._id;
+		delete output._doc;
+		
+		return output;
+	}
+
 	public findLast = async (): Promise<Readonly<T>> => {
 		return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;
 	}
