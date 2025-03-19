@@ -1,8 +1,11 @@
 import Classes from "lafka/database";
 
-import passport, { Profile } from "passport";
+import passport = require("passport");
+
+import { Profile } from "passport";
+
 import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
-import { AuthTypes } from "lafka/types/auth/auth-user.types";
+import { AuthTypes, AuthUser } from "lafka/types/auth/auth-user.types";
 
 import Api from "api/index.api";
 
@@ -48,7 +51,17 @@ class Authenticator {
           profile_id: user.id
         }).init();
 
-        return done(null, authUser);
+        return done(null, {
+          id: authUser.id,
+          profile_id: authUser.profile_id,
+          service_id: authUser.service_id,
+          
+          access_token: authUser.access_token,
+          refresh_token: authUser.refresh_token,
+
+          created_at: authUser.created_at,
+          type: authUser.type,
+        } as AuthUser);
       } catch (error) {
         console.log(error);
 

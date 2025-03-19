@@ -25,7 +25,7 @@
 
     "dev:database": "pnpm --filter @lafka/db-logic dev",
     "dev:frontend": "pnpm --filter frontend start:dev",
-    "dev:backend": "pnpm --filter backend start"
+    "dev:backend": "pnpm --filter backend start:dev"
   },
   "engines": {
     "node": ">=20.11.0",

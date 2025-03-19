@@ -1,7 +1,10 @@
 import connect from "lafka/database/database/index.database";
 
+import { json, urlencoded } from "express";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+
+import cookieParser = require("cookie-parser")
 
 import Passport from "./strategies";
 
@@ -19,6 +22,10 @@ async function bootstrap() {
   });
 
   new Session("AVlzkjbsazvhxczvoiz", app).create();
+
+  app.use(cookieParser());
+  app.use(json());
+  app.use(urlencoded());
 
   app.use(passport.session());
   app.use(passport.initialize());
