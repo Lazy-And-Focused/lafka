@@ -13,18 +13,18 @@ import { USERS_ROUTES, USERS_CONTROLLER } from "./users.routes";
 export class UsersController {
   public constructor(private usersService: UsersService) {}
 
-    @Get(USERS_ROUTES.GET)
-    @Public()
-    public async get(@Param("data") data: string) {
-        const formatted = UsersService.formatGetData(data);
+  @Get(USERS_ROUTES.GET)
+  @Public()
+  public async get(@Param("data") data: string) {
+    const formatted = UsersService.formatGetData(data);
 
-        if (formatted instanceof Error) return {error: formatted.message};
+    if (formatted instanceof Error) return { error: formatted.message };
 
-        const res = await this.usersService.getUser(formatted);
+    const res = await this.usersService.getUser(formatted);
 
-        return {
-            ...res,
-            type: "user"
-        };
-    }
-};
+    return {
+      ...res,
+      type: "user"
+    };
+  }
+}

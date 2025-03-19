@@ -2,11 +2,11 @@ import { Models } from "lafka/database";
 
 const { auth_users: AuthUsers } = new Models();
 
-import passport from 'passport';
-import Authenticator from './authenticator';
+import passport from "passport";
+import Authenticator from "./authenticator";
 
 class GeneralStrategy {
-  protected readonly _passport: passport.PassportStatic = require('passport');
+  protected readonly _passport: passport.PassportStatic = require("passport");
   private readonly _authenticator: Authenticator;
 
   public constructor() {
@@ -27,7 +27,7 @@ class GeneralStrategy {
     this._passport.deserializeUser(async (u: any, done) => {
       try {
         const user = await AuthUsers.model.findOne({
-          service_id: u._service_id,
+          service_id: u._service_id
         });
 
         return user ? done(null, user) : done(null, null);
