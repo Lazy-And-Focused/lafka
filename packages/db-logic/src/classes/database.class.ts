@@ -48,7 +48,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 		return this._model;
 	}
 
-	public parse = (data: T): Omit<T & {_id?: string, _doc?: unknown}, "_id"|"_doc"> => {
+	public static parse = <T extends { id: string}>(data: T): Omit<T & {_id?: string, _doc?: unknown}, "_id"|"_doc"> => {
 		const output = (data as T & {_id?: string, _doc?: unknown});
 		
 		delete output._id;

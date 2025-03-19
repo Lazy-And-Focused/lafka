@@ -5,7 +5,6 @@ import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
 
 const { users, auth_users } = new Models();
-
 const keyGetSymbols = ["@"];
 const keyGetSymbolsMap = new Map<string, string>([
   ["@", "username"],
@@ -36,7 +35,7 @@ export class UsersService {
 
       return {
         successed: true,
-        resource: user
+        resource: 
       };
     } catch (error) {
       console.error(error);
