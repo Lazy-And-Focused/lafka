@@ -1,6 +1,7 @@
 import crypto from "crypto";
 
 import Api from "api/index.api";
+import { Request } from "express";
 
 const { HASH_KEY: key }= new Api().env;
 
@@ -14,6 +15,20 @@ class Hash {
   public execute(data: string) {
     this._hmac.update(data);
     return this._hmac.digest('hex');
+  }
+
+  public static parse(token: string|Request): {
+    successed: boolean,
+    id?: string,
+    token?: string
+  } {
+    const [ id, hash ] = typeof token === "string"
+      ? token.split("-")
+      : token.headers.token.toString().split("-");
+
+    if (!id || !hash) return { successed: false };
+
+    return { successed: true, id, token: hash } as const;
   }
 }
 

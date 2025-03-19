@@ -4,7 +4,7 @@ import { Models } from "lafka/database";
 import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
 
-const { users } = new Models();
+const { users, auth_users } = new Models();
 
 const keyGetSymbols = ["@"];
 const keyGetSymbolsMap = new Map<string, string>([
@@ -26,6 +26,30 @@ export class UsersService {
     if (!type) return new Error(`argument must be username (@username) or id (id)`);
 
     return { [type]: data.slice(1) };
+  }
+
+  public async findUserByAuthUserId(id: string): Promise<ServiceResponse<LAFka.User>> {
+    try {
+      const { data: authUser } = await auth_users.getData({filter: {id}});
+
+      if (!authUser || (authUser && !authUser[0])) return { successed: false, error: "User not found" };
+
+      const { data: user } = await users.getData({filter: {id: authUser[0].profile_id }});
+
+      if (!user || (user && !user[0])) return { successed: false, error: "User not found" };
+
+      return {
+        successed: true,
+        resource: user[0]
+      };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        successed: false,
+        error
+      };
+    }
   }
 
   public async getUser(data: Partial<LAFka.User> | string): Promise<ServiceResponse<LAFka.User>> {

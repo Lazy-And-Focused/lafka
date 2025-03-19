@@ -7,9 +7,9 @@ const { auth_users, users } = new Models();
 
 class Service {
   public async validateRequest(req: Request) {
-    const [ id, token ] = `${req.headers.token}`.split("-");
+    const { successed, id, token } = Hash.parse(req);
 
-    if (!(id && token)) return false;
+    if (!successed) return false;
 
     const findedUser = await auth_users.model.findOne({ id: id });
 
