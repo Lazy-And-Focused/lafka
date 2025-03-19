@@ -17,14 +17,13 @@ export class UsersController {
 
   @Get(USERS_ROUTES.GET_ME)
   public async getMe(@Req() req: Request, @Res() res: Response) {
-    const { successed, id } = Hash.parse(req);
+    const { successed, profile_id } = Hash.parse(req);
 
-    if (!successed) return res.sendStatus(403);
+    if (!successed) return res.send({successed: false, type: "user"});
 
-    return {
-      ...this.usersService.findUserByAuthUserId(id),
-      type: "user"
-    };
+    const user = await this.usersService.getUser(profile_id);
+
+    return res.send({...user, type: "user" });
   }
   
   @Get(USERS_ROUTES.GET)

@@ -20,15 +20,16 @@ class Hash {
   public static parse(token: string|Request): {
     successed: boolean,
     id?: string,
+    profile_id?: string,
     token?: string
   } {
-    const [ id, hash ] = typeof token === "string"
+    const [ id, profile_id, hash ] = typeof token === "string"
       ? token.split("-")
       : token.headers.token.toString().split("-");
 
-    if (!id || !hash) return { successed: false };
+    if (!id || !hash || !profile_id) return { successed: false };
 
-    return { successed: true, id, token: hash } as const;
+    return { successed: true, id, profile_id, token: hash } as const;
   }
 }
 

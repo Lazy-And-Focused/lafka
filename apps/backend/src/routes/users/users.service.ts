@@ -28,30 +28,6 @@ export class UsersService {
     return { [type]: data.slice(1) };
   }
 
-  public async findUserByAuthUserId(id: string): Promise<ServiceResponse<LAFka.User>> {
-    try {
-      const { data: authUser } = await auth_users.getData({filter: {id}});
-
-      if (!authUser || (authUser && !authUser[0])) return { successed: false, error: "User not found" };
-
-      const { data: user } = await users.getData({filter: {id: authUser[0].profile_id }});
-
-      if (!user || (user && !user[0])) return { successed: false, error: "User not found" };
-
-      return {
-        successed: true,
-        resource: user[0]
-      };
-    } catch (error) {
-      console.error(error);
-
-      return {
-        successed: false,
-        error
-      };
-    }
-  }
-
   public async getUser(data: Partial<LAFka.User> | string): Promise<ServiceResponse<LAFka.User>> {
     try {
       const user = await users.model.findOne(typeof data === "string" ? { id: data } : data);

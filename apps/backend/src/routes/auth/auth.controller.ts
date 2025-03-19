@@ -38,7 +38,7 @@ export class AuthController {
 
       if (!user) return;
 
-      res.cookie("id-token", `${user.id}-${new Hash().execute(user.access_token)}`);
+      res.cookie("id-token", `${user.id}-${user.profile_id}-${new Hash().execute(user.access_token)}`);
       res.redirect(api.env.CLIENT_URL);
     });
   }
