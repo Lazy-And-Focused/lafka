@@ -4,6 +4,7 @@ const { auth_users: AuthUsers } = new Models();
 
 import passport from "passport";
 import Authenticator from "./authenticator";
+import { AuthUser } from "lafka/types/auth/auth-user.types";
 
 class GeneralStrategy {
   protected readonly _passport: passport.PassportStatic = require("passport");
@@ -20,14 +21,14 @@ class GeneralStrategy {
   }
 
   private serializer() {
-    this._passport.serializeUser((user: any, done) => {
-      return done(null, user);
+    this._passport.serializeUser((user: AuthUser, done) => {
+      return done(null, user.id);
     });
 
-    this._passport.deserializeUser(async (u: any, done) => {
+    this._passport.deserializeUser(async (u: string, done) => {
       try {
         const user = await AuthUsers.model.findOne({
-          service_id: u._service_id
+          id: u
         });
 
         return user ? done(null, user) : done(null, null);
