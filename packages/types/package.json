@@ -17,6 +17,7 @@
   "license": "MIT",
   "devDependencies": {
     "tsc-alias": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "mongoose": "catalog:"
   }
 }

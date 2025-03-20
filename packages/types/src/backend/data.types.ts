@@ -1,4 +1,7 @@
 import { Models } from "../database/models.types";
+
+import { UpdateWriteOpResult, DeleteResult } from "mongoose";
+
 export type DataType = Exclude<Models, "auth_users">;
 
 export interface GetData<T> {
@@ -20,8 +23,8 @@ export interface ChangeData<T> {
   type: DataType;
   successed: boolean;
 
-  resource: T;
-  changed_resource?: T;
+  changed_resource_type: "resource"|"update"
+  changed_resource?: T|UpdateWriteOpResult;
   date: Date;
     
   error?: unknown;
@@ -31,7 +34,8 @@ export interface DeleteData<T> {
   type: DataType;
   successed: boolean;
 	
-  resource: T;
+  deleted_resource_type: "resource"|"delete";
+  deleted_resource?: T|DeleteResult;
   date: Date;
 
   error?: unknown;
