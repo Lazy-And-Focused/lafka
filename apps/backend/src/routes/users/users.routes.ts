@@ -2,8 +2,8 @@ export const USERS_CONTROLLER = ["users", "u"];
 
 export const USERS_ROUTES = {
   GET_ME: "",
-  GET: ":data",
-  POST: ":data",
-  DELETE: ":data",
-  PUT: ":data"
+  GET: ":identifier",
+  POST: ":identifier",
+  DELETE: ":identifier",
+  PUT: ":identifier"
 } as const;

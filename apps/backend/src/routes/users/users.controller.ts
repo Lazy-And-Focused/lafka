@@ -46,10 +46,10 @@ export class UsersController {
   @Get(USERS_ROUTES.GET)
   @Public()
   public async get(
-    @Param("data") data: string,
+    @Param("identifier") identifier: string,
     @Query("cache") cache?: string
   ): Promise<LAFka.Response.GetData<LAFka.User>> {
-    const formatted = UsersService.formatGetData(data);
+    const formatted = UsersService.formatGetData(identifier);
 
     if (formatted instanceof Error) return { successed: false, error: formatted.message, type: "users" };
     
