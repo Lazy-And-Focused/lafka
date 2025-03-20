@@ -14,13 +14,6 @@ export namespace Schemas {
         "users"
     ] as const;
     
-    export const modelKeys = {
-        auth_users: ["id", "service_id", "created_at", "profile_id", "access_token", "refresh_token", "type"],
-        posts: ["id", "name", "content", "description", "comments", "followers", "created_at", "changed_at", "creator_id", "type", "view_status", "likes", "dislikes", "reposts", "tags", "status"],
-        comments: ["id", "content", "created_at", "changed_at", "author_id", "post_id", "reply"],
-        users: ["id", "username", "nickname", "avatar", "biography", "created_at", "blocked_posts", "blog_posts", "forum_posts", "followed_blog_posts", "followed_forum_posts", "followers", "links"],
-    } as const;
-
     export type Models = typeof models[number];
 
     export const databases = {

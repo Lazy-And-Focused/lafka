@@ -11,6 +11,7 @@ import {
 	DeleteResult,
 	PickTypeInObject
 } from "lafka/types/mongodb.types";
+import { LAFka } from "lafka/types";
 
 import { Schemas } from "../database/schemas/index";
 
@@ -52,7 +53,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 
 	public static parse = <T extends { id: string}>(data: T, type: Schemas.Models): T => {
 		const output: {[key: string]: unknown} = {};
-		const keys = Schemas.modelKeys[type];
+		const keys = LAFka.keys[type];
 		
 		keys.forEach((k: string) => {
 			output[k] = (data as {[key: string]: unknown})[k];
