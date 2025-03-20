@@ -1,9 +1,9 @@
-import { AUKeys } from "../auth/auth-user.types";
-import { BPKeys } from "../posts/blog-post.types";
-import { CKeys } from "../content/comment.types";
-import { PFKeys } from "../posts/forum-post.types";
-import { PKeys } from "../posts/post.types";
-import { UKeys } from "../authors/user.types";
+import { AU_KEYS } from "../auth/auth-user.types";
+import { BP_KEYS } from "../posts/blog-post.types";
+import { C_KEYS  } from "../content/comment.types";
+import { PF_KEYS } from "../posts/forum-post.types";
+import { P_KEYS } from "../posts/post.types";
+import { U_KEYS } from "../authors/user.types";
 
 export const MODELS = [
   "auth_users",
@@ -15,11 +15,11 @@ export const MODELS = [
 export type Models = (typeof MODELS)[number];
 
 export const KEYS = {
-  auth_users: AUKeys,
-  posts: [...PKeys, ...PFKeys, ...BPKeys],
-  comments: CKeys,
-  users: UKeys,
+  auth_users: AU_KEYS,
+  posts: [...P_KEYS, ...PF_KEYS, ...BP_KEYS],
+  comments: C_KEYS,
+  users: U_KEYS,
   
-  blog_posts: BPKeys,
-  forum_posts: PFKeys,
+  blog_posts: BP_KEYS,
+  forum_posts: PF_KEYS,
 } as const;
