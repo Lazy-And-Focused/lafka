@@ -18,12 +18,12 @@ class AuthApi {
   static get methods(): Record<"abbreviations" | "methods", readonly string[]> {
     return {
       abbreviations: Array.from(abbreviations.keys()),
-      methods: LAFka.authTypes
+      methods: LAFka.AUTH_TYPES
     };
   }
 
   private getMethod(): [boolean, { [key: string]: unknown; method: string; body: any }] {
-    if (!LAFka.authTypes.includes(this._method as any)) {
+    if (!LAFka.AUTH_TYPES.includes(this._method as any)) {
       if (abbreviations.get(this._method))
         return [true, { body: null, method: abbreviations.get(this._method) }];
 
@@ -32,7 +32,7 @@ class AuthApi {
         {
           body: {
             msg: "Sorry, but method " + this._method + " not found. Try next:",
-            methods: LAFka.authTypes
+            methods: LAFka.AUTH_TYPES
           },
           method: this._method
         }

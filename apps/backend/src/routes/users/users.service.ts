@@ -13,18 +13,18 @@ const keyGetSymbolsMap = new Map<string, string>([
 
 @Injectable()
 export class UsersService {
-  public static formatGetData(data: string) {
+  public static formatGetData(data: string): { "id": string } | { "username": string } | Error {
     if (!keyGetSymbols.includes(data[0])) {
       if (isNaN(+data[0])) return new Error(`argument must be username (@username) or id (id)`);
 
       return { "id": data };
     }
 
-    const type = keyGetSymbolsMap.get(data[0]);
+    const type = keyGetSymbolsMap.get(data[0]) as "username"|"id";
 
     if (!type) return new Error(`argument must be username (@username) or id (id)`);
 
-    return { [type]: data.slice(1) };
+    return { [type]: data.slice(1) } as { "id": string } | { "username": string };
   }
 
   public async getUser(data: Partial<LAFka.User> | string): Promise<ServiceResponse<LAFka.User>> {
