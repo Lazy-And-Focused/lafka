@@ -1,4 +1,4 @@
-export const PKeys = [
+export const P_KEYS = [
 	"id",
 	"name",
 	"content",

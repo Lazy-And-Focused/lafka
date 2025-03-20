@@ -1,4 +1,4 @@
-export const CKeys = [
+export const C_KEYS = [
 	"id",
 	"content",
 	"created_at",

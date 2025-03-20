@@ -1,6 +1,6 @@
 import type { Link } from "../utility/utility.types";
 
-export const UKeys = [
+export const U_KEYS = [
 	"id",
 	"username",
 	"nickname",

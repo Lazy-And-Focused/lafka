@@ -1,65 +1,85 @@
+/* 
+  I{name} - interface {name}
+  T{name} - type {name}
+  C{name} - const {name}
+*/
+
 import {
-    authTypes as authTypesC,
-    AuthTypes as AuthTypesT,
-    AuthUser as AuthUserT,
-    AUKeys as CAUKeys
+  AUTH_TYPES as CAUTH_TYPES,
+  AuthTypes as TAuthTypes,
+  AuthUser as IAuthUser,
 } from "./auth/auth-user.types";
+
 import {
-    BlogPost as BlogPostT,
-    BPKeys as CBPKeys,
+  BlogPost as IBlogPost,
 } from "./posts/blog-post.types";
+
 import {
-    Comment as CommentT,
-    CKeys as CCKeys,
+  Comment as IComment,
 } from "./content/comment.types";
+
 import {
-    ForumPost as ForumPostT,
-    PFKeys as CPFKeys,
+  ForumPost as IForumPost,
 } from "./posts/forum-post.types";
+
 import {
-    Post as PostT,
-    PKeys as CPKeys,
+  Post as IPost,
 } from "./posts/post.types";
+
 import {
-    User as UserT,
-    UKeys as CUKeys,
+  User as IUser,
 } from "./authors/user.types";
 
-import { Link as LinkT, PostStatus as PostStatusT, Tag as TagT, Tags as TagsT } from "./utility/utility.types";
+import {
+  Link as TLink,
+	PostStatus as TPostStatus,
+	Tag as TTag,
+	Tags as TTags
+} from "./utility/utility.types";
+
+import {
+  KEYS as CKEYS,
+  MODELS as CMODELS,
+  Models as TModels,
+} from "./database/models.types";
+
+import {
+  GetData as IGetData,
+  CreateData as ICreateData,
+  ChangeData as IChangeData,
+  DeleteData as IDeleteData,
+  DataType as TDataType
+} from "./backend/data.types";
+
+export namespace LAFka.Response {
+  export type GetData<T> = IGetData<T>;
+  export type CreateData<T> = ICreateData<T>;
+  export type ChangeData<T> = IChangeData<T>;
+  export type DeleteData<T> = IDeleteData<T>;
+  export type DataType = TDataType;
+}
 
 export namespace LAFka {
-    export const models = [
-        "auth_users",
-        "posts",
-        "comments",
-        "users"
-    ] as const;
-    export const authTypes = authTypesC;
+  export const MODELS = CMODELS;
+  export const AUTH_TYPES = CAUTH_TYPES;
+  export const KEYS = CKEYS;
 
-    export const keys = {
-        auth_users: CAUKeys,
-        posts: [...CPKeys, ...CPFKeys, ...CBPKeys],
-        comments: CCKeys,
-        users: CUKeys,
-        
-        blog_posts: CBPKeys,
-        forum_posts: CPFKeys,
-    } as const;
+	export type Models = TModels;
 
-    export type AuthTypes = AuthTypesT;
-    export type AuthUser = AuthUserT;
+  export type AuthTypes = TAuthTypes;
+  export type AuthUser = IAuthUser;
 
-    export type User = UserT;
+  export type User = IUser;
     
-    export type Comment = CommentT;
+  export type Comment = IComment;
 
-    export type BlogPost = BlogPostT;
-    export type ForumPost = ForumPostT;
-    export type Post = PostT;
-    export type BlogAndForumPost = BlogPostT & ForumPostT;
+  export type BlogPost = IBlogPost;
+  export type ForumPost = IForumPost;
+  export type Post = IPost;
+  export type BlogAndForumPost = IBlogPost & IForumPost;
 
-    export type Link = LinkT;
-    export type PostStatus = PostStatusT;
-    export type Tag = TagT;
-    export type Tags = TagsT;
+  export type Link = TLink;
+  export type PostStatus = TPostStatus;
+  export type Tag = TTag;
+  export type Tags = TTags;
 }

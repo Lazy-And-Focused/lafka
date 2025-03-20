@@ -1,6 +1,6 @@
 import type { Post } from "./post.types";
 
-export const BPKeys = [
+export const BP_KEYS = [
 	"likes",
 	"dislikes",
 	"reposts"

@@ -1,8 +1,8 @@
-export const authTypes = ["google", "yandex"] as const;
+export const AUTH_TYPES = ["google", "yandex"] as const;
 
-export type AuthTypes = (typeof authTypes)[number];
+export type AuthTypes = (typeof AUTH_TYPES)[number];
 
-export const AUKeys = [
+export const AU_KEYS = [
 	"id",
 	"profile_id",
 	"service_id",

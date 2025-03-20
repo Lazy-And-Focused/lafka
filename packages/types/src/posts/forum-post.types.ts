@@ -1,7 +1,7 @@
 import type { Post } from "./post.types";
 import type { Tag, PostStatus } from "../utility/utility.types";
 
-export const PFKeys = [
+export const PF_KEYS = [
 	"tags",
 	"status"
 ] as const;
