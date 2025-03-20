@@ -1,4 +1,18 @@
-interface Post {
+export const PKeys = [
+	"id",
+	"name",
+	"content",
+	"description",
+	"comments",
+	"followers",
+	"created_at",
+	"changed_at",
+	"creator_id",
+	"type",
+	"view_status"
+] as const;
+
+export interface Post {
 	id: string;
 
 	name: string;
@@ -15,5 +29,3 @@ interface Post {
 	type: "forum" | "blog";
 	view_status: 0 | 1;
 }
-
-export { Post };

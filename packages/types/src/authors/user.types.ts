@@ -1,6 +1,23 @@
 import type { Link } from "../utility/utility.types";
 
-interface User {
+export const UKeys = [
+	"id",
+	"username",
+	"nickname",
+	"avatar",
+	"biography",
+	"links",
+	"created_at",
+	"forum_posts",
+	"blog_posts",
+	"followed_forum_posts",
+	"followed_blog_posts",
+	"blocked_posts",
+	"followers",
+	"following"
+] as const;
+
+export interface User {
 	id: string;
 
 	username: string;
@@ -21,5 +38,3 @@ interface User {
 	followers: string[];
 	following: string[];
 }
-
-export { User };

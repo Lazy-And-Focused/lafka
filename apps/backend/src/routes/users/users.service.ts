@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 
-import { Models } from "lafka/database";
+import DB, { Models } from "lafka/database";
 import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
 
-const { users, auth_users } = new Models();
+const { users } = new Models();
 const keyGetSymbols = ["@"];
 const keyGetSymbolsMap = new Map<string, string>([
   ["@", "username"],
@@ -35,7 +35,7 @@ export class UsersService {
 
       return {
         successed: true,
-        resource: 
+        resource: DB.Database.parse<LAFka.User>(user, "users")
       };
     } catch (error) {
       console.error(error);
