@@ -30,7 +30,7 @@ import { Link as LinkT, PostStatus as PostStatusT, Tag as TagT, Tags as TagsT } 
 export namespace LAFka {
     export const authTypes = authTypesC;
 
-    export const keys = {
+    export const dataKeys = {
         auth_users: CAUKeys,
         posts: [...CPKeys, ...CPFKeys, ...CBPKeys],
         comments: CCKeys,
