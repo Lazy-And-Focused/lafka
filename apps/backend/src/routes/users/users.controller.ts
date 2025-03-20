@@ -96,10 +96,38 @@ export class UsersController {
     const data = await this.usersService.updateUser(id, user, returnUser === "true");
 
     return {
-      ...data,
+      successed: data.successed,
       date,
       changed_resource_type: returnUser === "true" ? "resource" : "update",
+      changed_resource: data.resource,
       type: "users"
     };
   }
+
+  @Delete(USERS_ROUTES.DELETE)
+  public async delete(
+    @Req() req: Request,
+    @Param("identifier") identifier: string,
+    @Query("returnUser") returnUser?: string
+  ): Promise<LAFka.Response.DeleteData<LAFka.User>> {
+    const date = new Date();
+
+    const id = UsersService.formatGetData<true>(identifier, true);
+    if (id instanceof Error) return { successed: false, error: id.message, date, deleted_resource_type: "resource", type: "users" };
+
+    const { successed } = Hash.parse(req);
+    if (!successed) return { successed: false, date, deleted_resource_type: "resource", type: "users" };
+   
+    this.cacheManager.del(`user-${id}`);
+
+    const data = await this.usersService.deleteUser(id, returnUser === "true");
+
+    return {
+      successed: data.successed,
+      date,
+      deleted_resource_type: returnUser === "true" ? "resource" : "delete",
+      type: "users",
+      deleted_resource: data.resource,
+    }
+  };
 }

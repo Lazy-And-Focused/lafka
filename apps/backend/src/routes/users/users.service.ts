@@ -5,6 +5,7 @@ import { UpdateWriteOpResult } from "mongoose";
 import DB, { Models } from "lafka/database";
 import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
+import { DeleteResult } from "lafka/database/types/mongodb.types";
 
 const { users } = new Models();
 const keyGetSymbols = ["@"];
@@ -92,4 +93,32 @@ export class UsersService {
       };
     }
   }
+
+  public async deleteUser<T extends DeleteResult|LAFka.User>(
+    id: string,
+    returnUser: T extends LAFka.User
+      ? true
+      : false
+  ): Promise<ServiceResponse<T>> {
+    try {
+      const resource: LAFka.User|null = returnUser
+        ? DB.Database.parse<LAFka.User>(await users.model.findOne({id}), "users")
+        : null;
+      
+      const deleted = await users.delete({id});
+
+      return {
+        successed: deleted.acknowledged,
+        resource: resource ? resource as T : deleted as T
+      }
+    } catch (error) {
+      console.error(error);
+
+      return {
+        successed: false,
+        error
+      };
+    }
+  }
+
 }
