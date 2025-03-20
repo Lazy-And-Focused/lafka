@@ -46,8 +46,8 @@ interface ChangeData<T extends unknown> {
   type: DataType;
   successed: boolean;
 
-  resource: T;
-  changed_resource?: T;
+  changed_resource_type: "resource"|"update"
+  changed_resource?: T|UpdateWriteOpResult;
   date: Date;
     
   error?: unknown;
@@ -60,7 +60,8 @@ interface DeleteData<T extends unknown> {
   type: DataType;
   successed: boolean;
 	
-  resource: T;
+  deleted_resource_type: "resource"|"delete";
+  deleted_resource?: T|DeleteResult;
   date: Date;
 
   error?: unknown;
