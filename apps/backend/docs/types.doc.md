@@ -8,12 +8,21 @@
 type AuthTypes = "google" | "yandex";
 ```
 
+## DataType
+```ts
+/* 
+  type Models = "auth_users" | "posts" | "comments" | "users"
+*/
+type DataType = Exclude<Models, "auth_users">;
+// "posts" | "comments" | "users"
+```
+
 <hr>
 
 ## GetData
 ```ts
 interface GetData<T extends unknown> {
-  type: "user"|"post"|"comment";
+  type: DataType;
   successed: boolean;
   resource?: T;
   error?: unknown;
@@ -23,7 +32,7 @@ interface GetData<T extends unknown> {
 ## CreateData
 ```ts
 interface CreateData<T extends unknown> {
-  type: "user"|"post"|"comment";
+  type: DataType;
   successed: boolean;
   created_resource?: T;
   date: Date;
@@ -34,7 +43,7 @@ interface CreateData<T extends unknown> {
 ## ChangeData
 ```ts
 interface ChangeData<T extends unknown> {
-  type: "user"|"post"|"comment";
+  type: DataType;
   successed: boolean;
 
   resource: T;
@@ -48,7 +57,7 @@ interface ChangeData<T extends unknown> {
 ## DeleteData
 ```ts
 interface DeleteData<T extends unknown> {
-  type: "user"|"post"|"comment";
+  type: DataType;
   successed: boolean;
 	
   resource: T;
