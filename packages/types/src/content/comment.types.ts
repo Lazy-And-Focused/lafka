@@ -6,7 +6,7 @@ export const CKeys = [
 	"author_id",
 	"post_id",
 	"reply",
-];
+] as const;
 
 export interface Comment {
 	id: string;
