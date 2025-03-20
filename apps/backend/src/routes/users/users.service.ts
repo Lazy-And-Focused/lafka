@@ -15,18 +15,34 @@ const keyGetSymbolsMap = new Map<string, string>([
 
 @Injectable()
 export class UsersService {
-  public static formatGetData(data: string): { "id": string } | { "username": string } | Error {
+  public static formatGetData<Lazy extends boolean = false>(
+    data: string,
+    format: Lazy
+  ): Lazy extends true ? (string|Error) : ({ "id": string } | { "username": string } | Error) {
     if (!keyGetSymbols.includes(data[0])) {
-      if (isNaN(+data[0])) return new Error(`argument must be username (@username) or id (id)`);
+      if (isNaN(+data[0])) return new Error(`argument must be username (@username) or id (id)`) as any;
 
-      return { "id": data };
+      return format
+        ? data as any
+        : { "id": data } as any;
     }
 
     const type = keyGetSymbolsMap.get(data[0]) as "username"|"id";
 
-    if (!type) return new Error(`argument must be username (@username) or id (id)`);
+    if (!type) return new Error(`argument must be username (@username) or id (id)`) as any;
 
-    return { [type]: data.slice(1) } as { "id": string } | { "username": string };
+    return format
+      ? data.slice(1) as any
+      : { [type]: data.slice(1) } as { "id": string } | { "username": string } as any;
+  }
+
+  public static formatGettedData<Lazy extends boolean = false>(
+    data: { "id": string } | { "username": string } | (Lazy extends true ? Error : never)
+  ): Lazy extends true ? string|false : string {
+    if (data instanceof Error) return false as any;
+
+    const key = Object.keys(data)[0]
+    return data[key];
   }
 
   public async getUser(data: Partial<LAFka.User> | string): Promise<ServiceResponse<LAFka.User>> {

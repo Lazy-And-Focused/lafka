@@ -2,7 +2,7 @@ import { LAFka } from "lafka/types";
 import DB from "lafka/database"
 
 import { Request } from "express";
-import { Controller, Get, Inject, Injectable, Param, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, Inject, Injectable, Param, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 
@@ -32,11 +32,10 @@ export class UsersController {
     @Param("identifier") identifier: string,
     @Query("cache") cache?: string
   ): Promise<LAFka.Response.GetData<LAFka.User>> {
-    const formatted = UsersService.formatGetData(identifier);
-    const key = Object.keys(formatted)[0]
-    const formattedIdentifier: string = formatted[key];
-
+    const formatted = UsersService.formatGetData<false>(identifier, false);
+    
     if (formatted instanceof Error) return { successed: false, error: formatted.message, type: "users" };
+    const formattedIdentifier = UsersService.formatGettedData(formatted);
     
     const value = await api.getCache<LAFka.User>(`user-${formattedIdentifier}`, this.cacheManager, cache);
     if (value) return { successed: true, resource: value, type: "users" };
@@ -71,25 +70,30 @@ export class UsersController {
   @Put(USERS_ROUTES.PUT)
   public async put(
     @Req() req: Request,
+    @Param("identifier") identifier: string,
     @Query("returnUser") returnUser?: string
   ): Promise<LAFka.Response.ChangeData<LAFka.User>> {
-    const { successed, profile_id } = Hash.parse(req);
     const date = new Date();
+
+    const id = UsersService.formatGetData<true>(identifier, true);
+    if (id instanceof Error) return { successed: false, error: id.message, date, changed_resource_type: "resource", type: "users" };
+
+    const { successed } = Hash.parse(req);
 
     if (!successed) return { successed: false, date, changed_resource_type: "resource", type: "users" };
     const user: Partial<LAFka.User> = DB.Database.parse(req.body, "users");
 
     (async () => {
-      const value = await api.getCache<LAFka.User>(`user-${profile_id}`, this.cacheManager);
+      const value = await api.getCache<LAFka.User>(`user-${id}`, this.cacheManager);
       if (value) return value;
 
-      const { successed, resource } = await this.usersService.getUser(profile_id);
+      const { successed, resource } = await this.usersService.getUser(id);
       if (successed) return resource;
 
       return null;
-    })().then(u => this.cacheManager.set(`user-${profile_id}`, u));
+    })().then(u => this.cacheManager.set(`user-${id}`, u));
 
-    const data = await this.usersService.updateUser(profile_id, user, returnUser === "true");
+    const data = await this.usersService.updateUser(id, user, returnUser === "true");
 
     return {
       ...data,
