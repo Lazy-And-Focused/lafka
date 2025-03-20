@@ -28,6 +28,12 @@ import {
 import { Link as LinkT, PostStatus as PostStatusT, Tag as TagT, Tags as TagsT } from "./utility/utility.types";
 
 export namespace LAFka {
+    export const models = [
+        "auth_users",
+        "posts",
+        "comments",
+        "users"
+    ] as const;
     export const authTypes = authTypesC;
 
     export const keys = {
