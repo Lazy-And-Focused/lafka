@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
+import { UpdateWriteOpResult } from "mongoose";
+
 import DB, { Models } from "lafka/database";
 import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
@@ -37,6 +39,34 @@ export class UsersService {
         successed: true,
         resource: DB.Database.parse<LAFka.User>(user, "users")
       };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        successed: false,
+        error
+      };
+    }
+  }
+
+  public async updateUser<T extends UpdateWriteOpResult|LAFka.User>(
+    id: string,
+    data: Partial<LAFka.User>,
+    returnUser: T extends LAFka.User
+      ? true
+      : false
+  ): Promise<ServiceResponse<T>> {
+    try {
+      const updated = await users.update({filter: {id}, update: data});
+
+      const resource: T = returnUser
+        ? DB.Database.parse<LAFka.User>(await users.model.findOne({id}), "users") as T
+        : updated as T;
+
+      return {
+        successed: updated.acknowledged,
+        resource: resource
+      }
     } catch (error) {
       console.error(error);
 

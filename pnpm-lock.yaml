@@ -313,6 +313,12 @@ importers:
 
   packages/types:
     devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.17.21
+      mongoose:
+        specifier: 'catalog:'
+        version: 8.11.0
       tsc-alias:
         specifier: 'catalog:'
         version: 1.8.11
