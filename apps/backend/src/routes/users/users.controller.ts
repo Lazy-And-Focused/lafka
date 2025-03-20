@@ -71,7 +71,8 @@ export class UsersController {
   public async put(
     @Req() req: Request,
     @Param("identifier") identifier: string,
-    @Query("returnUser") returnUser?: string
+    @Query("returnUser") returnUser?: string,
+    @Query("cache") cache?: string
   ): Promise<LAFka.Response.ChangeData<LAFka.User>> {
     const date = new Date();
 
@@ -84,7 +85,7 @@ export class UsersController {
     const user: Partial<LAFka.User> = DB.Database.parse(req.body, "users");
 
     (async () => {
-      const value = await api.getCache<LAFka.User>(`user-${id}`, this.cacheManager);
+      const value = await api.getCache<LAFka.User>(`user-${id}`, this.cacheManager, cache);
       if (value) return value;
 
       const { successed, resource } = await this.usersService.getUser(id);

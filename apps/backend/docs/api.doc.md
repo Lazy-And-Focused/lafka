@@ -77,6 +77,12 @@ interface User {
 
 </details>
 
+
+
+#### query
+- `cache`: включает/выключает взятие данных сперва из кэша
+- `returnUser`: (Для put, delete) вовзращает User, а не UpdateWriteOpResult или DeleteResult (Дополнительно обращается к базе данных)
+
 #### params
 
 ##### `identifier`: `string`
@@ -210,12 +216,12 @@ fetch(api + "/u/1235", {
 | ------------- | ------------------ |
 | `/users`       | `/u`               |
 #### Routes
-| path                | method       | body                | headers           | response |
-| ------------------- | ------------ | ------------------  | ----------------- | -------- |
-| `/`                 | `get`        | `null`     		     | `{token: string}` | [`GetData<User>`](./types.doc.md#getdata) |
-| `/:identifier`      | `get`        | `null`     		     | `null`            | [`GetData<User>`](./types.doc.md#getdata) |
-| `/:identifier`      | `delete`     | `null`              | `{token: string}` | [`DeleteData<User>`](./types.doc.md#deletedata) |
-| `/:identifier`      | `put`        | `Partial<User>`     | `{token: string}` | [`ChangeData<User>`](./types.doc.md/#changedata) |
+| path                | query    | method       | body                | headers           | response |
+| ------------------- | -------- | ------------ | ------------------  | ----------------- | -------- |
+| `/`                 | `cache: boolean\|undefined` | `get`        | `null`     		      | `{token: string}` | [`GetData<User>`](./types.doc.md#getdata) |
+| `/:identifier`      | `cache: boolean\|undefined` | `get`        | `null`     		      | `null`            | [`GetData<User>`](./types.doc.md#getdata) |
+| `/:identifier`      | `returnUser: boolean\|undefined` | `delete`     | `null`              | `{token: string}` | [`DeleteData<User>`](./types.doc.md#deletedata) |
+| `/:identifier`      | `cache: boolean\|undefined`, `returnUser: boolean\|undefined` | `put`        | `Partial<User>`     | `{token: string}` | [`ChangeData<User>`](./types.doc.md/#changedata) |
 
 <hr>
 
