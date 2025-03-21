@@ -103,6 +103,13 @@ class AuthUser implements LAFka.AuthUser {
 
 		return this;
 	};
+
+	public async delete() {
+		const auth_user = await this._database.auth_users.delete({profile_id: this._data.profile_id});
+		const user = await this._database.users.delete({id: this._data.profile_id});
+
+		return { auth_user, user };
+	};
 	
 	public async updateProfileId(id: string): Promise<LAFka.User | null> {
 		await this._database.auth_users.update({

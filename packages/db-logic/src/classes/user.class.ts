@@ -21,8 +21,11 @@ enum CreatePost {
 type PostTypes = "forum" | "blog" | "followed_forum" | "followed_blog" | "blocked";
 type Data = "username" | "nickname" | "biography" | "avatar" | "links";
 
+const database = new Database();
+
 class User<T extends boolean = false> implements LAFka.User {
-	private readonly _users = new Database().users;
+	private readonly _users = database.users;
+	private readonly _auth_users = database.auth_users;
 	
 	private _data: LAFka.User;
 	private initialized: boolean = false;
@@ -156,6 +159,13 @@ class User<T extends boolean = false> implements LAFka.User {
 		});
 
 		return new Status({ type: 1, text: action + "ing!" });
+	}
+
+	public readonly delete = async() => {
+		const auth_user = await this._auth_users.delete({filter: {profile_id: this._data.id}});
+		const user = await this._users.delete({id: this._data.id});
+
+		return { auth_user, user };
 	}
 
 	public readonly updateData = async (data: string | LAFka.Link[], type: Data) => {
