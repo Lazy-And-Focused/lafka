@@ -101,15 +101,17 @@ export class UsersService {
       : false
   ): Promise<ServiceResponse<T>> {
     try {
-      const resource: LAFka.User|null = returnUser
-        ? DB.Database.parse<LAFka.User>(await users.model.findOne({id}), "users")
-        : null;
+      const resource = returnUser
+        ? new DB.User<true>({id})
+        : DB.User;
       
-      const deleted = await users.delete({id});
+      const deleted = await resource.delete(id);
 
       return {
-        successed: deleted.acknowledged,
-        resource: resource ? resource as T : deleted as T
+        successed: deleted.user.acknowledged && deleted.auth_user.acknowledged,
+        resource: returnUser
+          ? deleted.user as T
+          : resource as unknown as T
       }
     } catch (error) {
       console.error(error);
