@@ -24,9 +24,6 @@ type Data = "username" | "nickname" | "biography" | "avatar" | "links";
 const database = new Database();
 
 class User<T extends boolean = false> implements LAFka.User {
-	private readonly _users = database.users;
-	private readonly _auth_users = database.auth_users;
-	
 	private _data: LAFka.User;
 	private initialized: boolean = false;
 
@@ -63,7 +60,7 @@ class User<T extends boolean = false> implements LAFka.User {
 			? { id: data.id, username: data.username }
 			: { username: data.username };
 
-		const status: StatusType<LAFka.User[]> = await this._users.getData({
+		const status: StatusType<LAFka.User[]> = await database.users.getData({
 			filter: { ...filter }
 		});
 
@@ -71,7 +68,7 @@ class User<T extends boolean = false> implements LAFka.User {
 			if (filter.id && !filter.username)
 				return null as any;
 
-			const user = await this._users.create(data);
+			const user = await database.users.create(data);
 			this.initialized = true;
 
 			return this.paste(data, user);
@@ -79,7 +76,7 @@ class User<T extends boolean = false> implements LAFka.User {
 			const user = status.data[0];
 			const updateData = this.paste(data, user);
 
-			this._users.update({
+			database.users.update({
 				filter: { username: data.username },
 				update: {
 					id: updateData._data.id,
@@ -115,7 +112,7 @@ class User<T extends boolean = false> implements LAFka.User {
 	};
 
 	private readonly getDatabaseUser = async (id?: string) => {
-		const { data } = await this._users.getData({filter: {id: id||this._data.id}});
+		const { data } = await database.users.getData({filter: {id: id||this._data.id}});
 
 		return data ? data[0] : null;
 	};
@@ -123,7 +120,7 @@ class User<T extends boolean = false> implements LAFka.User {
 	private async addPosts(posts: string[], type: PostTypes) {
 		this._data[CreatePost[type]].push(...posts);
 
-		return await this._users.push({
+		return await database.users.push({
 			filter: { id: this._data.id },
 			update: { [CreatePost[type]]: posts }
 		});
@@ -148,12 +145,12 @@ class User<T extends boolean = false> implements LAFka.User {
 			user.following = user.following.filter((id) => id !== following);
 		}
 
-		this._users.update({
+		database.users.update({
 			filter: { id: followingUser.id },
 			update: { followers: followingUser.followers }
 		});
 
-		this._users.update({
+		database.users.update({
 			filter: { id: user.id },
 			update: { followers: user.following }
 		});
@@ -161,9 +158,16 @@ class User<T extends boolean = false> implements LAFka.User {
 		return new Status({ type: 1, text: action + "ing!" });
 	}
 
+	public static readonly delete = async(id: string) => {
+		const auth_user = await database.auth_users.delete({filter: {profile_id: id}});
+		const user = await database.users.delete({id: id});
+
+		return { auth_user, user };
+	}
+
 	public readonly delete = async() => {
-		const auth_user = await this._auth_users.delete({filter: {profile_id: this._data.id}});
-		const user = await this._users.delete({id: this._data.id});
+		const auth_user = await database.auth_users.delete({filter: {profile_id: this._data.id}});
+		const user = await database.users.delete({id: this._data.id});
 
 		return { auth_user, user };
 	}
@@ -171,13 +175,13 @@ class User<T extends boolean = false> implements LAFka.User {
 	public readonly updateData = async (data: string | LAFka.Link[], type: Data) => {
 		if (typeof data === "string" && type !== "links") {
 			this._data[type] === data;
-			await this._users.update({
+			await database.users.update({
 				filter: { id: this._data.id },
 				update: { [type]: data }
 			});
 		} else if (Array.isArray(data) && type === "links") {
 			this._data[type].push(...data);
-			await this._users.push({
+			await database.users.push({
 				filter: { id: this._data.id },
 				update: { [type]: data }
 			});
