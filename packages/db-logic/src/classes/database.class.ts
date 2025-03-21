@@ -53,7 +53,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
 
 	public static parse = <T extends { id: string}>(data: T, type: Schemas.Models): T => {
 		const output: {[key: string]: unknown} = {};
-		const keys = LAFka.keys[type];
+		const keys = LAFka.KEYS[type];
 		
 		keys.forEach((k: string) => {
 			output[k] = (data as {[key: string]: unknown})[k];
