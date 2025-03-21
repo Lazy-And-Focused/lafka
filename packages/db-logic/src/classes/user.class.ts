@@ -165,11 +165,8 @@ class User<T extends boolean = false> implements LAFka.User {
 		return { auth_user, user };
 	}
 
-	public readonly delete = async() => {
-		const auth_user = await database.auth_users.delete({filter: {profile_id: this._data.id}});
-		const user = await database.users.delete({id: this._data.id});
-
-		return { auth_user, user };
+	public readonly delete = async(id?: string) => {
+		return await User.delete(id || this._data.id);
 	}
 
 	public readonly updateData = async (data: string | LAFka.Link[], type: Data) => {
