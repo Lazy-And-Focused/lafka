@@ -80,13 +80,17 @@ interface User {
 
 
 #### query
-- `cache`: включает/выключает взятие данных сперва из кэша
-- `returnUser`: (Для put, delete) вовзращает User, а не UpdateWriteOpResult или DeleteResult (Дополнительно обращается к базе данных)
+1. `cache`: `boolean`
+- Включает/выключает взятие данных сперва из кэша
+
+2. `returnUser`: `boolean`
+- (Для put, delete) вовзращает User, а не UpdateWriteOpResult или DeleteResult (Дополнительно обращается к базе данных)
 
 #### params
-
-##### `identifier`: `string`
+1. `identifier`: `string`
 - `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567`
+
+#### examples
 
 <details>
 <summary>1. GET (ME)</summary>
@@ -208,13 +212,11 @@ fetch(api + "/u/1235", {
 
 </details>
 
-| name         | type               | value                        | expample 			|
-| ------------ | ------------------ | --------------------------   | ------------------ |
-| `identifier`       | `string`           | `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567` | `fetch(api + "/u/@FOCKUSTY")`, `fetch(api + "/users/12345")` |
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| `/users`       | `/u`               |
+| `/users`       | `/u`              |
+
 #### Routes
 | path                | query    | method       | body                | headers           | response |
 | ------------------- | -------- | ------------ | ------------------  | ----------------- | -------- |
@@ -229,7 +231,7 @@ fetch(api + "/u/1235", {
 ### /posts/
 
 #### params
-##### `id`: `string`
+1. `id`: `string`
 - `id` поста на сайте, поиск: `1235412`
 
 #### types
@@ -273,6 +275,7 @@ interface Post {
 | full          | abbreviation       |
 | ------------- | ------------------ |
 | `/posts`      | `/p`               |
+
 #### Routes
 | path                  | method       | body                | headers           | response |
 | -----  | ------------ | ------------------  | ----------------- | -------- |
@@ -309,13 +312,14 @@ interface Comment {
 </details>
 
 #### params
-##### `id`: `string`
+1. `id`: `string`
 - `id` комментария на сайте, поиск: `1235412`
 
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
 | `/comments`   | `/c`               |
+
 #### Routes
 | path                | method       | body                | headers           | response |
 | ------------------- | ------------ | ------------------  | ----------------- | -------- |
