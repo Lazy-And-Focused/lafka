@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
+import "./schemas/index";
 import "./models.database";
+import "../classes/index";
 
-export default async (url = "mongodb+srv://laf:jIDOPKEVOsTTP81k@lafka.y12tx.mongodb.net/?retryWrites=true&w=majority&appName=lafka") => {
+export default async (url: string) => {
 	mongoose
 		.connect(url)
 		.catch((err) => console.error(err))

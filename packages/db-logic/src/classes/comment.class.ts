@@ -1,6 +1,6 @@
-import { LAFka } from "lafka/types";
-
 import Database, { Constructors } from "database/models.database";
+
+import { LAFka } from "lafka/types";
 
 class Comment implements LAFka.Comment {
 	private readonly _comments = new Database().comments;
