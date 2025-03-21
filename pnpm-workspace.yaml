@@ -3,22 +3,30 @@ packages:
   - "packages/*"
 
 catalog:
-  eslint: "^9.0.0"
+  # TYPES
+  typescript: 5.7.3
+  "@types/node": ^20.10.5
+
+  # ESLINT + PRETTIER
+  eslint: ^9.0.0
+  prettier: ^3.0.0
+  # ⇑ PLUGINS
   eslint-config-prettier: ^9
   eslint-plugin-prettier: ^5
-  prettier: ^3.0.0
 
-  "@types/node": "^20.10.5"
-  "dotenv": "^16.4.7"
-  "nodemon": "^3.1.9"
-  "ts-node": "^10.9.2"
-  "tsc-alias": "^1.8.10"
-  "tsconfig-paths": "^4.2.0"
-  "typescript": "5.7.3"
+  # ENVIRONMENT
+  dotenv: ^16.4.7
+  fock-logger: 2.3.1
 
-  "axios": "^1.7.9"
+  # DEV
+  nodemon: ^3.1.9
+  ts-node: ^10.9.2
+  tsc-alias: ^1.8.10
+  tsconfig-paths: ^4.2.0
 
-  "fock-logger": "2.3.1"
+  # HTTP
+  axios: ^1.7.9
 
-  "mongodb": "^6.8.0"
-  "mongoose": "^8.5.3"
+  # DATABASE
+  mongodb: ^6.8.0
+  mongoose: ^8.5.3
