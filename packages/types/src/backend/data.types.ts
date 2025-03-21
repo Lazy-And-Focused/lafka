@@ -23,19 +23,19 @@ export interface ChangeData<T> {
   type: DataType;
   successed: boolean;
 
-  changed_resource_type: "resource"|"update"
-  changed_resource?: T|UpdateWriteOpResult;
+  changed_resource_type: "resource" | "update";
+  changed_resource?: T | UpdateWriteOpResult;
   date: Date;
-    
+
   error?: unknown;
 }
 
 export interface DeleteData<T> {
   type: DataType;
   successed: boolean;
-	
-  deleted_resource_type: "resource"|"delete";
-  deleted_resource?: T|DeleteResult;
+
+  deleted_resource_type: "resource" | "delete";
+  deleted_resource?: T | DeleteResult;
   date: Date;
 
   error?: unknown;

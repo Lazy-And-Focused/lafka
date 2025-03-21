@@ -5,7 +5,4 @@ import { Classes } from "./classes";
 
 export default Classes;
 
-export {
-    Database,
-    Models
-};
+export { Database, Models };

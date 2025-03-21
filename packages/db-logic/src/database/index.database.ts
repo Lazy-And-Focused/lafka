@@ -4,10 +4,10 @@ import "./models.database";
 import "../classes/index";
 
 export default async (url: string) => {
-	mongoose
-		.connect(url)
-		.catch((err) => console.error(err))
-		.then(async () => {
-			console.log("Connected to MongoDB");
-		});
+  mongoose
+    .connect(url)
+    .catch((err) => console.error(err))
+    .then(async () => {
+      console.log("Connected to MongoDB");
+    });
 };

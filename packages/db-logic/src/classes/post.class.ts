@@ -7,252 +7,248 @@ import type { CreateData, CreatePickData } from "lafka/types/mongodb.types";
 import Comment from "./comment.class";
 
 class Post implements LAFka.Post {
-	private _data: LAFka.BlogAndForumPost;
-	private initialized: boolean = false;
+  private _data: LAFka.BlogAndForumPost;
+  private initialized: boolean = false;
 
-	private readonly _posts = new Database().posts;
+  private readonly _posts = new Database().posts;
 
-	public constructor(
-		data: Constructors.posts
-	) {
-		this._data = {
-			id: "",
-			created_at: new Date(),
+  public constructor(data: Constructors.posts) {
+    this._data = {
+      id: "",
+      created_at: new Date(),
 
-			likes: 0,
-			dislikes: 0,
-			reposts: 0,
+      likes: 0,
+      dislikes: 0,
+      reposts: 0,
 
-			followers: 0,
-			comments: [],
+      followers: 0,
+      comments: [],
 
-			view_status: 1,
+      view_status: 1,
 
-			tags: [],
-			status: "open",
+      tags: [],
+      status: "open",
 
-			...data,
-		}
-	}
+      ...data
+    };
+  }
 
-	public readonly init = async () => {
-		if (this.initialized) return this;
+  public readonly init = async () => {
+    if (this.initialized) return this;
 
-		const data = this._data;
+    const data = this._data;
 
-		const create = async () => {
-			if (this.initialized) return this;
-			this.initialized = true;
+    const create = async () => {
+      if (this.initialized) return this;
+      this.initialized = true;
 
-			const post = await this._posts.create(data);
+      const post = await this._posts.create(data);
 
-			return this.paste(data, post);
-		};
+      return this.paste(data, post);
+    };
 
-		if (data.id) {
-			const { data: gettedPost } = await this._posts.getData({
-				filter: { id: data.id }
-			});
+    if (data.id) {
+      const { data: gettedPost } = await this._posts.getData({
+        filter: { id: data.id }
+      });
 
-			if (gettedPost) {
-				this.initialized = true;
-				return this.paste(data, gettedPost[0]);
-			}
-		}
+      if (gettedPost) {
+        this.initialized = true;
+        return this.paste(data, gettedPost[0]);
+      }
+    }
 
-		await create();
+    await create();
 
-		return this;
-	};
+    return this;
+  };
 
-	private readonly paste = (
-		data: CreateData<LAFka.BlogAndForumPost> & { id?: string },
-		post: LAFka.BlogAndForumPost
-	) => {
-		this._data = {
-			...data,
-			...post,
+  private readonly paste = (
+    data: CreateData<LAFka.BlogAndForumPost> & { id?: string },
+    post: LAFka.BlogAndForumPost
+  ) => {
+    this._data = {
+      ...data,
+      ...post,
 
-			id: post.id
-		};
+      id: post.id
+    };
 
-		return this;
-	};
+    return this;
+  };
 
-	private readonly changed = () => {
-		this._data.changed_at = new Date();
-	};
+  private readonly changed = () => {
+    this._data.changed_at = new Date();
+  };
 
-	private readonly addComments = async (comments: string[]) => {
-		this._data.comments.push(...comments);
+  private readonly addComments = async (comments: string[]) => {
+    this._data.comments.push(...comments);
 
-		return await this._posts.push({
-			filter: { id: this._data.id },
-			update: { comments: comments }
-		});
-	};
+    return await this._posts.push({
+      filter: { id: this._data.id },
+      update: { comments: comments }
+    });
+  };
 
-	public async createComment(
-		comment: CreatePickData<LAFka.Comment, "author_id" | "content">
-	) {
-		const created = await new Comment({
-			post_id: this._data.id,
-			...comment
-		}).init();
+  public async createComment(comment: CreatePickData<LAFka.Comment, "author_id" | "content">) {
+    const created = await new Comment({
+      post_id: this._data.id,
+      ...comment
+    }).init();
 
-		return {
-			response: this.addComments([created.id]),
-			comment: created
-		};
-	}
+    return {
+      response: this.addComments([created.id]),
+      comment: created
+    };
+  }
 
-	public readonly addTags = async (tags: LAFka.Tag[]) => {
-		if (this._data.type !== "forum") return "this is a blog post";
+  public readonly addTags = async (tags: LAFka.Tag[]) => {
+    if (this._data.type !== "forum") return "this is a blog post";
 
-		this._data.tags.push(...tags);
+    this._data.tags.push(...tags);
 
-		return await this._posts.push({
-			filter: { id: this._data.id },
-			update: { tags: tags }
-		});
-	};
+    return await this._posts.push({
+      filter: { id: this._data.id },
+      update: { tags: tags }
+    });
+  };
 
-	public addLikes = async (likes: number) => {
-		if (this._data.type != "blog") return "this is a forum posts";
+  public addLikes = async (likes: number) => {
+    if (this._data.type != "blog") return "this is a forum posts";
 
-		this._data.likes += likes;
+    this._data.likes += likes;
 
-		return await this._posts.update({
-			filter: { id: this._data.id },
-			update: { likes: this._data.likes }
-		});
-	};
+    return await this._posts.update({
+      filter: { id: this._data.id },
+      update: { likes: this._data.likes }
+    });
+  };
 
-	public addDislikes = async (dislikes: number) => {
-		if (this._data.type != "blog") return "this is a forum posts";
+  public addDislikes = async (dislikes: number) => {
+    if (this._data.type != "blog") return "this is a forum posts";
 
-		this._data.dislikes += dislikes;
+    this._data.dislikes += dislikes;
 
-		return await this._posts.update({
-			filter: { id: this._data.id },
-			update: { dislikes: this._data.dislikes }
-		});
-	};
+    return await this._posts.update({
+      filter: { id: this._data.id },
+      update: { dislikes: this._data.dislikes }
+    });
+  };
 
-	public addReposts = async (reposts: number) => {
-		if (this._data.type != "blog") return "this is a forum posts";
+  public addReposts = async (reposts: number) => {
+    if (this._data.type != "blog") return "this is a forum posts";
 
-		this._data.reposts += reposts;
+    this._data.reposts += reposts;
 
-		return await this._posts.update({
-			filter: { id: this._data.id },
-			update: { reposts: this._data.reposts }
-		});
-	};
+    return await this._posts.update({
+      filter: { id: this._data.id },
+      update: { reposts: this._data.reposts }
+    });
+  };
 
-	public set name(data: string) {
-		this.changed();
+  public set name(data: string) {
+    this.changed();
 
-		this._data.name = data;
-	}
+    this._data.name = data;
+  }
 
-	public set content(data: string) {
-		this.changed();
+  public set content(data: string) {
+    this.changed();
 
-		this._data.content = data;
-	}
+    this._data.content = data;
+  }
 
-	public set description(data: string) {
-		this.changed();
+  public set description(data: string) {
+    this.changed();
 
-		this._data.description = data;
-	}
+    this._data.description = data;
+  }
 
-	public set followers(followers: number) {
-		this._data.followers = followers;
-	}
+  public set followers(followers: number) {
+    this._data.followers = followers;
+  }
 
-	public get id(): string {
-		return this._data.id;
-	}
+  public get id(): string {
+    return this._data.id;
+  }
 
-	public get created_at() {
-		return this._data.created_at;
-	}
+  public get created_at() {
+    return this._data.created_at;
+  }
 
-	public get changed_at() {
-		return this._data.changed_at;
-	}
+  public get changed_at() {
+    return this._data.changed_at;
+  }
 
-	public get creator_id() {
-		return this._data.creator_id;
-	}
+  public get creator_id() {
+    return this._data.creator_id;
+  }
 
-	public get view_status() {
-		return this._data.view_status;
-	}
+  public get view_status() {
+    return this._data.view_status;
+  }
 
-	public get name(): string {
-		return this._data.name;
-	}
+  public get name(): string {
+    return this._data.name;
+  }
 
-	public get content(): string {
-		return this._data.content;
-	}
+  public get content(): string {
+    return this._data.content;
+  }
 
-	public get description(): string | undefined {
-		return this._data.description;
-	}
+  public get description(): string | undefined {
+    return this._data.description;
+  }
 
-	public get comments(): string[] {
-		return this._data.comments;
-	}
+  public get comments(): string[] {
+    return this._data.comments;
+  }
 
-	public get followers(): number {
-		return this._data.followers;
-	}
+  public get followers(): number {
+    return this._data.followers;
+  }
 
-	public get createdAt(): Date {
-		return this._data.created_at;
-	}
+  public get createdAt(): Date {
+    return this._data.created_at;
+  }
 
-	public get changedAt(): Date | undefined {
-		return this._data.changed_at;
-	}
+  public get changedAt(): Date | undefined {
+    return this._data.changed_at;
+  }
 
-	public get type(): "forum" | "blog" {
-		return this._data.type;
-	}
+  public get type(): "forum" | "blog" {
+    return this._data.type;
+  }
 
-	public get likes(): number {
-		if (this._data.type != "blog") return 0;
+  public get likes(): number {
+    if (this._data.type != "blog") return 0;
 
-		return this._data.likes;
-	}
+    return this._data.likes;
+  }
 
-	public get dislikes(): number {
-		if (this._data.type != "blog") return 0;
+  public get dislikes(): number {
+    if (this._data.type != "blog") return 0;
 
-		return this._data.dislikes;
-	}
+    return this._data.dislikes;
+  }
 
-	public get reposts(): number {
-		if (this._data.type != "blog") return 0;
+  public get reposts(): number {
+    if (this._data.type != "blog") return 0;
 
-		return this._data.reposts;
-	}
+    return this._data.reposts;
+  }
 
-	public get tags(): LAFka.Tag[] {
-		if (this._data.type != "forum") return [];
+  public get tags(): LAFka.Tag[] {
+    if (this._data.type != "forum") return [];
 
-		return this._data.tags;
-	}
+    return this._data.tags;
+  }
 
-	public get status(): LAFka.PostStatus {
-		if (this._data.type !== "forum") return "blocked";
+  public get status(): LAFka.PostStatus {
+    if (this._data.type !== "forum") return "blocked";
 
-		return this._data.status;
-	}
+    return this._data.status;
+  }
 }
 
 export default Post;

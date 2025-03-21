@@ -7,41 +7,27 @@
 import {
   AUTH_TYPES as CAUTH_TYPES,
   AuthTypes as TAuthTypes,
-  AuthUser as IAuthUser,
+  AuthUser as IAuthUser
 } from "./auth/auth-user.types";
 
-import {
-  BlogPost as IBlogPost,
-} from "./posts/blog-post.types";
+import { BlogPost as IBlogPost } from "./posts/blog-post.types";
 
-import {
-  Comment as IComment,
-} from "./content/comment.types";
+import { Comment as IComment } from "./content/comment.types";
 
-import {
-  ForumPost as IForumPost,
-} from "./posts/forum-post.types";
+import { ForumPost as IForumPost } from "./posts/forum-post.types";
 
-import {
-  Post as IPost,
-} from "./posts/post.types";
+import { Post as IPost } from "./posts/post.types";
 
-import {
-  User as IUser,
-} from "./authors/user.types";
+import { User as IUser } from "./authors/user.types";
 
 import {
   Link as TLink,
-	PostStatus as TPostStatus,
-	Tag as TTag,
-	Tags as TTags
+  PostStatus as TPostStatus,
+  Tag as TTag,
+  Tags as TTags
 } from "./utility/utility.types";
 
-import {
-  KEYS as CKEYS,
-  MODELS as CMODELS,
-  Models as TModels,
-} from "./database/models.types";
+import { KEYS as CKEYS, MODELS as CMODELS, Models as TModels } from "./database/models.types";
 
 import {
   GetData as IGetData,
@@ -64,13 +50,13 @@ export namespace LAFka {
   export const AUTH_TYPES = CAUTH_TYPES;
   export const KEYS = CKEYS;
 
-	export type Models = TModels;
+  export type Models = TModels;
 
   export type AuthTypes = TAuthTypes;
   export type AuthUser = IAuthUser;
 
   export type User = IUser;
-    
+
   export type Comment = IComment;
 
   export type BlogPost = IBlogPost;
