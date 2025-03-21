@@ -7,14 +7,10 @@ config();
 class Api {
   public readonly env = process.env;
 
-  public async getCache<T>(
-    key: string,
-    cacheManager: Cache,
-    cache?: string,
-  ) {
+  public async getCache<T>(key: string, cacheManager: Cache, cache?: string) {
     if ((!!cache && Boolean(cache) && cache !== "false") || typeof cache === "undefined") {
       return (await cacheManager.get<T>(key)) || false;
-    };
+    }
 
     return false;
   }

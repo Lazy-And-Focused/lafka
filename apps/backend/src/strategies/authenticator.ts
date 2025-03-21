@@ -55,12 +55,12 @@ class Authenticator {
           id: authUser.id,
           profile_id: authUser.profile_id,
           service_id: authUser.service_id,
-          
+
           access_token: authUser.access_token,
           refresh_token: authUser.refresh_token,
 
           created_at: authUser.created_at,
-          type: authUser.type,
+          type: authUser.type
         } as AuthUser);
       } catch (error) {
         console.log(error);

@@ -27,12 +27,12 @@ class GeneralStrategy {
         id: user.id,
         profile_id: user.profile_id,
         service_id: user.service_id,
-        
+
         access_token: user.access_token,
         refresh_token: user.refresh_token,
 
         created_at: user.created_at,
-        type: user.type,
+        type: user.type
       });
     });
 
@@ -42,17 +42,19 @@ class GeneralStrategy {
           id: u
         });
 
-        return user ? done(null, {
-          id: user.id,
-          profile_id: user.profile_id,
-          service_id: user.service_id,
-          
-          access_token: user.access_token,
-          refresh_token: user.refresh_token,
+        return user
+          ? done(null, {
+              id: user.id,
+              profile_id: user.profile_id,
+              service_id: user.service_id,
 
-          created_at: user.created_at,
-          type: user.type,
-        } as AuthUser) : done(null, null);
+              access_token: user.access_token,
+              refresh_token: user.refresh_token,
+
+              created_at: user.created_at,
+              type: user.type
+            } as AuthUser)
+          : done(null, null);
       } catch (err) {
         console.error(err);
 

@@ -47,17 +47,22 @@ class AuthApi {
     if (!successed) return res.send(body);
 
     passport.authenticate(method)(req, res, next);
-    
+
     return;
   }
 
-  public callback(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction, callback: (...args: [any, AuthUser|null, any]) => any): unknown {
+  public callback(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+    callback: (...args: [any, AuthUser | null, any]) => any
+  ): unknown {
     const [successed, { method, body }] = this.getMethod();
 
     if (!successed) return res.send(body);
 
     passport.authenticate(method, callback)(req, res, next);
-    
+
     return;
   }
 }
