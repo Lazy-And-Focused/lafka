@@ -11,13 +11,10 @@ import {
   DeleteResult,
   PickTypeInObject
 } from "lafka/types/mongodb.types";
-import { LAFka } from "lafka/types";
 
 import { Schemas } from "../database/schemas/index";
 
-import getData from "./helpers/get-data.helper";
-import getAllModels from "./helpers/get-all-models.helper";
-import deleteModel from "./helpers/delete-model.helper";
+import { Helpers } from "./helpers";
 
 export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
   name: Models;
@@ -54,16 +51,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
     return this._model;
   }
 
-  public static parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => {
-    const output: { [key: string]: unknown } = {};
-    const keys = LAFka.KEYS[type];
-
-    keys.forEach((k: string) => {
-      output[k] = (data as { [key: string]: unknown })[k];
-    });
-
-    return output as T;
-  };
+  public static parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => Helpers.parse<T>(data, type);
 
   public findLast = async (): Promise<Readonly<T>> => {
     return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;
@@ -104,19 +92,19 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
   };
 
   public getData = async (options: FindOptions<T>): Promise<DatabaseStatus<T[]>> => {
-    return await getData<T>(this._model, options);
+    return await Helpers.getData<T>(this._model, options);
   };
 
   public deleteModel = async (): Promise<DatabaseStatus> => {
-    return await deleteModel(this._model.name);
+    return await Helpers.deleteModel(this._model.name);
   };
 
   public static getAllModels = async (): Promise<DatabaseStatus> => {
-    return await getAllModels();
+    return await Helpers.getAllModels();
   };
 
   public static deleteModel = async (name: string): Promise<DatabaseStatus> => {
-    return await deleteModel(name);
+    return await Helpers.deleteModel(name);
   };
 
   get id(): Promise<string> {

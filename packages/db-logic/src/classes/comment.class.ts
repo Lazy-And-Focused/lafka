@@ -1,17 +1,18 @@
 import Database, { Constructors } from "database/models.database";
 
 import { LAFka } from "lafka/types";
+import { Helpers } from "./helpers";
 
 class Comment implements LAFka.Comment {
-  private readonly _comments = new Database().comments;
+  private readonly database = new Database();
 
   private initialized: boolean = false;
-  private _data: LAFka.Comment;
+  private data: LAFka.Comment;
 
   public constructor(data: Constructors.comments) {
     const now = new Date();
 
-    this._data = {
+    this.data = {
       id: "",
       created_at: now,
       ...data
@@ -20,27 +21,27 @@ class Comment implements LAFka.Comment {
 
   public init = async () => {
     if (this.initialized) return this;
-    const data = this._data;
+    const commentData = this.data;
 
     const create = async () => {
       if (this.initialized) return this;
 
       this.initialized = true;
 
-      const comment = await this._comments.create({
-        ...data,
+      const createdComment = await this.database.comments.create({
+        ...commentData,
         changed_at: undefined
       });
 
-      return this.paste(data, comment);
+      return this.paste(commentData, createdComment);
     };
 
-    if (data.id) {
-      const comment = await this._comments.model.findOne({ id: data.id });
+    if (commentData.id) {
+      const foundComment = await this.database.comments.model.findOne({ id: commentData.id });
 
-      if (comment) {
+      if (foundComment) {
         this.initialized = true;
-        return this.paste(data, comment);
+        return this.paste(commentData, foundComment);
       }
     }
 
@@ -50,52 +51,52 @@ class Comment implements LAFka.Comment {
   };
 
   private paste(data: Constructors.comments & { created_at: Date }, comment: LAFka.Comment) {
-    this._data = {
+    this.data = Helpers.parse({
       ...data,
       ...comment,
 
       id: comment.id
-    };
+    }, "comments");
 
     return this;
   }
 
   private changed() {
-    this._data.changed_at = new Date();
+    this.data.changed_at = new Date();
   }
 
   public set content(content: string) {
     this.changed();
 
-    this._data.content = content;
+    this.data.content = content;
   }
 
   public get id(): string {
-    return this._data.id;
+    return this.data.id;
   }
 
   public get content(): string {
-    return this._data.content;
+    return this.data.content;
   }
 
   public get created_at(): Date {
-    return this._data.created_at;
+    return this.data.created_at;
   }
 
   public get author_id(): string {
-    return this._data.author_id;
+    return this.data.author_id;
   }
 
   public get post_id(): string {
-    return this._data.post_id;
+    return this.data.post_id;
   }
 
   public get reply(): string | undefined {
-    return this._data.reply;
+    return this.data.reply;
   }
 
   public get changed_at(): Date | undefined {
-    return this._data.changed_at;
+    return this.data.changed_at;
   }
 }
 

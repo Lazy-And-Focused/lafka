@@ -3,10 +3,10 @@ import Database, { Constructors } from "database/models.database";
 import { LAFka } from "lafka/types";
 
 import { CreateData } from "lafka/types/mongodb.types";
+import { Helpers } from "./helpers";
 
 class AuthUser implements LAFka.AuthUser {
-  private _data: LAFka.AuthUser;
-  private readonly _filter_options: {
+  private readonly filter_options: {
     profile: {
       profile_id: string;
       type: LAFka.AuthTypes;
@@ -16,26 +16,28 @@ class AuthUser implements LAFka.AuthUser {
       type: LAFka.AuthTypes;
     };
   };
-  private readonly _tokens: {
+
+  private readonly tokens: {
     access_token: string;
     refresh_token?: string;
   };
 
   private readonly database = new Database();
+  private data: LAFka.AuthUser;
 
   public constructor(data: Constructors.auth_users) {
-    this._data = {
+    this.data = {
       id: "",
       created_at: new Date(),
       ...data
     };
 
-    this._tokens = {
+    this.tokens = {
       access_token: data.access_token,
       refresh_token: data.refresh_token
     };
 
-    this._filter_options = {
+    this.filter_options = {
       profile: {
         profile_id: data.profile_id || "null",
         type: data.type
@@ -48,20 +50,20 @@ class AuthUser implements LAFka.AuthUser {
   }
 
   public async init() {
-    const userData = this._data;
+    const authUserData = this.data;
 
-    if (userData.profile_id !== "null") {
+    if (authUserData.profile_id !== "null") {
       const { data } = await this.database.auth_users.getData({
-        filter: this._filter_options.profile
+        filter: this.filter_options.profile
       });
 
       if (data && data[0] && data.length === 1) {
         await this.database.auth_users.update({
           filter: data[0],
-          update: this._tokens
+          update: this.tokens
         });
 
-        return this.paste(this._data, data[0]);
+        return this.paste(this.data, data[0]);
       } else if (data && data.length > 1) {
         for (const u of data) {
           this.database.auth_users.delete({ id: u.id });
@@ -69,37 +71,26 @@ class AuthUser implements LAFka.AuthUser {
       }
     }
 
-    const { data } = await this.database.auth_users.getData({
-      filter: this._filter_options.service
+    const { data: gettedAuthUser } = await this.database.auth_users.getData({
+      filter: this.filter_options.service
     });
 
-    if (data && data[0]) {
+    if (gettedAuthUser && gettedAuthUser[0]) {
       await this.database.auth_users.update({
-        filter: this._filter_options.service,
+        filter: this.filter_options.service,
         update: {
-          service_id: userData.service_id,
-          ...this._tokens
+          service_id: authUserData.service_id,
+          ...this.tokens
         }
       });
 
-      return this.paste(this._data, data[0]);
+      return this.paste(this.data, gettedAuthUser[0]);
     } else {
-      const created = await this.database.auth_users.create({ ...userData });
+      const createdAuthUser = await this.database.auth_users.create({ ...authUserData });
 
-      return this.paste(this._data, created);
+      return this.paste(this.data, createdAuthUser);
     }
   }
-
-  private readonly paste = (data: CreateData<LAFka.AuthUser>, user: LAFka.AuthUser) => {
-    this._data = {
-      ...data,
-      ...user,
-
-      id: user.id
-    };
-
-    return this;
-  };
 
   public static async delete(userId: string) {
     const db = new Database();
@@ -110,16 +101,16 @@ class AuthUser implements LAFka.AuthUser {
   }
 
   public async delete(userId?: string) {
-    return AuthUser.delete(userId || this._data.profile_id);
+    return AuthUser.delete(userId || this.data.profile_id);
   }
 
   public async updateProfileId(id: string): Promise<LAFka.User | null> {
     await this.database.auth_users.update({
-      filter: { id: this._data.id },
+      filter: { id: this.data.id },
       update: { profile_id: id }
     });
 
-    this._data.profile_id = id;
+    this.data.profile_id = id;
 
     const { data } = await this.database.users.getData({ filter: { id: this.profile_id } });
 
@@ -127,32 +118,44 @@ class AuthUser implements LAFka.AuthUser {
   }
 
   public get id(): string {
-    return this._data.id;
+    return this.data.id;
   }
 
   public get profile_id(): string {
-    return this._data.profile_id;
+    return this.data.profile_id;
   }
 
   public get service_id(): string {
-    return this._data.service_id;
+    return this.data.service_id;
   }
 
   public get created_at(): Date {
-    return this._data.created_at;
+    return this.data.created_at;
   }
 
   public get access_token(): string {
-    return this._data.access_token;
+    return this.data.access_token;
   }
 
   public get refresh_token(): string | undefined {
-    return this._data.refresh_token;
+    return this.data.refresh_token;
   }
 
   public get type(): LAFka.AuthTypes {
-    return this._data.type;
+    return this.data.type;
   }
+
+  private readonly paste = (data: CreateData<LAFka.AuthUser>, user: LAFka.AuthUser) => {
+    this.data = Helpers.parse<LAFka.AuthUser>({
+      ...data,
+      ...user,
+
+      id: user.id
+    }, "auth_users");
+
+    return this;
+  };
+
 }
 
 export default AuthUser;
