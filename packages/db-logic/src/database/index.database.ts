@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 import "./schemas/index";
 import "./models.database";
 import "../classes/index";

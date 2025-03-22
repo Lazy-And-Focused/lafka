@@ -47,12 +47,18 @@ export type PickTypeInObject<T extends { [key: string]: any }, K = any[]> = Remo
 
 export type ModelData<T> = Omit<T, "id" | "_id">;
 export type CreateData<T> = Partial<ModelData<T>>;
-export type CreatePickData<T, K extends keyof ModelData<T>> = Partial<ModelData<T>> &
+export type PickCreateData<T, K extends keyof ModelData<T>> = Partial<ModelData<T>> &
   Pick<ModelData<T>, K>;
 
-export interface Status<T extends any = any> {
+export interface Status<
+  Data extends any = any,
+  Error extends any = undefined,
+  isError extends boolean = Error extends undefined ? false : true
+> {
   text: string;
-  type: 0 | 1;
-  data?: T;
-  error?: string | null;
+  successed: isError extends true ? false : true;
+
+  data: isError extends true ? Data|undefined : Data
+  
+  error: isError extends true ? Error : undefined;
 }

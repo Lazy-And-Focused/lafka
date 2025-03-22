@@ -1,7 +1,7 @@
 import { Classes } from "../classes";
 import { Schemas } from "./schemas";
 
-import type { CreatePickData, ModelData } from "lafka/types/mongodb.types";
+import type { PickCreateData, ModelData } from "lafka/types/mongodb.types";
 import { LAFka } from "lafka/types";
 
 type AuthUser = LAFka.AuthUser;
@@ -12,20 +12,20 @@ type User = LAFka.User;
 
 export namespace Constructors {
   export type auth_users = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
-  export type comments = CreatePickData<Comment, "author_id" | "post_id" | "content"> & {
+  export type comments = PickCreateData<Comment, "author_id" | "post_id" | "content"> & {
     id?: string;
   };
 
-  export type posts = CreatePickData<
+  export type posts = PickCreateData<
     ForumPost & BlogPost,
     "content" | "creator_id" | "name" | "type"
   > & { _id?: string };
 
-  export type users_data = CreatePickData<User, "username" | "created_at"> & { id?: string };
+  export type users_data = PickCreateData<User, "username" | "created_at"> & { id?: string };
 
   export type users<T> = T extends true
     ? Partial<User> & { id: string }
-    : CreatePickData<User, "username"> & { id?: string };
+    : PickCreateData<User, "username"> & { id?: string };
 }
 
 class Database {

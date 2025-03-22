@@ -6,7 +6,7 @@ import type { FindOptions, Status as DatabaseStatus } from "lafka/types/mongodb.
 const getData = async <T>(
   Model: ModelType<T>,
   options: FindOptions<T>
-): Promise<DatabaseStatus<T[]>> => {
+): Promise<DatabaseStatus<T[], any, boolean>> => {
   try {
     const data = await Model.find(options.filter, options.projection, options.options);
 
@@ -14,7 +14,8 @@ const getData = async <T>(
 
     return new Status({
       text: "Таблицы были найдены",
-      type: 1,
+      successed: true,
+      error: undefined,
       data
     });
   } catch (err) {

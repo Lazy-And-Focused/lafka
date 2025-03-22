@@ -2,7 +2,7 @@ import Database, { Constructors } from "database/models.database";
 
 import { LAFka } from "lafka/types";
 
-import type { CreateData, CreatePickData, Status as StatusType } from "lafka/types/mongodb.types";
+import type { CreateData, PickCreateData, Status as StatusType } from "lafka/types/mongodb.types";
 import { Status, Error } from "lafka/types/status.classes";
 
 import Post from "./post.class";
@@ -58,7 +58,7 @@ class User<T extends boolean = false> implements LAFka.User {
       filter: { ...filter }
     });
 
-    if (status.type === 0 || !status.data) {
+    if (!status.successed || !status.data) {
       if (filter.id && !filter.username) return null as any;
 
       const user = await this.database.users.create(data);
@@ -122,7 +122,7 @@ class User<T extends boolean = false> implements LAFka.User {
   private async followController(
     following: string,
     action: "follow" | "unfollow"
-  ): Promise<StatusType<any>> {
+  ): Promise<StatusType<any, any, boolean>> {
     const followingUser = await this.getDatabaseUser(following);
     const user = await this.getDatabaseUser();
 
@@ -146,7 +146,7 @@ class User<T extends boolean = false> implements LAFka.User {
       update: { followers: user.following }
     });
 
-    return new Status({ type: 1, text: action + "ing!" });
+    return new Status({ successed: true, text: action + "ing!", data: action + "ing!", error: undefined });
   }
 
   public static readonly delete = async (id: string) => {
@@ -178,11 +178,11 @@ class User<T extends boolean = false> implements LAFka.User {
       return new Error("type mismatch");
     }
 
-    return new Status({ type: 1, text: type + " updated" });
+    return new Status({ successed: true, text: type + " updated", data: type + " updated", error: undefined });
   };
 
   public async createPost(
-    post: CreatePickData<LAFka.BlogAndForumPost, "content" | "name" | "type">
+    post: PickCreateData<LAFka.BlogAndForumPost, "content" | "name" | "type">
   ) {
     const created = await new Post({ ...post, creator_id: this._data.id }).init();
 

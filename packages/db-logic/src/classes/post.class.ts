@@ -2,7 +2,7 @@ import Database, { Constructors } from "../database/models.database";
 
 import { LAFka } from "lafka/types";
 
-import type { CreateData, CreatePickData } from "lafka/types/mongodb.types";
+import type { CreateData, PickCreateData } from "lafka/types/mongodb.types";
 
 import Comment from "./comment.class";
 
@@ -90,7 +90,7 @@ class Post implements LAFka.Post {
     });
   };
 
-  public async createComment(comment: CreatePickData<LAFka.Comment, "author_id" | "content">) {
+  public async createComment(comment: PickCreateData<LAFka.Comment, "author_id" | "content">) {
     const created = await new Comment({
       post_id: this._data.id,
       ...comment
