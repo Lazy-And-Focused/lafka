@@ -1,4 +1,5 @@
 import type { Link } from "../utility/utility.types";
+import { Rights } from "./rights.types";
 
 export const U_KEYS = [
   "id",
@@ -14,7 +15,8 @@ export const U_KEYS = [
   "followed_blog_posts",
   "blocked_posts",
   "followers",
-  "following"
+  "following",
+  "rights"
 ] as const;
 
 export interface User {
@@ -37,4 +39,6 @@ export interface User {
 
   followers: string[];
   following: string[];
+
+  rights: Rights;
 }
