@@ -27,8 +27,11 @@ const schema = new Schema<LAFka.User>({
   followed_forum_posts: [{ type: SchemaTypes.String, ref: "posts" }],
 
   followers: [{ type: SchemaTypes.String, ref: "users" }],
+  following: [{ type: SchemaTypes.String, ref: "users" }],
 
-  links: [Link]
+  links: [Link],
+
+  rights: { type: SchemaTypes.Map, required: true, unique: false }
 });
 
 const database = mongoose.model("users", schema);

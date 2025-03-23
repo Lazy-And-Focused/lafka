@@ -44,6 +44,12 @@ class User<T extends boolean = false> implements LAFka.User {
       avatar: undefined,
       nickname: undefined,
       biography: undefined,
+      rights: {
+        default: LAFka.Rights.DEFAULT_USER_RIGHTS,
+        organizations: {},
+        posts: {},
+        users: {}
+      },
       ...data
     };
   }
@@ -188,6 +194,10 @@ class User<T extends boolean = false> implements LAFka.User {
 
   public get following(): string[] {
     return this.data.following;
+  }
+
+  public get rights(): LAFka.Rights.Rights {
+    return this.data.rights;
   }
 
   private readonly paste = (data: CreateData<LAFka.User>, user: LAFka.User) => {
