@@ -16,6 +16,18 @@ class GeneralStrategy {
 
     this._authenticator = new Authenticator(this._passport);
   }
+  
+  public readonly initialize = () => {
+    return this._passport.initialize();
+  };
+
+  public readonly session = () => {
+    return this._passport.session();
+  };
+
+  public get passport() {
+    return this._passport;
+  }
 
   public get auth(): Authenticator {
     return this._authenticator;
@@ -61,18 +73,6 @@ class GeneralStrategy {
         return done(err, null);
       }
     });
-  }
-
-  public readonly initialize = () => {
-    return this._passport.initialize();
-  };
-
-  public readonly session = () => {
-    return this._passport.session();
-  };
-
-  public get passport() {
-    return this._passport;
   }
 }
 

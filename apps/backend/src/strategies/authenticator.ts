@@ -1,7 +1,6 @@
 import Classes from "lafka/database";
 
 import passport = require("passport");
-
 import { Profile } from "passport";
 
 import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
@@ -11,6 +10,12 @@ import Api from "api/index.api";
 
 const api = new Api();
 
+/**
+ * @types [AuthTypes, string, string[]?] (first, second, third)
+ * @first the method of authentication
+ * @second the module in passport
+ * @third a scopes
+ */
 const defaultPassports: [AuthTypes, string, string[]?][] = [
   ["google", "passport-google-oauth20", ["profile"]],
   ["yandex", "passport-yandex"]

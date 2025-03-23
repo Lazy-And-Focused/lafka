@@ -17,7 +17,7 @@ class Session {
   private readonly _cookie: { maxAge: number } = {
     maxAge: 60000 * 60 * 24 * 7
   };
-  private readonly _mongo_url: string = api.env.MONGO_URL || "mongodb://127.0.0.1/lafka";
+  private readonly _mongo_url: string = api.env.MONGO_URL;
 
   constructor(
     secret: string,
