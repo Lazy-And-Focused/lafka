@@ -155,9 +155,9 @@ export const LAZY_RIGHTS: LazyRights = {
 } as const;
 
 export const DEFAULT_USER_RIGHTS: Readonly<{
-  [P in Lowercase<keyof LazyRights>]: LazyRights[Uppercase<P>]
+  [P in keyof LazyRights]: LazyRights[Uppercase<P>]
 }> = {
-  me: {
+  ME: {
     ADMINISTRATOR:                  0x00000000000000000,
     MODERATOR:                      0x00000000000000000,
     USER:                           0x00000000000000004,
@@ -178,13 +178,13 @@ export const DEFAULT_USER_RIGHTS: Readonly<{
     ORGANIZATIONS_DELETE:           0x00000000000000000,
   },
 
-  users: {
+  USERS: {
     READ:                           0x00000000000004000,
     MANAGE:                         0x00000000000000000,
     MODERATE:                       0x00000000000000000,
   },
 
-  posts: {
+  POSTS: {
     OWNER:                          0x00000000000000000,
     MANAGER:                        0x00000000000000000,
 
@@ -204,7 +204,7 @@ export const DEFAULT_USER_RIGHTS: Readonly<{
     VIEWERS_BLOCK:                  0x00000000000000000,
   },
 
-  organizations: {
+  ORGANIZATIONS: {
     OWNER:                          0x00000000000000000,
     ADMINISTRATOR:                  0x00000000000000000,
 
