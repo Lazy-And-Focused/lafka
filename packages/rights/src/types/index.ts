@@ -1,4 +1,4 @@
-import { Rights } from "../../node_modules/@lafka/types/dist";
+import { Rights } from "@lafka/types";
 
 import {
   LazyRightsService as ILazyRightsService,
@@ -7,14 +7,14 @@ import {
 } from "./rights.service";
 
 export declare namespace Types {
-  export declare abstract class LazyRightsService<
+  export abstract class LazyRightsService<
     T extends Rights.RightsKeys,
     K extends T extends "default"
       ? keyof Rights.LazyRights
       : string = T extends "default"
         ? keyof Rights.LazyRights
         : string
-  > extends ILazyRightsService<T, K> {};
+  > extends ILazyRightsService<T, K> {}
 
   export type RightsType<
     T extends Rights.RightsKeys,

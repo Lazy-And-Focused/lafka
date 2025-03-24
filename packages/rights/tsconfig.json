@@ -5,6 +5,7 @@
         "outDir": "./dist",
         "removeComments": true,
         "declaration": true,
+        "allowJs": true,
         "strict": true,
         "strictNullChecks": true,
         "skipLibCheck": true, 

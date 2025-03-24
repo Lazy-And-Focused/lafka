@@ -1,4 +1,4 @@
-import { Rights } from "../../node_modules/@lafka/types/dist";
+import { Rights } from "@lafka/types";
 
 export type RightsType<
   T extends Rights.RightsKeys,
