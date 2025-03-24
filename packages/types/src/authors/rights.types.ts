@@ -83,75 +83,77 @@ export namespace Rights {
     readonly ORGANIZATIONS: LazyOrganizationsRights
   };
   
+  class Parser {
+    public static execute(rights: LazyRights[keyof LazyRights] | LazyRights) {
+      let raw: bigint = 0n;
+      
+      Object.keys(rights).forEach(k => {
+        if (typeof rights[k] === "bigint")
+          raw += rights[k];
+        else Object.keys(rights[k]).forEach(k2 => raw += rights[k][k2])
+      });
+
+      return raw;
+    }
+  }
+
   // prettier-ignore-start
   export const LAZY_RIGHTS: LazyRights = {
     ME: {
-      ADMINISTRATOR:                  1n << 1n,
-      MODERATOR:                      1n << 2n,
-      USER:                           1n << 3n,
-      
-      MUTE:                           1n << 4n,
-      BAN:                            1n << 5n,
-    
-      POSTS_CREATE:                   1n << 6n,
-      COMMENTS_CREATE:                1n << 7n,
-      ORGANIZATIONS_CREATE:           1n << 8n,
-    
-      POSTS_MANAGE:                   1n << 9n,
-      COMMENTS_MANAGE:                1n << 10n,
-      ORGANIZATIONS_MANAGE:           1n << 11n,
-    
-      POSTS_DELETE:                   1n << 12n,
-      COMMENTS_DELETE:                1n << 13n,
-      ORGANIZATIONS_DELETE:           1n << 14n,
+      ADMINISTRATOR:                  1n << 0n,
+      MODERATOR:                      1n << 1n,
+      USER:                           1n << 2n,
+      MUTE:                           1n << 3n,
+      BAN:                            1n << 4n,
+      POSTS_CREATE:                   1n << 5n,
+      COMMENTS_CREATE:                1n << 6n,
+      ORGANIZATIONS_CREATE:           1n << 7n,
+      POSTS_MANAGE:                   1n << 8n,
+      COMMENTS_MANAGE:                1n << 9n,
+      ORGANIZATIONS_MANAGE:           1n << 10n,
+      POSTS_DELETE:                   1n << 11n,
+      COMMENTS_DELETE:                1n << 12n,
+      ORGANIZATIONS_DELETE:           1n << 13n,
     },
   
     USERS: {
-      READ:                           1n << 15n,
-      MANAGE:                         1n << 16n,
-      MODERATE:                       1n << 17n,
+      READ:                           1n << 14n,
+      MANAGE:                         1n << 15n,
+      MODERATE:                       1n << 16n,
     },
   
     POSTS: {
-      OWNER:                          1n << 18n,
-      MANAGER:                        1n << 19n,
-  
-      VIEW:                           1n << 20n,
-      MANAGE:                         1n << 21n,
-      DELETE:                         1n << 22n,
-      REACT:                          1n << 23n,
-      ATTACH_FILES:                   1n << 24n,
-  
-      COMMENTS_READ:                  1n << 25n,
-      COMMENTS_CREATE:                1n << 26n,
-      COMMENTS_DELETE:                1n << 27n,
-      COMMENTS_MANAGE:                1n << 28n,
-      COMMENTS_REACT:                 1n << 29n,
-      
-      VIEWERS_MUTE:                   1n << 30n,
-      VIEWERS_BLOCK:                  1n << 31n,
+      OWNER:                          1n << 17n,
+      MANAGER:                        1n << 18n,
+      VIEW:                           1n << 19n,
+      MANAGE:                         1n << 20n,
+      DELETE:                         1n << 21n,
+      REACT:                          1n << 22n,
+      ATTACH_FILES:                   1n << 23n,
+      COMMENTS_READ:                  1n << 24n,
+      COMMENTS_CREATE:                1n << 25n,
+      COMMENTS_DELETE:                1n << 26n,
+      COMMENTS_MANAGE:                1n << 27n,
+      COMMENTS_REACT:                 1n << 28n,
+      VIEWERS_MUTE:                   1n << 29n,
+      VIEWERS_BLOCK:                  1n << 30n,
     },
   
     ORGANIZATIONS: {
-      OWNER:                          1n << 32n,
-      ADMINISTRATOR:                  1n << 33n,
-  
-      INVITE_CREATE:                  1n << 34n,
-      RIGHTS_MANAGE:                  1n << 35n,
-  
-      READ:                           1n << 36n,
-      MANAGE:                         1n << 37n,
-      DELETE:                         1n << 38n,
-  
-      POSTS_READ:                     1n << 39n,
-      POSTS_CREATE:                   1n << 40n,
-      POSTS_MANAGE:                   1n << 41n,
-      POSTS_DELETE:                   1n << 42n,
-  
-      ROLES_MANAGE:                   1n << 43n,
-  
-      MEMBERS_KICK:                   1n << 44n,
-      VIEWERS_BLOCK:                  1n << 45n,
+      OWNER:                          1n << 31n,
+      ADMINISTRATOR:                  1n << 32n,
+      INVITE_CREATE:                  1n << 33n,
+      RIGHTS_MANAGE:                  1n << 34n,
+      READ:                           1n << 35n,
+      MANAGE:                         1n << 36n,
+      DELETE:                         1n << 37n,
+      POSTS_READ:                     1n << 38n,
+      POSTS_CREATE:                   1n << 39n,
+      POSTS_MANAGE:                   1n << 40n,
+      POSTS_DELETE:                   1n << 41n,
+      ROLES_MANAGE:                   1n << 42n,
+      MEMBERS_KICK:                   1n << 43n,
+      VIEWERS_BLOCK:                  1n << 44n,
     }
   } as const;
   
@@ -159,64 +161,83 @@ export namespace Rights {
     [P in keyof LazyRights]: LazyRights[Uppercase<P>]
   }> = {
     ME: {
-      ADMINISTRATOR:                  1n << 0n,        /* default: 1n << 1n */
-      MODERATOR:                      1n << 0n,        /* default: 1n << 2n */
-      USER:                           1n << 3n,        /* default: 1n << 3n */
-      MUTE:                           1n << 0n,        /* default: 1n << 4n */
-      BAN:                            1n << 0n,        /* default: 1n << 5n */
-      POSTS_CREATE:                   1n << 6n,        /* default: 1n << 6n */
-      COMMENTS_CREATE:                1n << 7n,        /* default: 1n << 7n */
-      ORGANIZATIONS_CREATE:           1n << 8n,        /* default: 1n << 8n */
-      POSTS_MANAGE:                   1n << 0n,        /* default: 1n << 9n */
-      COMMENTS_MANAGE:                1n << 0n,        /* default: 1n << 10n */
-      ORGANIZATIONS_MANAGE:           1n << 0n,        /* default: 1n << 11n */
-      POSTS_DELETE:                   1n << 0n,        /* default: 1n << 12n */
-      COMMENTS_DELETE:                1n << 0n,        /* default: 1n << 13n */
-      ORGANIZATIONS_DELETE:           1n << 0n,        /* default: 1n << 14n */
+      ADMINISTRATOR:                  0n << 0n,         /* default: 1n << 1n */
+      MODERATOR:                      0n << 1n,         /* default: 1n << 2n */
+      USER:                           1n << 2n,         /* default: 1n << 3n */
+      MUTE:                           0n << 3n,         /* default: 1n << 4n */
+      BAN:                            0n << 4n,         /* default: 1n << 5n */
+      POSTS_CREATE:                   1n << 5n,         /* default: 1n << 6n */
+      COMMENTS_CREATE:                1n << 6n,         /* default: 1n << 7n */
+      ORGANIZATIONS_CREATE:           1n << 7n,         /* default: 1n << 8n */
+      POSTS_MANAGE:                   0n << 8n,         /* default: 1n << 9n */
+      COMMENTS_MANAGE:                0n << 9n,         /* default: 1n << 10n */
+      ORGANIZATIONS_MANAGE:           0n << 10n,        /* default: 1n << 11n */
+      POSTS_DELETE:                   0n << 11n,        /* default: 1n << 12n */
+      COMMENTS_DELETE:                0n << 12n,        /* default: 1n << 13n */
+      ORGANIZATIONS_DELETE:           0n << 13n,        /* default: 1n << 14n */
     },
   
     USERS: {
-      READ:                           1n << 15n,       /* default: 1n << 15n */
-      MANAGE:                         1n << 0n,        /* default: 1n << 16n */
-      MODERATE:                       1n << 0n,        /* default: 1n << 17n */
+      READ:                           1n << 14n,        /* default: 1n << 15n */
+      MANAGE:                         0n << 15n,        /* default: 1n << 16n */
+      MODERATE:                       0n << 16n,        /* default: 1n << 17n */
     },
   
     POSTS: {
-      OWNER:                          1n << 0n,        /* default: 1n << 18n */
-      MANAGER:                        1n << 0n,        /* default: 1n << 19n */
-      VIEW:                           1n << 20n,       /* default: 1n << 20n */
-      MANAGE:                         1n << 0n,        /* default: 1n << 21n */
-      DELETE:                         1n << 0n,        /* default: 1n << 22n */
-      REACT:                          1n << 23n,       /* default: 1n << 23n */
-      ATTACH_FILES:                   1n << 24n,       /* default: 1n << 24n */
-      COMMENTS_READ:                  1n << 25n,       /* default: 1n << 25n */
-      COMMENTS_CREATE:                1n << 26n,       /* default: 1n << 26n */
-      COMMENTS_DELETE:                1n << 0n,        /* default: 1n << 27n */
-      COMMENTS_MANAGE:                1n << 0n,        /* default: 1n << 28n */
-      COMMENTS_REACT:                 1n << 29n,       /* default: 1n << 29n */
-      VIEWERS_MUTE:                   1n << 0n,        /* default: 1n << 30n */
-      VIEWERS_BLOCK:                  1n << 0n,        /* default: 1n << 31n */
+      OWNER:                          0n << 17n,        /* default: 1n << 18n */
+      MANAGER:                        0n << 18n,        /* default: 1n << 19n */
+      VIEW:                           1n << 19n,        /* default: 1n << 20n */
+      MANAGE:                         0n << 20n,        /* default: 1n << 21n */
+      DELETE:                         0n << 21n,        /* default: 1n << 22n */
+      REACT:                          1n << 22n,        /* default: 1n << 23n */
+      ATTACH_FILES:                   1n << 23n,        /* default: 1n << 24n */
+      COMMENTS_READ:                  1n << 24n,        /* default: 1n << 25n */
+      COMMENTS_CREATE:                1n << 25n,        /* default: 1n << 26n */
+      COMMENTS_DELETE:                0n << 26n,        /* default: 1n << 27n */
+      COMMENTS_MANAGE:                0n << 27n,        /* default: 1n << 28n */
+      COMMENTS_REACT:                 1n << 28n,        /* default: 1n << 29n */
+      VIEWERS_MUTE:                   0n << 29n,        /* default: 1n << 30n */
+      VIEWERS_BLOCK:                  0n << 30n,        /* default: 1n << 31n */
     },
   
     ORGANIZATIONS: {
-      OWNER:                          1n << 0n,        /* default: 1n << 32n */
-      ADMINISTRATOR:                  1n << 0n,        /* default: 1n << 33n */
-      INVITE_CREATE:                  1n << 0n,        /* default: 1n << 34n */
-      RIGHTS_MANAGE:                  1n << 0n,        /* default: 1n << 35n */
-      READ:                           1n << 36n,       /* default: 1n << 36n */
-      MANAGE:                         1n << 0n,        /* default: 1n << 37n */
-      DELETE:                         1n << 0n,        /* default: 1n << 38n */
-      POSTS_READ:                     1n << 39n,       /* default: 1n << 39n */
-      POSTS_CREATE:                   1n << 0n,        /* default: 1n << 40n */
-      POSTS_MANAGE:                   1n << 0n,        /* default: 1n << 41n */
-      POSTS_DELETE:                   1n << 0n,        /* default: 1n << 42n */
-      ROLES_MANAGE:                   1n << 0n,        /* default: 1n << 43n */
-      MEMBERS_KICK:                   1n << 0n,        /* default: 1n << 44n */
-      VIEWERS_BLOCK:                  1n << 0n,        /* default: 1n << 45n */
+      OWNER:                          0n << 31n,        /* default: 1n << 32n */
+      ADMINISTRATOR:                  0n << 32n,        /* default: 1n << 33n */
+      INVITE_CREATE:                  0n << 33n,        /* default: 1n << 34n */
+      RIGHTS_MANAGE:                  0n << 34n,        /* default: 1n << 35n */
+      READ:                           1n << 35n,        /* default: 1n << 36n */
+      MANAGE:                         0n << 36n,        /* default: 1n << 37n */
+      DELETE:                         0n << 37n,        /* default: 1n << 38n */
+      POSTS_READ:                     1n << 38n,        /* default: 1n << 39n */
+      POSTS_CREATE:                   0n << 39n,        /* default: 1n << 40n */
+      POSTS_MANAGE:                   0n << 40n,        /* default: 1n << 41n */
+      POSTS_DELETE:                   0n << 41n,        /* default: 1n << 42n */
+      ROLES_MANAGE:                   0n << 42n,        /* default: 1n << 43n */
+      MEMBERS_KICK:                   0n << 43n,        /* default: 1n << 44n */
+      VIEWERS_BLOCK:                  0n << 44n,        /* default: 1n << 45n */
     }
   } as const;
   // prettier-ignore-end
   
+  export const RAW_LAZY_RIGHTS = {
+    RAW: Parser.execute(LAZY_RIGHTS),
+    RAW_USERS: Parser.execute(LAZY_RIGHTS.USERS),
+    RAW_POSTS: Parser.execute(LAZY_RIGHTS.POSTS),
+    RAW_ORGANIZATIONS: Parser.execute(LAZY_RIGHTS.ORGANIZATIONS)
+  } as const;
+
+  export const RAW_DEFAULT_USER_RIGHTS = {
+    RAW: Parser.execute(DEFAULT_USER_RIGHTS),
+    RAW_USERS: Parser.execute(DEFAULT_USER_RIGHTS.USERS),
+    RAW_POSTS: Parser.execute(DEFAULT_USER_RIGHTS.POSTS),
+    RAW_ORGANIZATIONS: Parser.execute(DEFAULT_USER_RIGHTS.ORGANIZATIONS)
+  } as const;
+  
+  export type RawLazyRights = typeof RAW_LAZY_RIGHTS;
+  export type RawLazyRightsKeys = keyof RawLazyRights;
+  export type RawDefaultUserRights = typeof RAW_DEFAULT_USER_RIGHTS;
+  export type RawDefaultUserRightsKeys = keyof RawDefaultUserRights;
+
   export const R_ME_KEYS = [
     "ADMINISTRATOR",
     "MODERATOR",
