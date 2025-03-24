@@ -35,6 +35,7 @@ import {
 
 import {
   R_KEYS as CR_KEYS,
+  R_LAZY_KEYS as CR_LAZY_KEYS,
   LAZY_RIGHTS as CLAZY_RIGHTS,
   DEFAULT_USER_RIGHTS as CDEFAULT_USER_RIGHTS,
   
@@ -61,7 +62,8 @@ export namespace LAFka.Response {
 }
 
 export namespace LAFka.Rights {
-  export const R_KEYS = CR_KEYS;
+  export const KEYS = CR_KEYS;
+  export const LAZY_KEYS = CR_LAZY_KEYS;
   export const LAZY_RIGHTS = CLAZY_RIGHTS;
   export const DEFAULT_USER_RIGHTS = CDEFAULT_USER_RIGHTS;
 
