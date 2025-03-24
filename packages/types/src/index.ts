@@ -33,25 +33,7 @@ import {
   DataType as TDataType
 } from "./backend/data.types";
 
-import {
-  R_KEYS as CR_KEYS,
-  R_LAZY_KEYS as CR_LAZY_KEYS,
-  LAZY_RIGHTS as CLAZY_RIGHTS,
-  DEFAULT_USER_RIGHTS as CDEFAULT_USER_RIGHTS,
-  
-  LazyRights as ILazyRights,
-  Rights as IRights,
-
-  LazyMeRights as TLazyMeRights,
-  LazyPostsRights as TLazyPostsRights,
-  LazyUsersRights as TLazyUsersRights,
-  LazyOrganizationsRights as TLazyOrganizationsRights,
-  
-  MeRights as TMeRights,
-  PostsRights as TPostsRights,
-  UsersRights as TUsersRights,
-  OrganizationsRights as TOrganizationsRights,
-} from "./authors/rights.types";
+export { Rights } from "./authors/rights.types";
 
 export namespace LAFka.Response {
   export type GetData<T> = IGetData<T>;
@@ -59,26 +41,6 @@ export namespace LAFka.Response {
   export type ChangeData<T> = IChangeData<T>;
   export type DeleteData<T> = IDeleteData<T>;
   export type DataType = TDataType;
-}
-
-export namespace LAFka.Rights {
-  export const KEYS = CR_KEYS;
-  export const LAZY_KEYS = CR_LAZY_KEYS;
-  export const LAZY_RIGHTS = CLAZY_RIGHTS;
-  export const DEFAULT_USER_RIGHTS = CDEFAULT_USER_RIGHTS;
-
-  export type LazyRights = ILazyRights;
-  export type Rights = IRights;
-  
-  export type LazyMeRights = TLazyMeRights;
-  export type LazyPostsRights = TLazyPostsRights;
-  export type LazyUsersRights = TLazyUsersRights;
-  export type LazyOrganizationsRights = TLazyOrganizationsRights;
-  
-  export type MeRights = TMeRights;
-  export type PostsRights = TPostsRights;
-  export type UsersRights = TUsersRights;
-  export type OrganizationsRights = TOrganizationsRights;
 }
 
 export namespace LAFka {

@@ -40,5 +40,5 @@ export interface User {
   followers: string[];
   following: string[];
 
-  rights: Rights;
+  rights: Rights.Rights;
 }
