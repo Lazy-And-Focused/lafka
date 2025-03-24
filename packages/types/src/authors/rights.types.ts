@@ -233,7 +233,7 @@ export const R_LAZY_KEYS = [
   "USERS",
   "POSTS",
   "ORGANIZATIONS"
-];
+] as const;
 
 export const R_KEYS = [
   "default",
