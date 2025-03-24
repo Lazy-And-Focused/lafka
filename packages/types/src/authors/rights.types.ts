@@ -83,7 +83,7 @@ export namespace Rights {
     readonly ORGANIZATIONS: LazyOrganizationsRights
   };
   
-  class Parser {
+  export class Parser {
     public static execute(rights: LazyRights[keyof LazyRights] | LazyRights) {
       let raw: bigint = 0n;
       
