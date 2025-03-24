@@ -1,3 +1,5 @@
+import { Rights } from "../../node_modules/@lafka/types/dist";
+
 import {
   LazyRightsService as ILazyRightsService,
   RightsType as IRightsType,
@@ -6,24 +8,25 @@ import {
 
 export declare namespace Types {
   export declare abstract class LazyRightsService<
-    T extends (typeof LAFka.Rights.KEYS)[number],
+    T extends Rights.RightsKeys,
     K extends T extends "default"
-      ? keyof LAFka.Rights.LazyRights
+      ? keyof Rights.LazyRights
       : string = T extends "default"
-        ? keyof LAFka.Rights.LazyRights
+        ? keyof Rights.LazyRights
         : string
   > extends ILazyRightsService<T, K> {};
 
   export type RightsType<
-    T extends (typeof LAFka.Rights.KEYS)[number],
+    T extends Rights.RightsKeys,
     K extends T extends "default"
-      ? keyof LAFka.Rights.LazyRights
+      ? keyof Rights.LazyRights
       : string
   > = IRightsType<T, K>;
+  
   export type RightsTypeArray<
-    T extends (typeof LAFka.Rights.KEYS)[number],
+    T extends Rights.RightsKeys,
     K extends T extends "default"
-      ? keyof LAFka.Rights.LazyRights
+      ? keyof Rights.LazyRights
       : string
   > = IRightsTypeArray<T, K>;
 }
