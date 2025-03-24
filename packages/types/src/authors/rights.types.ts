@@ -229,9 +229,10 @@ export const DEFAULT_USER_RIGHTS: Readonly<{
 // prettier-ignore-end
 
 export const R_KEYS = [
-  "users",
-  "posts",
-  "organizations"
+  "ME",
+  "USERS",
+  "POSTS",
+  "ORGANIZATIONS"
 ] as const;
 
 export interface Rights {
