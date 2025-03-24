@@ -1,6 +1,6 @@
 import Database, { Constructors } from "database/models.database";
 
-import { LAFka } from "lafka/types";
+import { LAFka, Rights } from "lafka/types";
 
 import type { CreateData, PickCreateData, Status as StatusType } from "lafka/types/mongodb.types";
 import { Status, Error } from "lafka/types/status.classes";
@@ -45,7 +45,7 @@ class User<T extends boolean = false> implements LAFka.User {
       nickname: undefined,
       biography: undefined,
       rights: {
-        default: LAFka.Rights.DEFAULT_USER_RIGHTS,
+        default: Rights.DEFAULT_USER_RIGHTS,
         organizations: {},
         posts: {},
         users: {}
@@ -196,7 +196,7 @@ class User<T extends boolean = false> implements LAFka.User {
     return this.data.following;
   }
 
-  public get rights(): LAFka.Rights.Rights {
+  public get rights(): Rights.Rights {
     return this.data.rights;
   }
 
