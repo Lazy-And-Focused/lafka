@@ -49,13 +49,13 @@ const d = new RightsService<"default">(LAFka.Rights.DEFAULT_USER_RIGHTS).has({
   rights: ["ADMINISTRATOR"]
 });
 
-if (d !== false) d;
+console.log(d);
 
 const u = new RightsService<"users">({"12345": LAFka.Rights.DEFAULT_USER_RIGHTS.USERS}).has({
   key: "12345",
   rights: ["MANAGE"]
 });
 
-if (u !== false) u;
+console.log(u);
 
 export default RightsService;
