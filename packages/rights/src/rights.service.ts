@@ -1,6 +1,19 @@
 import { Types } from "./types"; 
 import { Rights } from "lafka/types";
 
+/**
+ * @generics
+ * T: "default" | "users" | "posts" | "organizations"
+ * 
+ * ```js
+ * if (T === "default") {
+ *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+ * }
+ * else {
+ *    K: string (the id)
+ * }
+ * ```
+ */
 export class LazyRightsService<
   T extends Rights.RightsKeys,
   K extends T extends "default"
@@ -9,14 +22,49 @@ export class LazyRightsService<
       ? keyof Rights.Lazy.Rights
       : string
 > extends Types.LazyRightsService<T, K> {
+  /**
+   * ```js
+   * (async() => {
+   *    const { rights } = (await (await fetch(api_url, {headers})).json());
+   * 
+   *    new LazyRightsService<"default">(rights.default);
+   *    new LazyRightsService<"users">(rights.users);
+   *    new LazyRightsService<"posts">(rights.posts);
+   *    new LazyRightsService<"organizations">(rights.organizations);
+   * })();
+   * ```
+   * 
+   * @param rights Rights.Rights[T]
+   */
   public constructor(public readonly rights: Rights.Rights[T]) {
     super(rights);
   }
   
+  /**
+   * ```js
+   * import { Rights } from "@lafka/types"
+   * 
+   * (async() => {
+   *    const { rights } = await (await fetch(api_url, {headers})).json();
+   * 
+   *    new LazyRightsService<"default">(rights.default).has({
+   *        key: "ME",
+   *        rights: ["ADMINISTRATOR"]
+   *    });
+   * 
+   *    new LazyRightsService<"posts">({rights.posts}).has({
+   *        key: "some-user-id",
+   *        rights: ["DELETE"]
+   *    });
+   * })();
+   * ```
+   * 
+   * @returns {false|Record<R[number], boolean>}
+   */
   public has<R extends Types.RightsTypeArray<T, K> = Types.RightsTypeArray<T, K>>(data: {
     key: K extends keyof Rights.Lazy.Rights ? K : string,
     rights: R
-  }) {
+  }): false | Record<R[number], boolean> {
     const rights = Array.from(new Set(data.rights));
 
     if (rights.length === 0) return false;
@@ -31,6 +79,19 @@ export class LazyRightsService<
   }
 };
 
+/**
+ * @generics
+ * T: "default" | "users" | "posts" | "organizations"
+ * 
+ * ```js
+ * if (T === "default") {
+ *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+ * }
+ * else {
+ *    K: string (the id)
+ * }
+ * ```
+ */
 class RightsService<
   T extends Rights.RightsKeys,
   K extends T extends "default"
@@ -39,6 +100,22 @@ class RightsService<
       ? keyof Rights.Lazy.Rights
       : string
 > {
+    /**
+   * ```js
+   * import { Rights } from "@lafka/types";
+   * 
+   * (async() => {
+   *    const { rights } = (await (await fetch(api_url, {headers})).json());
+   * 
+   *    new RightsService<"default">(rights.default);
+   *    new RightsService<"users">(rights.users);
+   *    new RightsService<"posts">(rights.posts);
+   *    new RightsService<"organizations">(rights.organizations);
+   * })();
+   * ```
+   * 
+   * @param rights Rights.Rights[T]
+   */
   public constructor(public readonly rights: Rights.Rights[T]) {};
 
   public hasOne(data: {
@@ -51,43 +128,47 @@ class RightsService<
     return (raw & right) === right;
   }
 
+  /**
+   * ```js
+   * import { Rights } from "@lafka/types";
+   * 
+   * (async() => {
+   *    const { rights } = (await (await fetch(api_url, {headers})).json());
+   * 
+   *    new RightsService<"posts">(rights.posts).has({
+   *       key: "12345",
+   *       rights: [
+   *           Rights.Default.POSTS_RIGHTS.MANAGE,
+   *           Rights.Default.POSTS_RIGHTS.COMMENTS_READ,
+   *       ]
+   *    });
+   * 
+   *    new RightsService<"posts">(rights.posts).has({
+   *       key: "67890",
+   *       rights: Rights.Default.POSTS_RIGHTS.OWNER,
+   *    });
+   *    // is equals ⩚  |  is equals
+   *    // is equals |  ⩛  is equals
+   *    new RightsService<"posts">(rights.posts).hasOne({
+   *       key: "67890",
+   *       right: Rights.Default.POSTS_RIGHTS.OWNER,
+   *    });
+   * })()
+   * ```
+   * 
+   * @returns {boolean}
+   */
   public has(
     data: {
       key: K extends keyof Rights.Lazy.Rights ? K : string;
-      rights: [...[bigint|number]];
+      rights: [...[bigint|number]] | bigint|number;
     }
-  ) {
-    for (const right of data.rights) {
-      if (!this.hasOne({...data, right})) return false;
-      else continue;
-    }
-
-    return true;
+  ): boolean {
+    return (Array.isArray(data.rights)
+      ? data.rights
+      : [data.rights])
+      .every((v) => this.hasOne({...data, right: v}));
   }
 }
-
-const b = new RightsService<"posts">({"12345": Rights.Default.USER_RIGHTS.POSTS}).has({
-  key: "12345",
-  rights: [
-    Rights.Default.ME_RIGHTS.ADMINISTRATOR
-  ]
-})
-
-
-
-
-const d = new LazyRightsService<"default">(Rights.Default.USER_RIGHTS).has({
-  key: "ME",
-  rights: ["ADMINISTRATOR"]
-});
-
-console.log(d);
-
-const u = new LazyRightsService<"users">({"12345": Rights.Default.USERS_RIGHTS}).has({
-  key: "12345",
-  rights: ["MANAGE"]
-});
-
-console.log(u);
 
 export default RightsService;

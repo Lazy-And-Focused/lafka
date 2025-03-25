@@ -1,5 +1,18 @@
 import { Rights } from "@lafka/types";
 
+/**
+ * @generics
+ * T: "default" | "users" | "posts" | "organizations"
+ * 
+ * ```js
+ * if (T === "default") {
+ *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+ * }
+ * else {
+ *    K: string (the id)
+ * }
+ * ```
+ */
 export type RightsType<
   T extends Rights.RightsKeys,
   K extends T extends "default"
@@ -9,6 +22,19 @@ export type RightsType<
   ? (keyof Rights.Lazy.Rights[K])
   : (keyof (Rights.Rights[T][keyof Rights.Rights[T]]));
 
+/**
+ * @generics
+ * T: "default" | "users" | "posts" | "organizations"
+ * 
+ * ```js
+ * if (T === "default") {
+ *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+ * }
+ * else {
+ *    K: string (the id)
+ * }
+ * ```
+ */
 export type RightsTypeArray<
   T extends Rights.RightsKeys,
   K extends T extends "default"
@@ -16,6 +42,19 @@ export type RightsTypeArray<
     : string
 > = [RightsType<T, K>, ...RightsType<T, K>[]];
 
+/**
+ * @generics
+ * T: "default" | "users" | "posts" | "organizations"
+ * 
+ * ```js
+ * if (T === "default") {
+ *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+ * }
+ * else {
+ *    K: string (the id)
+ * }
+ * ```
+ */
 export declare abstract class LazyRightsService<
   T extends Rights.RightsKeys,
   K extends T extends "default"

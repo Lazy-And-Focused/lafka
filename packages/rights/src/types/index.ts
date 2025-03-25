@@ -7,6 +7,19 @@ import {
 } from "./rights.service";
 
 export declare namespace Types {
+  /**
+   * @generics
+   * T: "default" | "users" | "posts" | "organizations"
+   * 
+   * ```js
+   * if (T === "default") {
+   *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+   * }
+   * else {
+   *    K: string (the id)
+   * }
+   * ```
+   */
   export abstract class LazyRightsService<
     T extends Rights.RightsKeys,
     K extends T extends "default"
@@ -16,6 +29,19 @@ export declare namespace Types {
         : string
   > extends ILazyRightsService<T, K> {}
 
+  /**
+   * @generics
+   * T: "default" | "users" | "posts" | "organizations"
+   * 
+   * ```js
+   * if (T === "default") {
+   *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+   * }
+   * else {
+   *    K: string (the id)
+   * }
+   * ```
+   */
   export type RightsType<
     T extends Rights.RightsKeys,
     K extends T extends "default"
@@ -23,6 +49,19 @@ export declare namespace Types {
       : string
   > = IRightsType<T, K>;
   
+  /**
+   * @generics
+   * T: "default" | "users" | "posts" | "organizations"
+   * 
+   * ```js
+   * if (T === "default") {
+   *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
+   * }
+   * else {
+   *    K: string (the id)
+   * }
+   * ```
+   */
   export type RightsTypeArray<
     T extends Rights.RightsKeys,
     K extends T extends "default"
