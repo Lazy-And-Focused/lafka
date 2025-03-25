@@ -1,90 +1,6 @@
 export namespace Rights {
-  export type LazyMeRights = Readonly<{
-    ADMINISTRATOR: number|bigint,
-    MODERATOR: number|bigint,
-    USER: number|bigint,
-    
-    MUTE: number|bigint,
-    BAN: number|bigint,
-  
-    POSTS_CREATE: number|bigint,
-    COMMENTS_CREATE: number|bigint,
-    ORGANIZATIONS_CREATE: number|bigint,
-  
-    POSTS_MANAGE: number|bigint,
-    COMMENTS_MANAGE: number|bigint,
-    ORGANIZATIONS_MANAGE: number|bigint,
-  
-    POSTS_DELETE: number|bigint,
-    COMMENTS_DELETE: number|bigint,
-    ORGANIZATIONS_DELETE: number|bigint,
-  }>;
-  
-  export type MeRights = keyof LazyMeRights;
-  
-  export type LazyUsersRights = Readonly<{
-    READ: number|bigint,
-    MANAGE: number|bigint,
-    MODERATE: number|bigint,
-  }>;
-  
-  export type UsersRights = keyof LazyUsersRights;
-  
-  export type LazyPostsRights = Readonly<{
-    OWNER: number|bigint,
-    MANAGER: number|bigint,
-  
-    VIEW: number|bigint,
-    MANAGE: number|bigint,
-    DELETE: number|bigint,
-    REACT: number|bigint,
-    ATTACH_FILES: number|bigint,
-  
-    COMMENTS_READ: number|bigint,
-    COMMENTS_CREATE: number|bigint,
-    COMMENTS_DELETE: number|bigint,
-    COMMENTS_MANAGE: number|bigint,
-    COMMENTS_REACT: number|bigint,
-    
-    VIEWERS_MUTE: number|bigint,
-    VIEWERS_BLOCK: number|bigint,
-  }>;
-  
-  export type PostsRights = keyof LazyPostsRights;
-  
-  export type LazyOrganizationsRights = Readonly<{
-    OWNER: number|bigint,
-    ADMINISTRATOR: number|bigint,
-  
-    INVITE_CREATE: number|bigint,
-    RIGHTS_MANAGE: number|bigint,
-  
-    READ: number|bigint,
-    MANAGE: number|bigint,
-    DELETE: number|bigint,
-  
-    POSTS_READ: number|bigint,
-    POSTS_CREATE: number|bigint,
-    POSTS_MANAGE: number|bigint,
-    POSTS_DELETE: number|bigint,
-  
-    ROLES_MANAGE: number|bigint,
-  
-    MEMBERS_KICK: number|bigint,
-    VIEWERS_BLOCK: number|bigint,
-  }>;
-  
-  export type OrganizationsRights = keyof LazyOrganizationsRights;
-  
-  export interface LazyRights {
-    readonly ME: LazyMeRights,
-    readonly USERS: LazyUsersRights,
-    readonly POSTS: LazyPostsRights,
-    readonly ORGANIZATIONS: LazyOrganizationsRights
-  };
-  
   export class Parser {
-    public static execute(rights: LazyRights[keyof LazyRights] | LazyRights) {
+    public static execute(rights: Lazy.Rights[keyof Lazy.Rights] | Lazy.Rights) {
       let raw: bigint = 0n;
       
       Object.keys(rights).forEach(k => {
@@ -96,10 +12,74 @@ export namespace Rights {
       return raw;
     }
   }
+  
+  export namespace Lazy {
+    export interface MeRights {
+      readonly ADMINISTRATOR: number|bigint,
+      readonly MODERATOR: number|bigint,
+      readonly USER: number|bigint,
+      readonly MUTE: number|bigint,
+      readonly BAN: number|bigint,
+      readonly POSTS_CREATE: number|bigint,
+      readonly COMMENTS_CREATE: number|bigint,
+      readonly ORGANIZATIONS_CREATE: number|bigint,
+      readonly POSTS_MANAGE: number|bigint,
+      readonly COMMENTS_MANAGE: number|bigint,
+      readonly ORGANIZATIONS_MANAGE: number|bigint,
+      readonly POSTS_DELETE: number|bigint,
+      readonly COMMENTS_DELETE: number|bigint,
+      readonly ORGANIZATIONS_DELETE: number|bigint,
+    };
 
-  // prettier-ignore-start
-  export const LAZY_RIGHTS: LazyRights = {
-    ME: {
+    export interface UsersRights {
+      readonly READ: number|bigint,
+      readonly MANAGE: number|bigint,
+      readonly MODERATE: number|bigint,
+    };
+
+    export interface PostsRights {
+      readonly OWNER: number|bigint,
+      readonly MANAGER: number|bigint,
+      readonly VIEW: number|bigint,
+      readonly MANAGE: number|bigint,
+      readonly DELETE: number|bigint,
+      readonly REACT: number|bigint,
+      readonly ATTACH_FILES: number|bigint,
+      readonly COMMENTS_READ: number|bigint,
+      readonly COMMENTS_CREATE: number|bigint,
+      readonly COMMENTS_DELETE: number|bigint,
+      readonly COMMENTS_MANAGE: number|bigint,
+      readonly COMMENTS_REACT: number|bigint,
+      readonly VIEWERS_MUTE: number|bigint,
+      readonly VIEWERS_BLOCK: number|bigint,
+    };
+
+    export interface OrganizationsRights {
+      readonly OWNER: number|bigint,
+      readonly ADMINISTRATOR: number|bigint,
+      readonly INVITE_CREATE: number|bigint,
+      readonly RIGHTS_MANAGE: number|bigint,
+      readonly READ: number|bigint,
+      readonly MANAGE: number|bigint,
+      readonly DELETE: number|bigint,
+      readonly POSTS_READ: number|bigint,
+      readonly POSTS_CREATE: number|bigint,
+      readonly POSTS_MANAGE: number|bigint,
+      readonly POSTS_DELETE: number|bigint,
+      readonly ROLES_MANAGE: number|bigint,
+      readonly MEMBERS_KICK: number|bigint,
+      readonly VIEWERS_BLOCK: number|bigint,
+    };
+
+    export interface Rights {
+      readonly ME: MeRights,
+      readonly USERS: UsersRights,
+      readonly POSTS: PostsRights,
+      readonly ORGANIZATIONS: OrganizationsRights
+    };
+    
+    // prettier-ignore-start
+    export const ME_RIGHTS: MeRights = {
       ADMINISTRATOR:                  1n << 0n,
       MODERATOR:                      1n << 1n,
       USER:                           1n << 2n,
@@ -114,15 +94,15 @@ export namespace Rights {
       POSTS_DELETE:                   1n << 11n,
       COMMENTS_DELETE:                1n << 12n,
       ORGANIZATIONS_DELETE:           1n << 13n,
-    },
+    } as const;
   
-    USERS: {
+    export const USERS_RIGHTS: UsersRights = {
       READ:                           1n << 14n,
       MANAGE:                         1n << 15n,
       MODERATE:                       1n << 16n,
-    },
+    } as const;
   
-    POSTS: {
+    export const POSTS_RIGHTS: PostsRights = {
       OWNER:                          1n << 17n,
       MANAGER:                        1n << 18n,
       VIEW:                           1n << 19n,
@@ -137,9 +117,9 @@ export namespace Rights {
       COMMENTS_REACT:                 1n << 28n,
       VIEWERS_MUTE:                   1n << 29n,
       VIEWERS_BLOCK:                  1n << 30n,
-    },
+    } as const;
   
-    ORGANIZATIONS: {
+    export const ORGANIZATIONS_RIGHTS: OrganizationsRights = {
       OWNER:                          1n << 31n,
       ADMINISTRATOR:                  1n << 32n,
       INVITE_CREATE:                  1n << 33n,
@@ -154,13 +134,20 @@ export namespace Rights {
       ROLES_MANAGE:                   1n << 42n,
       MEMBERS_KICK:                   1n << 43n,
       VIEWERS_BLOCK:                  1n << 44n,
-    }
-  } as const;
+    } as const;
   
-  export const DEFAULT_USER_RIGHTS: Readonly<{
-    [P in keyof LazyRights]: LazyRights[Uppercase<P>]
-  }> = {
-    ME: {
+    export const RIGHTS: Rights = {
+      ME: ME_RIGHTS,
+      USERS: USERS_RIGHTS,
+      POSTS: POSTS_RIGHTS,
+      ORGANIZATIONS: ORGANIZATIONS_RIGHTS
+    } as const;
+    // prettier-ignore-end
+  }
+
+  export namespace Default {
+    // prettier-ignore-start
+    export const ME_RIGHTS: Lazy.MeRights = {
       ADMINISTRATOR:                  0n << 0n,         /* default: 1n << 1n */
       MODERATOR:                      0n << 1n,         /* default: 1n << 2n */
       USER:                           1n << 2n,         /* default: 1n << 3n */
@@ -175,15 +162,15 @@ export namespace Rights {
       POSTS_DELETE:                   0n << 11n,        /* default: 1n << 12n */
       COMMENTS_DELETE:                0n << 12n,        /* default: 1n << 13n */
       ORGANIZATIONS_DELETE:           0n << 13n,        /* default: 1n << 14n */
-    },
-  
-    USERS: {
+    } as const;
+
+    export const USERS_RIGHTS: Lazy.UsersRights = {
       READ:                           1n << 14n,        /* default: 1n << 15n */
       MANAGE:                         0n << 15n,        /* default: 1n << 16n */
       MODERATE:                       0n << 16n,        /* default: 1n << 17n */
-    },
-  
-    POSTS: {
+    } as const;
+
+    export const POSTS_RIGHTS: Lazy.PostsRights = {
       OWNER:                          0n << 17n,        /* default: 1n << 18n */
       MANAGER:                        0n << 18n,        /* default: 1n << 19n */
       VIEW:                           1n << 19n,        /* default: 1n << 20n */
@@ -198,9 +185,9 @@ export namespace Rights {
       COMMENTS_REACT:                 1n << 28n,        /* default: 1n << 29n */
       VIEWERS_MUTE:                   0n << 29n,        /* default: 1n << 30n */
       VIEWERS_BLOCK:                  0n << 30n,        /* default: 1n << 31n */
-    },
-  
-    ORGANIZATIONS: {
+    } as const;
+
+    export const ORGANIZATIONS_RIGHTS: Lazy.OrganizationsRights = {
       OWNER:                          0n << 31n,        /* default: 1n << 32n */
       ADMINISTRATOR:                  0n << 32n,        /* default: 1n << 33n */
       INVITE_CREATE:                  0n << 33n,        /* default: 1n << 34n */
@@ -215,30 +202,84 @@ export namespace Rights {
       ROLES_MANAGE:                   0n << 42n,        /* default: 1n << 43n */
       MEMBERS_KICK:                   0n << 43n,        /* default: 1n << 44n */
       VIEWERS_BLOCK:                  0n << 44n,        /* default: 1n << 45n */
+    } as const;
+
+    export const USER_RIGHTS = {
+      ME: ME_RIGHTS,
+      USERS: USERS_RIGHTS,
+      POSTS: POSTS_RIGHTS,
+      ORGANIZATIONS: ORGANIZATIONS_RIGHTS
+    } as const;
+
+    export interface UserRights {
+      ME: Lazy.MeRights,
+      USERS: Lazy.UsersRights,
+      POSTS: Lazy.PostsRights,
+      ORGANIZATIONS: Lazy.OrganizationsRights,
     }
-  } as const;
-  // prettier-ignore-end
-  
-  export const RAW_LAZY_RIGHTS = {
-    RAW: Parser.execute(LAZY_RIGHTS),
-    RAW_USERS: Parser.execute(LAZY_RIGHTS.USERS),
-    RAW_POSTS: Parser.execute(LAZY_RIGHTS.POSTS),
-    RAW_ORGANIZATIONS: Parser.execute(LAZY_RIGHTS.ORGANIZATIONS)
-  } as const;
+    // prettier-ignore-end
+  }
 
-  export const RAW_DEFAULT_USER_RIGHTS = {
-    RAW: Parser.execute(DEFAULT_USER_RIGHTS),
-    RAW_USERS: Parser.execute(DEFAULT_USER_RIGHTS.USERS),
-    RAW_POSTS: Parser.execute(DEFAULT_USER_RIGHTS.POSTS),
-    RAW_ORGANIZATIONS: Parser.execute(DEFAULT_USER_RIGHTS.ORGANIZATIONS)
-  } as const;
-  
-  export type RawLazyRights = typeof RAW_LAZY_RIGHTS;
-  export type RawLazyRightsKeys = keyof RawLazyRights;
-  export type RawDefaultUserRights = typeof RAW_DEFAULT_USER_RIGHTS;
-  export type RawDefaultUserRightsKeys = keyof RawDefaultUserRights;
+  export namespace Raw {
+    export const LAZY_ALL_RIGHTS = Parser.execute(Lazy.RIGHTS);
 
-  export const R_ME_KEYS = [
+    export const LAZY_ME_RIGHTS = Parser.execute(Lazy.RIGHTS.ME);
+    export const LAZY_USERS_RIGHTS = Parser.execute(Lazy.RIGHTS.USERS);
+    export const LAZY_POSTS_RIGHTS = Parser.execute(Lazy.RIGHTS.POSTS);
+    export const LAZY_ORGANIZATIONS_RIGHTS = Parser.execute(Lazy.RIGHTS.ORGANIZATIONS);
+
+    export const DEFAULT_USER_ALL_RIGHTS = Parser.execute(Default.USER_RIGHTS);
+    export const DEFAULT_USER_ME_RIGHTS = Parser.execute(Default.USER_RIGHTS.ME);
+    export const DEFAULT_USER_USERS_RIGHTS = Parser.execute(Default.USER_RIGHTS.USERS);
+    export const DEFAULT_USER_POSTS_RIGHTS = Parser.execute(Default.USER_RIGHTS.POSTS);
+    export const DEFAULT_USER_ORGANIZATIONS_RIGHTS = Parser.execute(Default.USER_RIGHTS.ORGANIZATIONS);
+
+    export const LAZY_RIGHTS = {
+      ALL: LAZY_ALL_RIGHTS,
+      
+      ME: LAZY_ME_RIGHTS,
+      USERS: LAZY_USERS_RIGHTS,
+      POSTS: LAZY_POSTS_RIGHTS,
+      ORGANIZATIONS: LAZY_ORGANIZATIONS_RIGHTS
+    } as const;
+  
+    export const DEFAULT_USER_RIGHTS = {
+      ALL: DEFAULT_USER_ALL_RIGHTS,
+      
+      ME: DEFAULT_USER_ME_RIGHTS,
+      USERS: DEFAULT_USER_USERS_RIGHTS,
+      POSTS: DEFAULT_USER_POSTS_RIGHTS,
+      ORGANIZATIONS: DEFAULT_USER_ORGANIZATIONS_RIGHTS
+    } as const;
+  
+    export const LAZY_RIGHTS_KEYS = [
+      "ALL",
+      "ME",
+      "USERS",
+      "POSTS",
+      "ORGANIZATIONS"
+    ] as const;
+  
+    export const DEFAULT_USER_RIGHTS_KEYS = [
+      "ALL",
+      "ME",
+      "USERS",
+      "POSTS",
+      "ORGANIZATIONS"
+    ] as const;
+    
+    export type LazyRights = typeof LAZY_RIGHTS;
+    export type LazyRightsKeys = keyof LazyRights;
+    export type DefaultUserRights = typeof DEFAULT_USER_RIGHTS;
+    export type DefaultUserRightsKeys = keyof DefaultUserRights;
+  }
+  
+  export type MeRights = keyof Lazy.MeRights;
+  export type UsersRights = keyof Lazy.UsersRights;
+  export type PostsRights = keyof Lazy.PostsRights;
+  export type OrganizationsRights = keyof Lazy.OrganizationsRights;
+
+  export const ME_KEYS = [
     "ADMINISTRATOR",
     "MODERATOR",
     "USER",
@@ -254,16 +295,16 @@ export namespace Rights {
     "COMMENTS_DELETE",
     "ORGANIZATIONS_DELETE"
   ] as const;
-  export type MeRightsKeys = typeof R_ME_KEYS[number];
+  export type MeRightsKeys = typeof ME_KEYS[number];
   
-  export const R_USERS_KEYS = [
+  export const USERS_KEYS = [
     "READ",
     "MANAGE",
     "MODERATE"
   ] as const;
-  export type UsersRightsKeys = typeof R_USERS_KEYS[number];
+  export type UsersRightsKeys = typeof USERS_KEYS[number];
   
-  export const R_POSTS_KEYS = [
+  export const POSTS_KEYS = [
     "OWNER",
     "MANAGER",
     "VIEW",
@@ -279,9 +320,9 @@ export namespace Rights {
     "VIEWERS_MUTE",
     "VIEWERS_BLOCK"
   ] as const;
-  export type PostsRightsKeys = typeof R_POSTS_KEYS[number];
+  export type PostsRightsKeys = typeof POSTS_KEYS[number];
   
-  export const R_ORGANIZATIONS_KEYS = [
+  export const ORGANIZATIONS_KEYS = [
     "OWNER",
     "ADMINISTRATOR",
     "INVITE_CREATE",
@@ -297,23 +338,23 @@ export namespace Rights {
     "MEMBERS_KICK",
     "VIEWERS_BLOCK"
   ] as const;
-  export type OrganizationsRightsKeys = typeof R_ORGANIZATIONS_KEYS[number];
+  export type OrganizationsRightsKeys = typeof ORGANIZATIONS_KEYS[number];
   
-  export const R_LAZY_KEYS = [
+  export const LAZY_KEYS = [
     "ME",
     "USERS",
     "POSTS",
     "ORGANIZATIONS"
   ] as const;
-  export type LazyRightsKeys = typeof R_LAZY_KEYS[number];
+  export type LazyRightsKeys = typeof LAZY_KEYS[number];
   
-  export const R_KEYS = [
+  export const KEYS = [
     "default",
     "users",
     "posts",
     "organizations"
   ] as const;
-  export type RightsKeys = typeof R_KEYS[number];
+  export type RightsKeys = typeof KEYS[number];
   
   export type GetKeys<T extends LazyRightsKeys> = ({
     ME: MeRightsKeys,
@@ -323,18 +364,18 @@ export namespace Rights {
   })[T];
   
   export interface Rights {
-    default: typeof DEFAULT_USER_RIGHTS,
+    default: Default.UserRights,
   
     users: {
-      [userId: string]: LazyUsersRights
+      [userId: string]: Lazy.UsersRights
     },
   
     posts: {
-      [postId: string]: LazyPostsRights
+      [postId: string]: Lazy.PostsRights
     },
   
     organizations: {
-      [organizationId: string]: LazyOrganizationsRights
+      [organizationId: string]: Lazy.OrganizationsRights
     },
   };
 }
