@@ -1,5 +1,5 @@
 import type { Link } from "../utility/utility.types";
-import { Rights } from "./rights.types";
+import { Rights } from "../rights/rights.types";
 
 export const U_KEYS = [
   "id",

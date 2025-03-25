@@ -33,7 +33,7 @@ import {
   DataType as TDataType
 } from "./backend/data.types";
 
-export { Rights } from "./authors/rights.types";
+export { Rights } from "./rights/rights.types";
 
 export namespace LAFka.Response {
   export type GetData<T> = IGetData<T>;
