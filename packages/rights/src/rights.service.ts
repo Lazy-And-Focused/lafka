@@ -52,7 +52,7 @@ export class LazyRightsService<
    *        rights: ["ADMINISTRATOR"]
    *    });
    * 
-   *    new LazyRightsService<"posts">({rights.posts}).has({
+   *    new LazyRightsService<"posts">(rights.posts).has({
    *        key: "some-user-id",
    *        rights: ["DELETE"]
    *    });
@@ -100,7 +100,7 @@ class RightsService<
       ? keyof Rights.Lazy.Rights
       : string
 > {
-    /**
+  /**
    * ```js
    * import { Rights } from "@lafka/types";
    * 
