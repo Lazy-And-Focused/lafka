@@ -4,9 +4,9 @@ import { Rights } from "lafka/types";
 export class LazyRightsService<
   T extends Rights.RightsKeys,
   K extends T extends "default"
-    ? keyof Rights.LazyRights
+    ? keyof Rights.Lazy.Rights
     : string = T extends "default"
-      ? keyof Rights.LazyRights
+      ? keyof Rights.Lazy.Rights
       : string
 > extends Types.LazyRightsService<T, K> {
   public constructor(public readonly rights: Rights.Rights[T]) {
@@ -14,7 +14,7 @@ export class LazyRightsService<
   }
   
   public has<R extends Types.RightsTypeArray<T, K> = Types.RightsTypeArray<T, K>>(data: {
-    key: K extends keyof Rights.LazyRights ? K : string,
+    key: K extends keyof Rights.Lazy.Rights ? K : string,
     rights: R
   }) {
     const rights = Array.from(new Set(data.rights));
@@ -34,15 +34,15 @@ export class LazyRightsService<
 class RightsService<
   T extends Rights.RightsKeys,
   K extends T extends "default"
-    ? keyof Rights.LazyRights
+    ? keyof Rights.Lazy.Rights
     : string = T extends "default"
-      ? keyof Rights.LazyRights
+      ? keyof Rights.Lazy.Rights
       : string
 > {
   public constructor(public readonly rights: Rights.Rights[T]) {};
 
   public hasOne(data: {
-    key: K extends keyof Rights.LazyRights ? K : string;
+    key: K extends keyof Rights.Lazy.Rights ? K : string;
     right: bigint|number;
   }) {
     const right = BigInt(data.right);
@@ -53,7 +53,7 @@ class RightsService<
 
   public has(
     data: {
-      key: K extends keyof Rights.LazyRights ? K : string;
+      key: K extends keyof Rights.Lazy.Rights ? K : string;
       rights: [...[bigint|number]];
     }
   ) {
@@ -66,24 +66,24 @@ class RightsService<
   }
 }
 
-const b = new RightsService<"posts">({"12345": Rights.DEFAULT_USER_RIGHTS.POSTS}).has({
+const b = new RightsService<"posts">({"12345": Rights.Default.USER_RIGHTS.POSTS}).has({
   key: "12345",
   rights: [
-    Rights.DEFAULT_USER_RIGHTS.ME.ADMINISTRATOR
+    Rights.Default.ME_RIGHTS.ADMINISTRATOR
   ]
 })
 
 
 
 
-const d = new LazyRightsService<"default">(Rights.DEFAULT_USER_RIGHTS).has({
+const d = new LazyRightsService<"default">(Rights.Default.USER_RIGHTS).has({
   key: "ME",
   rights: ["ADMINISTRATOR"]
 });
 
 console.log(d);
 
-const u = new LazyRightsService<"users">({"12345": Rights.DEFAULT_USER_RIGHTS.USERS}).has({
+const u = new LazyRightsService<"users">({"12345": Rights.Default.USERS_RIGHTS}).has({
   key: "12345",
   rights: ["MANAGE"]
 });
