@@ -1,7 +1,7 @@
 {
   "name": "@lafka/rights",
   "version": "1.0.0",
-  "description": "",
+  "description": "Rights service for LAFka",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "files": [
@@ -12,11 +12,26 @@
     "start": "pnpm run build && node dist/rights.service.js",
     "build": "tsc && tsc-alias"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "rights",
+    "bitfield",
+    "lafka"
+  ],
+  "author": {
+    "name": "Lazy-And-Focused",
+    "url": "https://laf-info.netlify.app/"
+  },
+  "contributors": [
+    {
+      "name": "FOCKUSTY",
+      "email": "viserd.yt@gmail.com",
+      "url": "http://fockusty.netlify.app/"
+    }
+  ],
+  "license": "MIT",
   "devDependencies": {
     "@lafka/types": "workspace:^",
+    
     "@types/node": "catalog:",
     "nodemon": "catalog:",
     "ts-node": "catalog:",
