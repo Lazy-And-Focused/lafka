@@ -1,6 +1,5 @@
 import { Rights as LAFkaTypes } from "@lafka/types";
 
-import { Types } from "./types";
 export { Types } from "./types";
 
 type ToArray<T, K = T> = [K, ...T[]];
