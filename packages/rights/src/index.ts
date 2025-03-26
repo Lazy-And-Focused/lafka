@@ -15,8 +15,14 @@ export namespace Rights {
     return (exist, to) => {
       let right = exist;
       
-      if (func === "decrease") to.forEach(v => right ^ v);
-      else to.forEach(v => right | v);
+      if (func === "decrease")
+        to.forEach(v => (right & v) === v
+          ? right ^ v
+          : false);
+      else
+        to.forEach(v => (right & v) === 0n
+          ? right | v
+          : false);
 
       return right;
     }
@@ -91,8 +97,3 @@ export namespace Rights {
     }
   }
 }
-
-Rights.Service.decrease({
-  existed: 1n,
-  toDelete: [1n, 2n]
-})
