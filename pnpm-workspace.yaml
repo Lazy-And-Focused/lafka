@@ -31,4 +31,4 @@ catalog:
 
   # DATABASE
   mongodb: ^6.8.0
-  mongoose: ^8.5.3
+  mongoose: ^8.9.5
