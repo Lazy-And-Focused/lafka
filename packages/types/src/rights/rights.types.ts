@@ -1,6 +1,6 @@
 export namespace Rights {
   export class Parser {
-    public static toBigInt<T extends LazyRightsKeys, K extends GetKeys<T> = GetKeys<T>>(
+    public static toBigInt<T extends LazyRightsKeys>(
       key: T,
       right: GetKeys<T>
     ): bigint {
@@ -379,6 +379,12 @@ export namespace Rights {
     USERS: UsersRightsKeys,
     POSTS: PostsRightsKeys,
     ORGANIZATIONS: OrganizationsRightsKeys
+  })[T];
+  export type GetTypes<T extends RightsKeys> = ({
+    default: Default.UserRights,
+    users: Lazy.UsersRights
+    posts: Lazy.PostsRights
+    organizations: Lazy.OrganizationsRights
   })[T];
   
   export type Rights = Raw.Rights; 
