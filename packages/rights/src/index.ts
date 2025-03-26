@@ -1,176 +1,99 @@
-import { Types } from "./types";
 import { Rights as LAFkaTypes } from "@lafka/types";
 
+import { Types } from "./types";
 export { Types } from "./types";
 
+type ToArray<T, K = T> = [K, ...T[]];
+type ToDeleteType<T extends LAFkaTypes.LazyRightsKeys|false = false> = T extends LAFkaTypes.LazyRightsKeys
+  ? [T, LAFkaTypes.GetKeys<T>, ...LAFkaTypes.GetKeys<T>[]]
+  : bigint;
+
+type ToDeleteFunc = (existed: bigint, toDelete: bigint[]) => bigint;
+type ToGrateFunc = (existed: bigint, toGrate: bigint[]) => bigint;
+
 export namespace Rights {
-  /**
-   * @generics
-   * T: "default" | "users" | "posts" | "organizations"
-   * 
-   * ```js
-   * if (T === "default") {
-   *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
-   * }
-   * else {
-   *    K: string (the id)
-   * }
-   * ```
-   */
-  export class LazyRightsService<
-  T extends LAFkaTypes.RightsKeys,
-  K extends T extends "default"
-    ? keyof LAFkaTypes.Lazy.Rights
-    : string = T extends "default"
-      ? keyof LAFkaTypes.Lazy.Rights
-      : string
-  > extends Types.Rights.LazyRightsService<T, K> {
-  /**
-   * ```js
-   * (async() => {
-   *    const { rights } = (await (await fetch(api_url, {headers})).json());
-   * 
-   *    new LazyRightsService<"default">(rights.default);
-   *    new LazyRightsService<"users">(rights.users);
-   *    new LazyRightsService<"posts">(rights.posts);
-   *    new LazyRightsService<"organizations">(rights.organizations);
-   * })();
-   * ```
-   * 
-   * @param rights Rights.Rights[T]
-   */
-  public constructor(public readonly rights: LAFkaTypes.Rights[T]) {
-    super(rights);
+  function GratingLogic(func: "increase"|"decrease"): ToDeleteFunc|ToGrateFunc {
+    return (exist, to) => {
+      let right = exist;
+      
+      if (func === "decrease") to.forEach(v => right ^ v);
+      else to.forEach(v => right | v);
+
+      return right;
+    }
   }
 
-  /**
-   * ```js
-   * import { Rights } from "@lafka/types"
-   * 
-   * (async() => {
-   *    const { rights } = await (await fetch(api_url, {headers})).json();
-   * 
-   *    new LazyRightsService<"default">(rights.default).has({
-   *        key: "ME",
-   *        rights: ["ADMINISTRATOR"]
-   *    });
-   * 
-   *    new LazyRightsService<"posts">(rights.posts).has({
-   *        key: "some-user-id",
-   *        rights: ["DELETE"]
-   *    });
-   * })();
-   * ```
-   * 
-   * @returns {false|Record<R[number], boolean>}
-   */
-  public has<R extends Types.Rights.TypeArray<T, K> = Types.Rights.TypeArray<T, K>>(data: {
-    key: K extends keyof LAFkaTypes.Lazy.Rights ? K : string,
-    rights: R
-  }): false | Record<R[number], boolean> {
-    const rights = Array.from(new Set(data.rights));
+  function ServiceLogicGrate<T extends LAFkaTypes.LazyRightsKeys|false = false>({
+    existed, to, func
+  }: {
+    existed: bigint,
+    to: T extends false
+      ? ToArray<bigint>
+      : ToDeleteType<T> | ToArray<bigint>,
+    func: ToDeleteFunc | ToGrateFunc
+  }) {
+    if (typeof to[0] === "bigint") {
+      const data = to.map(v => {if (LAFkaTypes.Parser.exist(v)) return v}).filter(v => v !== undefined);
+      
+      if (data.length > 0) return func(existed, data);
+      else return false;
+    } else {
+      const data = to.splice(1).map(v => {
+        return LAFkaTypes.Parser.toBigInt<any>(to[0], v);
+      });
 
-    if (rights.length === 0) return false;
-
-    const existingRights = (this.rights as any)[data.key];
-
-    return Object.fromEntries(rights.map((right) => {
-      return existingRights[right] === 0
-        ? [right, false]
-        : [right, true];
-    })) as Record<R[number], boolean>;
-  }
+      return func(existed, data);
+    }
   };
 
-  /**
-  * @generics
-  * T: "default" | "users" | "posts" | "organizations"
-  * 
-  * ```js
-  * if (T === "default") {
-  *    K: "ME" | "USERS" | "POSTS" | "ORGANIZATIONS"
-  * }
-  * else {
-  *    K: string (the id)
-  * }
-  * ```
-  */
-  export class RightsService<
-  T extends LAFkaTypes.RightsKeys,
-  K extends T extends "default"
-    ? keyof LAFkaTypes.Lazy.Rights
-    : string = T extends "default"
-      ? keyof LAFkaTypes.Lazy.Rights
-      : string
-  > {
-  /**
-   * ```js
-   * import { Rights } from "@lafka/types";
-   * 
-   * (async() => {
-   *    const { rights } = (await (await fetch(api_url, {headers})).json());
-   * 
-   *    new RightsService<"default">(rights.default);
-   *    new RightsService<"users">(rights.users);
-   *    new RightsService<"posts">(rights.posts);
-   *    new RightsService<"organizations">(rights.organizations);
-   * })();
-   * ```
-   * 
-   * @param rights Rights.Rights[T]
-   */
-  public constructor(public readonly rights: LAFkaTypes.Rights[T]) {};
+  export class Service<T extends LAFkaTypes.LazyRightsKeys|false = false> {
+    public constructor(public readonly rights: bigint) {};
 
-  public hasOne(data: {
-    key: K extends keyof LAFkaTypes.Lazy.Rights ? K : string;
-    right: bigint|number;
-  }) {
-    const right = BigInt(data.right);
-    const raw = LAFkaTypes.Parser.execute((this.rights as any)[data.key]);
-    
-    return (raw & right) === right;
-  }
-
-  /**
-   * ```js
-   * import { Rights } from "@lafka/types";
-   * 
-   * (async() => {
-   *    const { rights } = (await (await fetch(api_url, {headers})).json());
-   * 
-   *    new RightsService<"posts">(rights.posts).has({
-   *       key: "12345",
-   *       rights: [
-   *           Rights.Default.POSTS_RIGHTS.MANAGE,
-   *           Rights.Default.POSTS_RIGHTS.COMMENTS_READ,
-   *       ]
-   *    });
-   * 
-   *    new RightsService<"posts">(rights.posts).has({
-   *       key: "67890",
-   *       rights: Rights.Default.POSTS_RIGHTS.OWNER,
-   *    });
-   *    // is equals ⩚  |  is equals
-   *    // is equals |  ⩛  is equals
-   *    new RightsService<"posts">(rights.posts).hasOne({
-   *       key: "67890",
-   *       right: Rights.Default.POSTS_RIGHTS.OWNER,
-   *    });
-   * })()
-   * ```
-   * 
-   * @returns {boolean}
-   */
-  public has(
-    data: {
-      key: K extends keyof LAFkaTypes.Lazy.Rights ? K : string;
-      rights: [...[bigint|number]] | bigint|number;
+    public increase(toDelete: T extends false
+      ? ToArray<bigint>
+      : ToDeleteType<T> | ToArray<bigint>
+    ) {
+      Service.decrease({existed: this.rights, toDelete});
     }
-  ): boolean {
-    return (Array.isArray(data.rights)
-      ? data.rights
-      : [data.rights])
-      .every((v) => this.hasOne({...data, right: v}));
-  }
+    
+    public decrease(toGrate: T extends false
+      ? ToArray<bigint>
+      : ToDeleteType<T> | ToArray<bigint>
+    ) {
+      Service.increase({existed: this.rights, toGrate});
+    }
+
+    public static increase<T extends LAFkaTypes.LazyRightsKeys|false = false>({
+      existed, toGrate
+    }: {
+      existed: bigint,
+      toGrate: T extends false
+        ? ToArray<bigint>
+        : ToDeleteType<T> | ToArray<bigint>
+    }) {
+      ServiceLogicGrate({
+        existed, to: toGrate,
+        func: GratingLogic("increase")
+      })
+    }
+
+    public static decrease<T extends LAFkaTypes.LazyRightsKeys|false = false>({
+      existed, toDelete
+    }: {
+      existed: bigint,
+      toDelete: T extends false
+        ? ToArray<bigint>
+        : ToDeleteType<T> | ToArray<bigint>
+    }) {
+      ServiceLogicGrate({
+        existed, to: toDelete,
+        func: GratingLogic("decrease")
+      })
+    }
   }
 }
+
+Rights.Service.decrease({
+  existed: 1n,
+  toDelete: [1n, 2n]
+})
