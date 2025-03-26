@@ -1,9 +1,10 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 
 import { User } from "@/components/user/user.component";
+import { LAFka } from "@lafka/types";
 
 type Props = {
-    user?: any
+    user?: LAFka.User
 };
  
 const Home: NextPage<Props> = ({ user }) => {

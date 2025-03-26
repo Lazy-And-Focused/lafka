@@ -1,7 +1,8 @@
 import React from "react";
+import { LAFka } from "@lafka/types";
 
 type Props = {
-  user?: any
+  user?: LAFka.User
 }
 
 export class User extends React.Component<Props> {
