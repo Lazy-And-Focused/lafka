@@ -1,5 +1,16 @@
 export namespace Rights {
   export class Parser {
+    public static toBigInt<T extends LazyRightsKeys, K extends GetKeys<T> = GetKeys<T>>(
+      key: T,
+      right: GetKeys<T>
+    ): bigint {
+      return (Rights.Lazy.RIGHTS[key] as any)[right];
+    };
+
+    public static exist(right: bigint): boolean {
+      return (Rights.Raw.LAZY_RIGHTS.ALL & right) === right;
+    }
+
     public static execute(rights: Lazy.Rights[keyof Lazy.Rights] | Lazy.Rights) {
       let raw: bigint = 0n;
       
@@ -222,7 +233,6 @@ export namespace Rights {
 
   export namespace Raw {
     export const LAZY_ALL_RIGHTS = Parser.execute(Lazy.RIGHTS);
-
     export const LAZY_ME_RIGHTS = Parser.execute(Lazy.RIGHTS.ME);
     export const LAZY_USERS_RIGHTS = Parser.execute(Lazy.RIGHTS.USERS);
     export const LAZY_POSTS_RIGHTS = Parser.execute(Lazy.RIGHTS.POSTS);
@@ -268,6 +278,14 @@ export namespace Rights {
       "ORGANIZATIONS"
     ] as const;
     
+    export interface Rights {
+      default: bigint;
+
+      users: { [userId: string]: bigint },
+      posts: { [postId: string]: bigint },
+      organizations: { [organizationId: string]: bigint },
+    }
+
     export type LazyRights = typeof LAZY_RIGHTS;
     export type LazyRightsKeys = keyof LazyRights;
     export type DefaultUserRights = typeof DEFAULT_USER_RIGHTS;
@@ -363,7 +381,9 @@ export namespace Rights {
     ORGANIZATIONS: OrganizationsRightsKeys
   })[T];
   
-  export interface Rights {
+  export type Rights = Raw.Rights; 
+
+  export interface LazyRights {
     default: Default.UserRights,
   
     users: {
