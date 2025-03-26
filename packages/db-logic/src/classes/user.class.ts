@@ -45,7 +45,7 @@ class User<T extends boolean = false> implements LAFka.User {
       nickname: undefined,
       biography: undefined,
       rights: {
-        default: Rights.DEFAULT_USER_RIGHTS,
+        default: Rights.Default.USER_RIGHTS,
         organizations: {},
         posts: {},
         users: {}
