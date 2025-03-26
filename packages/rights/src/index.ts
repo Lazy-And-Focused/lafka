@@ -1,4 +1,4 @@
-import { Rights as LAFkaTypes } from "@lafka/types";
+import { LAFka, Rights as LAFkaTypes } from "@lafka/types";
 
 export { Types } from "./types";
 
@@ -94,6 +94,58 @@ export namespace Rights {
         existed, to: toDelete,
         func: GratingLogic("decrease")
       })
+    }
+  }
+
+  export class User {
+    public constructor(public readonly user: LAFka.User) {};
+
+    /**
+     * keys that can be returned:
+     * @MeRightsKeys LAFka.MeRightsKeys (ME: MeRightsKeys[])
+     * @UsersRightsKeys LAFka.UsersRightsKeys (USERS: UsersRightsKeys[])
+     * @PostsRightsKeys LAFka.PostsRightsKeys (POSTS: PostsRightsKeys[])
+     * @OrganizationsRightsKeys LAFka.OrganizationsRightsKeys (ORGANIZATIONS: OrganizationsRightsKeys[])
+     */
+    public getDefaultRights(): Record<LAFkaTypes.LazyRightsKeys, string[]> {
+      const data: Record<LAFkaTypes.LazyRightsKeys, string[]> = {
+        "ME": [],
+        "USERS": [],
+        "POSTS": [],
+        "ORGANIZATIONS": []
+      };
+
+      for (const key of LAFkaTypes.LAZY_KEYS) {
+        for (const right of Object.keys(LAFkaTypes.Default.USER_RIGHTS[key])) {
+          if (this.defaultHas((LAFkaTypes.Default.USER_RIGHTS[key] as any)[right])) {
+            data[key].push(right);
+          }
+        };
+      };
+
+      return data;
+    }
+
+    public getRights<T extends Exclude<LAFkaTypes.RightsKeys, "default">>(type: T, id: string): LAFkaTypes.GetTypes<T>[] {
+      const def = LAFkaTypes.Default[`${type.toUpperCase()}_RIGHTS` as `${Uppercase<T>}_RIGHTS`];
+      
+      return Object.keys(def).filter(k => (this.user.rights[type][id] & (def as any)[k]) === (def as any)[k]) as any[];
+    }
+
+    public userHas(right: bigint, id: string): boolean {
+      return (this.user.rights.users[id] & right) === right;
+    }
+
+    public postsHas(right: bigint, id: string): boolean {
+      return (this.user.rights.posts[id] & right) === right;
+    }
+
+    public organizationsHas(right: bigint, id: string): boolean {
+      return (this.user.rights.organizations[id] & right) === right;
+    }
+
+    public defaultHas(right: bigint): boolean {
+      return (this.user.rights.default & right) === right;
     }
   }
 }
