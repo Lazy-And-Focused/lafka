@@ -4,27 +4,26 @@
 <hr>
 
 ## Пример (root (если есть))
-### `/users/:id`
+### `/users/`
 
 - == Описание ==
 
 #### params
-| name         | type               | value                        |
-| ------------ | ------------------ | --------------------------   |
-| `id`         | `string`           | `id` пользователя на сайте   |
+| name         | type               | value                            | example |
+| ------------ | ------------------ | --------------------------       | ------- |
+| `identifier`         | `string`           | индетификатор (username или id) пользователя на сайте   | `fetch(api + "/u/@FOCKUSTY")`, `fetch(api + "/u/12345")` |
 
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| `/api/v1`       | /api               |
-| `/user`         | /u                 |
+| `/users`      | /u                 |
 
-#### methods
-| method       | body            | response |
-| ------------ | --------------- | -------- |
-| `get`        | `access_token`  | [`User`](./types.doc.md#user)   |
-| `post`       | `1234`          | `undefined` |
-| `delete`     | `null`          | `1234helloworld` |
+#### Routes
+| path | method       | body            | headers             | response |
+| ------ | ------------ | --------------- | ------------------- | -------- |
+| `/:daaata` | `get`        | `null`          | `{ token: string }` | [`User`](./types.doc.md#user)   |
+| `/:daaata` | `post`       | `1234`          | `{ token: string }` | `undefined` |
+| `/:daaata` | `delete`     | `null`          | `{ token: string }` | `1234helloworld` |
 
 <hr>
 
@@ -44,7 +43,7 @@
 <hr>
 
 ## Пользователь
-### `/users/:id`
+### `/users/`
 
 - Предназначается для фетчинга пользователя с помощью запросов.
 
@@ -54,49 +53,186 @@
 
 ```ts
 interface User {
-	id: string;
+  id: string;
 
-	username: string;
-	nickname?: string;
-	avatar?: string;
+  username: string;
+  nickname?: string;
+  avatar?: string;
 
-	biography?: string;
-	links: Link[];
+  biography?: string;
+  links: Link[];
 
-	created_at: Date;
+  created_at: Date;
 
-	forum_posts: string[];
-	blog_posts: string[];
-	followed_forum_posts: string[];
-	followed_blog_posts: string[];
-	blocked_posts: string[];
+  forum_posts: string[];
+  blog_posts: string[];
+  followed_forum_posts: string[];
+  followed_blog_posts: string[];
+  blocked_posts: string[];
 
-	followers: string[];
-	following: string[];
+  followers: string[];
+  following: string[];
 }
 ```
 
 </details>
 
+
+
+#### query
+1. `cache`: `boolean`
+- Включает/выключает взятие данных сперва из кэша
+
+2. `returnUser`: `boolean`
+- (Для put, delete) вовзращает User, а не UpdateWriteOpResult или DeleteResult (Дополнительно обращается к базе данных)
+
 #### params
-| name         | type               | value                        |
-| ------------ | ------------------ | --------------------------   |
-| `id`         | `string`           | `id` пользователя на сайте   |
+1. `identifier`: `string`
+- `id` или `username` на сайте, поиск по `username`: `@FOCKUSTY`, поиск по `id`: `1234567`
+
+#### examples
+
+<details>
+<summary>1. GET (ME)</summary>
+
+</details>
+
+```ts
+// successed: true
+fetch(api + "/users/", {
+  method: "GET",
+  headers: { token: "id-token_in-cookie" }
+}).then(async data => {
+  console.log(await data.json()) // { type: "users", successed: true, resource: {...}, error: undefined }
+});
+
+// successed: false
+fetch(api + "/users/", {
+  method: "GET",
+  headers: { token: "id-token_in-cookie" }
+}).then(async data => {
+  console.log(await data.json()) // { type: "users", successed: false, resource: undefined, error: "FORBIDDEN" }
+});
+
+/* 
+  returning GetData<User>
+  required an id-token from cookies
+  method - GET
+*/
+```
+
+<details>
+<summary>2. GET</summary>
+
+```ts
+// find by username, successed: true
+fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then(async (data: GetData<User>) => {
+  console.log(await data.json()) // { successed: true, type: "users", resource: {...}, error: undefined } 
+});
+
+// find by id, successed: false
+fetch(api + "/users/1234567890", { method: "GET" }).then(async data => {
+  console.log(await data.json()) // { successed: false, type: "users", resource: null, error: "user not found" }
+});
+
+/* 
+  returning GetData<User>
+  not required data in headers/body
+  method - GET
+*/
+```
+
+</details>
+
+<details>
+<summary>3. DELETE</summary>
+
+```ts
+// delete by username, successed: true
+fetch(api + "/users/@FOCKUSTY", {
+  method: "DELETE",
+  headers: { token: "id-token_in-cookie" }
+}).then(async data => {
+  console.log(await data.json()) // { type: "users", successed: true, date: Date, resource: {...}, error: undefined }
+});
+
+// delete by id, successed: false
+fetch(api + "/u/1234", {
+  method: "DELETE",
+  headers: { token: "id-token_in-cookie" }
+}).then(async data => {
+  console.log(await data.json()) // { type: "users", successed: false, date: Date, resource: {...}, error: "403" }
+});
+
+/* 
+  returning DeleteData<User>
+  required an id-token from cookies
+  method - DELETE
+*/
+```
+
+</details>
+
+<details>
+<summary>4. PUT</summary>
+
+```ts
+// put by username, successed: true
+fetch(api + "/u/@FOCKUSTY", {
+  method: "PUT",
+  headers: { token: "id-token_in-cookie" },
+  body: JSON.stringify({
+    nickname: "fickus228",
+    biography: "The Hatter"
+  })
+}).then(async data => {
+  console.log(await data.json()) // { type: "users", successed: true, date: Date, resource: {...}, changed_resource: {...}, error: undefined }
+});
+
+// put by id, successed: false
+fetch(api + "/u/1235", {
+  method: "PUT",
+  headers: { token: "id-token_in-cookie" },
+  body: JSON.stringify({
+    nickname: "fickus228",
+    biography: "The Hatter"
+  })
+}).then(async data => {
+  console.log(await data.json()) // { type: "users", successed: false, date: Date, resource: {...}, changed_resource: undefined, error: "403" }
+});
+
+/* 
+  returning ChangeData<User>
+  required:
+    body: Partial<User>,
+    headers: an id-token from cookies
+  method - put
+*/
+```
+
+</details>
+
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| `/user`       | `/u`               |
-#### methods
-| method       | body                | response |
-| ------------ | ------------------  | -------- |
-| `get`        | `undefined`      | [`GetData<User>`](./types.doc.md#getdata) |
-| `delete`     | `access_token: string`      | [`DeleteData<User>`](./types.doc.md#deletedata) |
-| `put`        | `{ access_token: string } & Partial<User>`      | [`ChangeData<User>`](./types.doc.md/#changedata) |
+| `/users`       | `/u`              |
+
+#### Routes
+| path                | query    | method       | body                | headers           | response |
+| ------------------- | -------- | ------------ | ------------------  | ----------------- | -------- |
+| `/`                 | `cache: boolean\|undefined` | `get`        | `null`     		      | `{token: string}` | [`GetData<User>`](./types.doc.md#getdata) |
+| `/:identifier`      | `cache: boolean\|undefined` | `get`        | `null`     		      | `null`            | [`GetData<User>`](./types.doc.md#getdata) |
+| `/:identifier`      | `returnUser: boolean\|undefined` | `delete`     | `null`              | `{token: string}` | [`DeleteData<User>`](./types.doc.md#deletedata) |
+| `/:identifier`      | `cache: boolean\|undefined`, `returnUser: boolean\|undefined` | `put`        | `Partial<User>`     | `{token: string}` | [`ChangeData<User>`](./types.doc.md/#changedata) |
 
 <hr>
 
-## Посты (/posts)
-### `root`
+## Посты
+### /posts/
+
+#### params
+1. `id`: `string`
+- `id` поста на сайте, поиск: `1235412`
 
 #### types
 <details>
@@ -104,32 +240,32 @@ interface User {
 
 ```ts
 interface Post {
-	id: string;
+  id: string;
 
-	name: string;
-	content: string;
-	description?: string;
-	comments: string[];
-	followers: number;
+  name: string;
+  content: string;
+  description?: string;
+  comments: string[];
+  followers: number;
 
-	created_at: Date;
-	changed_at?: Date;
+  created_at: Date;
+  changed_at?: Date;
 
-	creator_id: string;
+  creator_id: string;
 
-	type: "forum" | "blog";
-	view_status: 0 | 1;
+  type: "forum" | "blog";
+  view_status: 0 | 1;
 
-	// Forum post:
+  // Forum post:
 
-	tags: Tag[] | null;
-	status: PostStatus | null;
+  tags: Tag[] | null;
+  status: PostStatus | null;
 
-	// Blog post:
+  // Blog post:
 
-	likes: number | null;
-	dislikes: number | null;
-	reposts: number | null;
+  likes: number | null;
+  dislikes: number | null;
+  reposts: number | null;
 }
 ```
 
@@ -139,25 +275,19 @@ interface Post {
 | full          | abbreviation       |
 | ------------- | ------------------ |
 | `/posts`      | `/p`               |
-#### methods
-| method       | body                | response |
-| ------------ | ------------------  | -------- |
-| post         | `{ acess_token: string, content: string, creator_id: string, name: string, type: string }` | [`CreateData<Post>`](./types.doc.md#createdata) |
 
-### `/:id`
-#### params
-| name         | type               | value                        |
-| ------------ | ------------------ | --------------------------   |
-| `id`         | `string`           | `id` поста на сайте          |
-#### methods
-| method       | body                | response |
-| ------------ | ------------------  | -------- |
-| get          | `undefined`              | [`GetData<Post>`](./types.doc.md#getdata) |
-| put          | `{ access_token: string, user_id: string } & Partial<Post>`     | [`ChangeData<Post>`](./types.doc.md#changedata) |
-| delete       | `{ acess_token: string, user_id: string }` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
+#### Routes
+| path                  | method       | body                | headers           | response |
+| -----  | ------------ | ------------------  | ----------------- | -------- |
+| `/`    | post                    | `{ content: string, creator_id: string, name: string, type: string }` | `{token: string}` | [`CreateData<Post>`](./types.doc.md#createdata) |
+| `/:id` | get                     | `null`                                | `null` | [`GetData<Post>`](./types.doc.md#getdata) |
+| `/:id` | put (your post)         | `null` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
+| `/:id` | put (not your post)     | `Partial<Post> & { user_id: string }` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
+| `/:id` | delete (your post)      | `null`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
+| `/:id` | delete (not your post)  | `{ user_id: string }`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
 
-## Комментарии (/comments)
-### `root`
+## Комментарии
+### `/comments/`
 
 #### types
 <details>
@@ -165,39 +295,37 @@ interface Post {
 
 ```ts
 interface Comment {
-	id: string;
+  id: string;
 
-	content: string;
+  content: string;
 
-	created_at: Date;
-	changed_at?: Date;
+  created_at: Date;
+  changed_at?: Date;
 
-	author_id: string;
-	post_id: string;
+  author_id: string;
+  post_id: string;
 
-	reply?: string;
+  reply?: string;
 }
 ```
 
 </details>
 
+#### params
+1. `id`: `string`
+- `id` комментария на сайте, поиск: `1235412`
+
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
 | `/comments`   | `/c`               |
-#### methods
-| method       | body                | response |
-| ------------ | ------------------  | -------- |
-| `post`       | `{ access_token: string, author_id: string, post_id: string, content: string }` | [`CreateData<Comment>`](./types.doc.md#changedata) |
 
-### /:id
-#### params
-| name         | type               | value                        |
-| ------------ | ------------------ | --------------------------   |
-| `id`         | `string`           | `id` комментария на сайте    |
-#### methods
-| method       | body                | response |
-| ------------ | ------------------  | -------- |
-| `get`        | `undefined`         | [`GetData<Comment>`](./types.doc.md#getdata) |
-| `put`        | `{ access_token: string, user_id: string } & Partial<Comment>` | [`ChangeData<Comment>`](./types.doc.md#changedata) |
-| `delete`     | `{ access_token: string, user_id: string }` | [`DeleteData<Comment>`](./types.doc.md#deletedata) |
+#### Routes
+| path                | method       | body                | headers           | response |
+| ------------------- | ------------ | ------------------  | ----------------- | -------- |
+| `/` | `post`          | `{ access_token: string, author_id: string, post_id: string, content: string }` | [`CreateData<Comment>`](./types.doc.md#changedata) |
+| `/:id` | `get`                    | `null` | `null` | [`GetData<Comment>`](./types.doc.md#getdata) |
+| `/:id` | `put` (your comment)        | `null` | `{token: string}` | [`ChangeData<Comment>`](./types.doc.md#changedata) |
+| `/:id` | `put` (not your comment)    | `Partial<Comment> & { user_id: string }` | `{token: string}` | [`ChangeData<Comment>`](./types.doc.md#changedata) |
+| `/:id` | `delete` (your comment)     | `null` | `{token: string}` | [`DeleteData<Comment>`](./types.doc.md#deletedata) |
+| `/:id` | `delete` (not your comment) | `{ user_id: string }` | `{token: string}` | [`DeleteData<Comment>`](./types.doc.md#deletedata) |

@@ -1,15 +1,23 @@
-interface Comment {
-	id: string;
+export const C_KEYS = [
+  "id",
+  "content",
+  "created_at",
+  "changed_at",
+  "author_id",
+  "post_id",
+  "reply"
+] as const;
 
-	content: string;
+export interface Comment {
+  id: string;
 
-	created_at: Date;
-	changed_at?: Date;
+  content: string;
 
-	author_id: string;
-	post_id: string;
+  created_at: Date;
+  changed_at?: Date;
 
-	reply?: string;
+  author_id: string;
+  post_id: string;
+
+  reply?: string;
 }
-
-export { Comment };

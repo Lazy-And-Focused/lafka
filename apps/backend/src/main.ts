@@ -1,7 +1,10 @@
-import connect from "database/database/index.database";
+import connect from "lafka/database/database/index.database";
 
+import { json, urlencoded } from "express";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+
+import cookieParser = require("cookie-parser");
 
 import Passport from "./strategies";
 
@@ -12,18 +15,22 @@ const passport = new Passport();
 const api = new Api();
 
 async function bootstrap() {
-	await connect(api.env.MONGO_URL);
+  await connect(api.env.MONGO_URL);
 
-	const app = await NestFactory.create(AppModule, {
-		cors: { origin: [api.env.CLIENT_URL], credentials: true }
-	});
+  const app = await NestFactory.create(AppModule, {
+    cors: { origin: [api.env.CLIENT_URL], credentials: true }
+  });
 
-	new Session("AVlzkjbsazvhxczvoiz", app).create();
+  new Session("AVlzkjbsazvhxczvoiz", app).create();
 
-	app.use(passport.session());
-	app.use(passport.initialize());
+  app.use(cookieParser());
+  app.use(json());
+  app.use(urlencoded());
 
-	await app.listen(3001);
+  app.use(passport.session());
+  app.use(passport.initialize());
+
+  await app.listen(3001);
 }
 
 bootstrap();

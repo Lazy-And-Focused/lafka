@@ -1,44 +1,71 @@
-import DatabaseClass from "../classes/default/database.class";
+import { Classes } from "../classes";
+import { Schemas } from "./schemas";
 
-import AuthUserSchema from "./schema/auth-user.schema";
-import CommentsSchema from "./schema/comments.schema";
-import PostsSchema from "./schema/posts.schema";
-import UsersSchema from "./schema/user.schema";
+import type { PickCreateData, ModelData } from "lafka/types/mongodb.types";
+import { LAFka } from "lafka/types";
 
-import type { AuthUser } from "types/auth/auth-user.types";
-import type { User } from "types/authors/user.types";
-import type { Comment } from "types/content/comment.types";
-import type { BlogPost } from "types/posts/blog-post.types";
-import type { ForumPost } from "types/posts/forum-post.types";
+type AuthUser = LAFka.AuthUser;
+type BlogPost = LAFka.BlogPost;
+type Comment = LAFka.Comment;
+type ForumPost = LAFka.ForumPost;
+type User = LAFka.User;
 
-class Database {
-	private readonly _auth_users = new DatabaseClass<AuthUser>(AuthUserSchema);
-	private readonly _comments = new DatabaseClass<Comment>(CommentsSchema);
+export namespace Constructors {
+  export type auth_users = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
+  export type comments = PickCreateData<Comment, "author_id" | "post_id" | "content"> & {
+    id?: string;
+  };
 
-	private readonly _posts = new DatabaseClass<
-		BlogPost & ForumPost,
-		Pick<BlogPost & ForumPost, "content" | "creator_id" | "name" | "type">
-	>(PostsSchema);
+  export type posts = PickCreateData<
+    ForumPost & BlogPost,
+    "content" | "creator_id" | "name" | "type"
+  > & { _id?: string };
 
-	private readonly _users = new DatabaseClass<User, Pick<User, "username">>(
-		UsersSchema
-	);
+  export type users_data = PickCreateData<User, "username" | "created_at"> & { id?: string };
 
-	get auth_users() {
-		return this._auth_users;
-	}
-
-	get comments() {
-		return this._comments;
-	}
-
-	get posts() {
-		return this._posts;
-	}
-
-	get users() {
-		return this._users;
-	}
+  export type users<T> = T extends true
+    ? Partial<User> & { id: string }
+    : PickCreateData<User, "username"> & { id?: string };
 }
 
-export default new Database();
+class Database {
+  private readonly _auth_users: Classes.DatabaseType<AuthUser, Partial<AuthUser>>;
+  private readonly _comments: Classes.DatabaseType<Comment>;
+
+  private readonly _posts: Classes.DatabaseType<
+    BlogPost & ForumPost,
+    Pick<BlogPost & ForumPost, "content" | "creator_id" | "name" | "type">
+  >;
+
+  private readonly _users: Classes.DatabaseType<User, Pick<User, "username">>;
+  private readonly _classes = Classes;
+
+  public constructor() {
+    this._auth_users = new Classes.Database<AuthUser>(Schemas.databases.auth_users);
+    this._comments = new Classes.Database<Comment>(Schemas.databases.comments);
+    this._posts = new Classes.Database<ForumPost & BlogPost>(Schemas.databases.posts);
+    this._users = new Classes.Database<User>(Schemas.databases.users);
+  }
+
+  public get classes() {
+    return this._classes;
+  }
+
+  public get auth_users() {
+    return this._auth_users;
+  }
+
+  public get comments() {
+    return this._comments;
+  }
+
+  public get posts() {
+    return this._posts;
+  }
+
+  public get users() {
+    return this._users;
+  }
+}
+
+export default Database;

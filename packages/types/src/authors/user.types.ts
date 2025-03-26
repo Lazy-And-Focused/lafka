@@ -1,25 +1,44 @@
 import type { Link } from "../utility/utility.types";
+import { Rights } from "../rights/rights.types";
 
-interface User {
-	id: string;
+export const U_KEYS = [
+  "id",
+  "username",
+  "nickname",
+  "avatar",
+  "biography",
+  "links",
+  "created_at",
+  "forum_posts",
+  "blog_posts",
+  "followed_forum_posts",
+  "followed_blog_posts",
+  "blocked_posts",
+  "followers",
+  "following",
+  "rights"
+] as const;
 
-	username: string;
-	nickname?: string;
-	avatar?: string;
+export interface User {
+  id: string;
 
-	biography?: string;
-	links: Link[];
+  username: string;
+  nickname?: string;
+  avatar?: string;
 
-	created_at: Date;
+  biography?: string;
+  links: Link[];
 
-	forum_posts: string[];
-	blog_posts: string[];
-	followed_forum_posts: string[];
-	followed_blog_posts: string[];
-	blocked_posts: string[];
+  created_at: Date;
 
-	followers: string[];
-	following: string[];
+  forum_posts: string[];
+  blog_posts: string[];
+  followed_forum_posts: string[];
+  followed_blog_posts: string[];
+  blocked_posts: string[];
+
+  followers: string[];
+  following: string[];
+
+  rights: Rights.Rights;
 }
-
-export { User };

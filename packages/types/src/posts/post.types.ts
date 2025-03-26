@@ -1,19 +1,31 @@
-interface Post {
-	id: string;
+export const P_KEYS = [
+  "id",
+  "name",
+  "content",
+  "description",
+  "comments",
+  "followers",
+  "created_at",
+  "changed_at",
+  "creator_id",
+  "type",
+  "view_status"
+] as const;
 
-	name: string;
-	content: string;
-	description?: string;
-	comments: string[];
-	followers: number;
+export interface Post {
+  id: string;
 
-	created_at: Date;
-	changed_at?: Date;
+  name: string;
+  content: string;
+  description?: string;
+  comments: string[];
+  followers: number;
 
-	creator_id: string;
+  created_at: Date;
+  changed_at?: Date;
 
-	type: "forum" | "blog";
-	view_status: 0 | 1;
+  creator_id: string;
+
+  type: "forum" | "blog";
+  view_status: 0 | 1;
 }
-
-export { Post };

@@ -1,9 +1,9 @@
 import type { Post } from "./post.types";
 
-interface BlogPost extends Post {
-	likes: number;
-	dislikes: number;
-	reposts: number;
-}
+export const BP_KEYS = ["likes", "dislikes", "reposts"] as const;
 
-export { BlogPost };
+export interface BlogPost extends Post {
+  likes: number;
+  dislikes: number;
+  reposts: number;
+}
