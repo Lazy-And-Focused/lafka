@@ -89,7 +89,18 @@ export class PostsService {
 
     return {
       successed: true,
-      resource: DB.Database.parse(await posts.create({...post, creator_id: userId}), "posts")
+      resource: DB.Database.parse(await posts.create({
+        ...post, 
+        creator_id: userId,
+        likes: 0,
+        dislikes: 0,
+        reposts: 0,
+        followers: 0,
+        comments: [],
+        view_status: 1,
+        tags: [],
+        status: "open",
+      }), "posts")
     };
   }
 

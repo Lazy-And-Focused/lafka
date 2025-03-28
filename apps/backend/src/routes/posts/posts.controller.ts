@@ -88,8 +88,9 @@ export class PostsContoller {
         type: "posts"
       };
 
-    const body = DB.Database.parse(req.body, "posts");
+    const body = DB.Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
+
 
     return {
       successed: post.successed,

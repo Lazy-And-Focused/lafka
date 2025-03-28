@@ -22,17 +22,18 @@ export class Post extends React.Component<Props> {
     if (data.length !== 3) return;
 
     (async () => {
-      const post = await fetch("http://localhost:3001/api/posts/", {
-        method: "POST", headers: this.props.headers,
+      await fetch("http://localhost:3001/api/posts/", {
+        method: "POST", headers: {
+          ...this.props.headers,
+          'Content-Type': 'application/json;charset=utf-8'
+        },
         body: JSON.stringify({
           userId: this.props.userId,
-          name: data[0].textContent || "",
-          content: data[1].textContent || "",
-          type: data[2].textContent || "",
+          name: (data[0] as any).value || "",
+          content: (data[1] as any).value || "",
+          type: (data[2] as any).value || "",
         })
       });
-
-      console.log(await post.json());
     })();
   };
 
