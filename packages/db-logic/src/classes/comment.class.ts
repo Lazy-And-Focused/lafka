@@ -14,8 +14,11 @@ class Comment implements LAFka.Comment {
 
     this.data = {
       id: "",
-      created_at: now,
-      ...data
+      created_at: data.created_at || now,
+      author_id: data.author_id,
+      content: data.content,
+      post_id: data.post_id,
+      reply: data.reply || undefined,
     };
   }
 

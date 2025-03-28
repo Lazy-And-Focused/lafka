@@ -16,21 +16,24 @@ class Post implements LAFka.Post {
   public constructor(data: Constructors.posts) {
     this.data = {
       id: "",
-      created_at: new Date(),
+      created_at: data.created_at || new Date(),
 
-      likes: 0,
-      dislikes: 0,
-      reposts: 0,
+      content: data.content,
+      creator_id: data.creator_id,
+      name: data.name,
+      type: data.type,
 
-      followers: 0,
-      comments: [],
+      likes: data.likes || 0,
+      dislikes: data.dislikes || 0,
+      reposts: data.reposts || 0,
 
-      view_status: 1,
+      followers: data.followers || 0,
+      comments: data.comments || [],
 
-      tags: [],
-      status: "open",
+      view_status: data.view_status || 1,
 
-      ...data
+      tags: data.tags || [],
+      status: data.status || "open"
     };
   }
 

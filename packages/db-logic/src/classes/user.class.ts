@@ -31,26 +31,25 @@ class User<T extends boolean = false> implements LAFka.User {
 
     this.data = {
       id: "",
-      username: "",
-      created_at: new Date(),
-      blocked_posts: [],
-      blog_posts: [],
-      followed_blog_posts: [],
-      followed_forum_posts: [],
-      followers: [],
-      following: [],
-      forum_posts: [],
-      links: [],
-      avatar: undefined,
-      nickname: undefined,
-      biography: undefined,
-      rights: {
+      username: data.username || "",
+      created_at: data.created_at || new Date(),
+      blocked_posts: data.blocked_posts || [],
+      blog_posts: data.blog_posts || [],
+      followed_blog_posts: data.followed_blog_posts || [],
+      followed_forum_posts: data.followed_forum_posts || [],
+      followers: data.followers || [],
+      following: data.following || [],
+      forum_posts: data.forum_posts || [],
+      links: data.links || [],
+      avatar: data.avatar || undefined,
+      nickname: data.nickname || undefined,
+      biography: data.biography || undefined,
+      rights: data.rights || {
         default: `${Rights.Raw.DEFAULT_USER_ALL_RIGHTS}`,
         organizations: [],
         posts: [],
         users: []
       },
-      ...data
     };
   }
 
