@@ -281,9 +281,9 @@ export namespace Rights {
     export interface Rights {
       default: bigint;
 
-      users: { [userId: string]: bigint },
-      posts: { [postId: string]: bigint },
-      organizations: { [organizationId: string]: bigint },
+      users: [string, bigint][],
+      posts: [string, bigint][],
+      organizations: [string, bigint][],
     }
 
     export type LazyRights = typeof LAZY_RIGHTS;
