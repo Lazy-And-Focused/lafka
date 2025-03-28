@@ -129,23 +129,23 @@ export namespace Rights {
     public getRights<T extends Exclude<LAFkaTypes.RightsKeys, "default">>(type: T, id: string): LAFkaTypes.GetTypes<T>[] {
       const def = LAFkaTypes.Default[`${type.toUpperCase()}_RIGHTS` as `${Uppercase<T>}_RIGHTS`];
       
-      return Object.keys(def).filter(k => (this.user.rights[type][id] & (def as any)[k]) === (def as any)[k]) as any[];
+      return Object.keys(def).filter(k => (BigInt(this.user.rights[type][id]) & (def as any)[k]) === (def as any)[k]) as any[];
     }
 
     public userHas(right: bigint, id: string): boolean {
-      return (this.user.rights.users[id] & right) === right;
+      return (BigInt(this.user.rights.users[id]) & right) === right;
     }
 
     public postsHas(right: bigint, id: string): boolean {
-      return (this.user.rights.posts[id] & right) === right;
+      return (BigInt(this.user.rights.posts[id]) & right) === right;
     }
 
     public organizationsHas(right: bigint, id: string): boolean {
-      return (this.user.rights.organizations[id] & right) === right;
+      return (BigInt(this.user.rights.organizations[id]) & right) === right;
     }
 
     public defaultHas(right: bigint): boolean {
-      return (this.user.rights.default & right) === right;
+      return (BigInt(this.user.rights.default) & right) === right;
     }
   }
 }

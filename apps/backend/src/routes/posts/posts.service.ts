@@ -79,7 +79,7 @@ export class PostsService {
       return { successed: false, error: "403 Forbidenn" };
 
     for (const required of REQUIRED_DATA_TO_CREATE_POST) {
-      if (!Object.keys(post).includes(required)) {
+      if (!Object.keys({...post, creator_id: userId}).includes(required)) {
         return {
           successed: false,
           error: "there is no required data"
@@ -89,7 +89,7 @@ export class PostsService {
 
     return {
       successed: true,
-      resource: DB.Database.parse(new DB.Post(post), "posts")
+      resource: DB.Database.parse(await posts.create({...post, creator_id: userId}), "posts")
     };
   }
 

@@ -2,12 +2,15 @@ import { GetServerSidePropsContext, NextPage } from "next";
 
 import { User } from "@/components/user/user.component";
 import { LAFka } from "@lafka/types";
+import { validateCookies } from "@/api/validator";
+import { Post } from "@/components/posts/post.component";
 
 type Props = {
-    user?: LAFka.User
+    user?: LAFka.User,
+    headers?: any
 };
  
-const Home: NextPage<Props> = ({ user }) => {
+const Home: NextPage<Props> = ({ user, headers }) => {
     return (
         <div>
             <div>
@@ -21,31 +24,33 @@ const Home: NextPage<Props> = ({ user }) => {
             
             <br />
 
-            <div style={{width: "300px"}}>
-                <span>Your profile:</span>
-                <br />
-                <User user={user} />
+            <div id="create" style={{display: "flex", backgroundColor: "#999099", padding: "2em", gap: "3em"}}>
+                <div style={{width: "300px", height: "700px"}}>
+                    <span>Your profile:</span>
+                    <br />
+                    <User user={user} />
+                </div>
+
+                <div>
+                    {
+                        (user && headers) 
+                            ? <Post userId={user.id} headers={headers}></Post>
+                            : <span>You must register</span>
+                    }
+                </div>
+            </div>
+            <div id="posts">
+
             </div>
         </div>
     )
 };
 
-const validateCookies = (ctx?: GetServerSidePropsContext) => {
-    if(!ctx)
-        return false;
-
-    const token = ctx.req.cookies["id-token"];
-
-    return token
-        ? ({ token })
-        : false;
-};
-
-export const getServerSideProps = async(ctx: GetServerSidePropsContext) => {
+export const getServerSideProps = async(ctx: GetServerSidePropsContext): Promise<{ props: Props; }> => {
     const headers = validateCookies(ctx);
 
     if(!headers)
-        return {props: { user: {} }};
+        return {props: {}};
 
     const user = await fetch("http://localhost:3001/api/users/", {headers});
 
@@ -53,7 +58,8 @@ export const getServerSideProps = async(ctx: GetServerSidePropsContext) => {
 
     return {
         props: {
-            user: (await user.json()).resource
+            user: (await user.json()).resource,
+            headers,
         }
     };
 };
