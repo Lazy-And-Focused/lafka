@@ -31,7 +31,12 @@ const schema = new Schema<LAFka.User>({
 
   links: [Link],
 
-  rights: { type: SchemaTypes.Map, required: true, unique: false }
+  rights: { type: {
+    default: SchemaTypes.BigInt,
+    users: SchemaTypes.Array,
+    posts: SchemaTypes.Array,
+    organizations: SchemaTypes.Array
+  }, required: true, unique: false }
 });
 
 const database = mongoose.model("users", schema);
