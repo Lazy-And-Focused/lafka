@@ -279,11 +279,11 @@ export namespace Rights {
     ] as const;
     
     export interface Rights {
-      default: bigint;
+      default: string /* it's a bigint */;
 
-      users: [string, bigint][],
-      posts: [string, bigint][],
-      organizations: [string, bigint][],
+      users: [string, string /* it's a bigint */][],
+      posts: [string, string /* it's a bigint */][],
+      organizations: [string, string /* it's a bigint */][],
     }
 
     export type LazyRights = typeof LAZY_RIGHTS;

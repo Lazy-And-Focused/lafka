@@ -5,11 +5,13 @@ import { LAFka } from "@lafka/types";
 import { validateCookies } from "@/api/validator";
 import { Post } from "@/components/posts/post.component";
 
+/* eslint-disable */
 type Props = {
     user?: LAFka.User,
     headers?: any
 };
- 
+ /* eslint-enable */
+
 const Home: NextPage<Props> = ({ user, headers }) => {
     return (
         <div>

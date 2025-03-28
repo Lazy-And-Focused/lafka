@@ -1,11 +1,12 @@
 import React from "react";
-import { validateCookies } from "@/api/validator";
 
+/* eslint-disable */
 type Props = {
   userId: string,
   headers: any,
 };
-
+/* eslint-enable */
+  
 export class Post extends React.Component<Props> {
   public constructor(props: Props) {
     super(props);

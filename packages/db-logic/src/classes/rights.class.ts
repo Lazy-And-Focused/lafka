@@ -24,10 +24,10 @@ class RightsService {
         nickname: undefined,
         biography: undefined,
         rights: {
-          default: RightsTypes.Raw.DEFAULT_USER_ALL_RIGHTS,
-          organizations: {},
-          posts: {},
-          users: {}
+          default: `${RightsTypes.Raw.DEFAULT_USER_ALL_RIGHTS}`,
+          organizations: [],
+          posts: [],
+          users: []
         },
       }
       : user;

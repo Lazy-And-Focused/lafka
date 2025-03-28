@@ -32,7 +32,7 @@ const schema = new Schema<LAFka.User>({
   links: [Link],
 
   rights: { type: {
-    default: SchemaTypes.BigInt,
+    default: SchemaTypes.String,
     users: SchemaTypes.Array,
     posts: SchemaTypes.Array,
     organizations: SchemaTypes.Array
