@@ -1,9 +1,4 @@
-import type { Post } from "./post.types";
-import type { Tag, PostStatus } from "../utility/utility.types";
+import { LAFka } from "../index";
 
-export const PF_KEYS = ["tags", "status"] as const;
-
-export interface ForumPost extends Post {
-  tags: Tag[];
-  status: PostStatus;
-}
+export const FORUM_POST_KEYS = LAFka.FORUM_POST_KEYS;
+export type ForumPost = LAFka.ForumPost;

@@ -1,23 +1,4 @@
-export const C_KEYS = [
-  "id",
-  "content",
-  "created_at",
-  "changed_at",
-  "author_id",
-  "post_id",
-  "reply"
-] as const;
+import { LAFka } from "../index";
 
-export interface Comment {
-  id: string;
-
-  content: string;
-
-  created_at: Date;
-  changed_at?: Date;
-
-  author_id: string;
-  post_id: string;
-
-  reply?: string;
-}
+export const COMMENT_KEYS = LAFka.COMMENT_KEYS;
+export type Comment = LAFka.Comment;

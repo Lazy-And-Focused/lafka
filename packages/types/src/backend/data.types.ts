@@ -1,42 +1,7 @@
-import { Models } from "../database/models.types";
+import { LAFka } from "../index";
 
-import { UpdateWriteOpResult, DeleteResult } from "mongoose";
-
-export type DataType = Exclude<Models, "auth_users">;
-
-export interface GetData<T> {
-  type: DataType;
-  successed: boolean;
-  resource?: T;
-  error?: unknown;
-}
-
-export interface CreateData<T> {
-  type: DataType;
-  successed: boolean;
-  created_resource?: T;
-  date: Date;
-  error?: unknown;
-}
-
-export interface ChangeData<T> {
-  type: DataType;
-  successed: boolean;
-
-  changed_resource_type: "resource" | "update";
-  changed_resource?: T | UpdateWriteOpResult;
-  date: Date;
-
-  error?: unknown;
-}
-
-export interface DeleteData<T> {
-  type: DataType;
-  successed: boolean;
-
-  deleted_resource_type: "resource" | "delete";
-  deleted_resource?: T | DeleteResult;
-  date: Date;
-
-  error?: unknown;
-}
+export type DataType = LAFka.Response.DataType;
+export type GetData<T> = LAFka.Response.GetData<T>;
+export type CreateData<T> = LAFka.Response.CreateData<T>;
+export type ChangeData<T> = LAFka.Response.ChangeData<T>;
+export type DeleteData<T> = LAFka.Response.DeleteData<T>;

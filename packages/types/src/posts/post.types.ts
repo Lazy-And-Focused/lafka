@@ -1,31 +1,6 @@
-export const P_KEYS = [
-  "id",
-  "name",
-  "content",
-  "description",
-  "comments",
-  "followers",
-  "created_at",
-  "changed_at",
-  "creator_id",
-  "type",
-  "view_status"
-] as const;
+import { LAFka } from "../index";
 
-export interface Post {
-  id: string;
-
-  name: string;
-  content: string;
-  description?: string;
-  comments: string[];
-  followers: number;
-
-  created_at: Date;
-  changed_at?: Date;
-
-  creator_id: string;
-
-  type: "forum" | "blog";
-  view_status: 0 | 1;
-}
+export const POST_KEYS = LAFka.POST_KEYS;
+export const POST_TYPES = LAFka.POST_TYPES;
+export type PostTypes = LAFka.PostTypes;
+export type Post = LAFka.Post;
