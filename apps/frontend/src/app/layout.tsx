@@ -4,7 +4,7 @@ import '@/utils/fontsLoader';
 import './globals.css';
 
 import Image from 'next/image';
-import FilePencil from './icons/FilePencil';
+import HeaderPanel from './components/Header__UserPanel';
 
 export const metadata: Metadata = {
   title: 'Lafka',
@@ -36,18 +36,7 @@ export default function RootLayout({
             />
           </h1>
 
-          <div className='flex flex-row items-center justify-end gap-5'>
-            <button className='flex h-6 w-6 items-center justify-center rounded-lg border border-[#EFDBB3] text-[#EFDBB3]'>
-              <FilePencil width={16} height={16} />
-            </button>
-            <Image
-              className='aspect-square h-8 w-8 rounded-full'
-              src={'https://laf-info.netlify.app/images/avatars/default.png'}
-              alt={'Logotype'}
-              width='32'
-              height='32'
-            />
-          </div>
+          <HeaderPanel />
         </header>
 
         <main>{children}</main>
