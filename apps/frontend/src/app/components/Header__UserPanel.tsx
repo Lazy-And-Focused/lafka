@@ -5,19 +5,45 @@ import FilePencil from '../icons/FilePencil';
 import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import { getUserFromSource } from '../../utils/getUser';
+import { LAFka } from '@lafka/types';
 
 export default function Header__UserPanel() {
-  const [user, setUser] = useState<string | undefined>(undefined);
+  const [user, setUser] = useState<LAFka.User | null>(null);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [isError, setError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const user = await getUserFromSource();
+      const res = await getUserFromSource();
 
-      setUser(user?.username);
+      if (res.error) setError(true);
+      else {
+        setUser(res.result);
+        setLoading(false);
+      }
     };
 
     fetchData();
   }, []);
+
+  if (isError || isLoading)
+    return (
+      <div
+        className={
+          'flex flex-row items-center justify-end gap-5 ' +
+          (isLoading && !isError ? 'animate-pulse' : '')
+        }
+      >
+        <Image
+          className='aspect-square h-8 w-8 rounded-full'
+          src='https://laf-info.netlify.app/images/avatars/default.png'
+          alt={'Loading avatar'}
+          width='32'
+          height='32'
+        />
+        Inkognito ({isError ? 'Error' : 'Logging...'})
+      </div>
+    );
 
   if (!user)
     return (
@@ -50,12 +76,15 @@ export default function Header__UserPanel() {
         </button>
         <Image
           className='aspect-square h-8 w-8 rounded-full'
-          src={'https://laf-info.netlify.app/images/avatars/default.png'}
-          alt={'Logotype'}
+          src={
+            user.avatar ||
+            'https://laf-info.netlify.app/images/avatars/default.png'
+          }
+          alt={`${user.username}'s avatar`}
           width='32'
           height='32'
         />
-        {user}
+        {user.nickname || user.username}
       </div>
     );
 }
