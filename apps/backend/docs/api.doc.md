@@ -221,7 +221,7 @@ fetch(api + "/u/1235", {
 | `/`                 | `cache: boolean\|undefined` | `get`        | `null`     		      | `{token: string}` | [`GetData<User>`](./types.doc.md#getdata) |
 | `/:identifier`      | `cache: boolean\|undefined` | `get`        | `null`     		      | `null`            | [`GetData<User>`](./types.doc.md#getdata) |
 | `/:identifier`      | `returnUser: boolean\|undefined` | `delete`     | `null`              | `{token: string}` | [`DeleteData<User>`](./types.doc.md#deletedata) |
-| `/:identifier`      | `cache: boolean\|undefined`, `returnUser: boolean\|undefined` | `put`        | `Partial<User>`     | `{token: string}` | [`ChangeData<User>`](./types.doc.md/#changedata) |
+| `/:identifier`      | `cache: boolean\|undefined` <br> `returnUser: boolean\|undefined` | `put`        | `Partial<User>`     | `{token: string}` | [`ChangeData<User>`](./types.doc.md/#changedata) |
 
 <hr>
 
@@ -445,7 +445,7 @@ fetch(api + "/posts/1234", {
 | path      | query             | method       | body                | headers           | response |
 | --------- | ----------------- |------------ | ------------------  | ----------------- | -------- |
 | `/`       |                   | post                    | `{ content: string, creator_id: string, name: string, type: string }` | `{token: string}` | [`CreateData<Post>`](./types.doc.md#createdata) |
-| `/`       | `offset: number\|undefined`, `count: number\|undefined`, [`sortBy: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1), [`sortType: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1) | get                     | `null`  | `null` | [`CreateData<Post>`](./types.doc.md#createdata) |
+| `/`       | `offset: number\|undefined`  <br> `count: number\|undefined` <br> [`sortBy: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1) <br> [`sortType: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1) | get                     | `null`  | `null` | [`CreateData<Post>`](./types.doc.md#createdata) |
 | `/:id`    | `null` | get                     | `null` | `null` | [`GetData<Post>`](./types.doc.md#getdata) |
 | `/:id`    | `null` | put     | `Partial<Post>` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
 | `/:id`    | `null` | delete      | `null`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
