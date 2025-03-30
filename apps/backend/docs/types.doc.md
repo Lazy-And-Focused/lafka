@@ -159,15 +159,24 @@ interface Post {
   creator_id: string;
   type: PostTypes;
   view_status: 0 | 1;
+
+  /* BlogPost */
+  likes: number;
+  dislikes: number;
+  reposts: number;
+  
+  /* ForumPost */
+  tags: Tag[];
+  status: PostStatus;
 }
 
-export interface BlogPost extends Post {
+interface BlogPost extends Post {
   likes: number;
   dislikes: number;
   reposts: number;
 }
 
-export interface ForumPost extends Post {
+interface ForumPost extends Post {
   tags: Tag[];
   status: PostStatus;
 }
