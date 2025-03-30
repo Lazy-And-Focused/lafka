@@ -46,7 +46,8 @@ export class PostsContoller {
       return {
         successed: false,
         type: "posts",
-        resource: []
+        error: "",
+        resource: null
       };
 
     const posts = await this.postsService.getPosts({
@@ -66,6 +67,8 @@ export class PostsContoller {
     if (!successed)
       return {
         successed: false,
+        error: "Hash parse error",
+        resource: null,
         type: "posts"
       };
 
@@ -84,6 +87,8 @@ export class PostsContoller {
     if (!successed)
       return {
         date,
+        created_resource: null,
+        error: "Hash parse error",
         successed: false,
         type: "posts"
       };
@@ -91,11 +96,13 @@ export class PostsContoller {
     const body = DB.Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
 
+    if (!post.successed)
+      return { successed: false, created_resource: null, error: post.error, date, type: "posts" };
 
     return {
       successed: post.successed,
       created_resource: post.resource,
-      error: post.error,
+      error: null,
       date,
       type: "posts"
     };

@@ -27,12 +27,14 @@ export class Post extends React.Component<Props> {
           ...this.props.headers,
           'Content-Type': 'application/json;charset=utf-8'
         },
+        /* eslint-disable */
         body: JSON.stringify({
           userId: this.props.userId,
           name: (data[0] as any).value || "",
           content: (data[1] as any).value || "",
           type: (data[2] as any).value || "",
         })
+        /* eslint-enable */
       });
     })();
   };
