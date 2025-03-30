@@ -54,24 +54,20 @@
 ```ts
 interface User {
   id: string;
-
   username: string;
   nickname?: string;
   avatar?: string;
-
   biography?: string;
   links: Link[];
-
   created_at: Date;
-
   forum_posts: string[];
   blog_posts: string[];
   followed_forum_posts: string[];
   followed_blog_posts: string[];
   blocked_posts: string[];
-
   followers: string[];
   following: string[];
+  rights: Rights.Rights;
 }
 ```
 
@@ -81,9 +77,11 @@ interface User {
 
 #### query
 1. `cache`: `boolean`
+- По умолчанию: `true`
 - Включает/выключает взятие данных сперва из кэша
 
 2. `returnUser`: `boolean`
+- По умолчанию: `false`
 - (Для put, delete) вовзращает User, а не UpdateWriteOpResult или DeleteResult (Дополнительно обращается к базе данных)
 
 #### params
@@ -95,23 +93,21 @@ interface User {
 <details>
 <summary>1. GET (ME)</summary>
 
-</details>
-
 ```ts
 // successed: true
 fetch(api + "/users/", {
   method: "GET",
-  headers: { token: "id-token_in-cookie" }
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" }
 }).then(async data => {
-  console.log(await data.json()) // { type: "users", successed: true, resource: {...}, error: undefined }
+  console.log(await data.json()) // { type: "users", successed: true, resource: {...}, error: null }
 });
 
 // successed: false
 fetch(api + "/users/", {
   method: "GET",
-  headers: { token: "id-token_in-cookie" }
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" }
 }).then(async data => {
-  console.log(await data.json()) // { type: "users", successed: false, resource: undefined, error: "FORBIDDEN" }
+  console.log(await data.json()) // { type: "users", successed: false, resource: null, error: "???" }
 });
 
 /* 
@@ -121,17 +117,19 @@ fetch(api + "/users/", {
 */
 ```
 
+</details>
+
 <details>
 <summary>2. GET</summary>
 
 ```ts
 // find by username, successed: true
-fetch(api + "/users/@FOCKUSTY", { method: "GET" }).then(async (data: GetData<User>) => {
-  console.log(await data.json()) // { successed: true, type: "users", resource: {...}, error: undefined } 
+fetch(api + "/users/@FOCKUSTY", { 'Content-Type': 'application/json;charset=utf-8', method: "GET" }).then(async (data: GetData<User>) => {
+  console.log(await data.json()) // { successed: true, type: "users", resource: {...}, error: null } 
 });
 
 // find by id, successed: false
-fetch(api + "/users/1234567890", { method: "GET" }).then(async data => {
+fetch(api + "/users/1234567890", { 'Content-Type': 'application/json;charset=utf-8', method: "GET" }).then(async data => {
   console.log(await data.json()) // { successed: false, type: "users", resource: null, error: "user not found" }
 });
 
@@ -151,17 +149,17 @@ fetch(api + "/users/1234567890", { method: "GET" }).then(async data => {
 // delete by username, successed: true
 fetch(api + "/users/@FOCKUSTY", {
   method: "DELETE",
-  headers: { token: "id-token_in-cookie" }
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" }
 }).then(async data => {
-  console.log(await data.json()) // { type: "users", successed: true, date: Date, resource: {...}, error: undefined }
+  console.log(await data.json()) // { type: "users", successed: true, date: Date, resource: {...}, error: null }
 });
 
 // delete by id, successed: false
 fetch(api + "/u/1234", {
   method: "DELETE",
-  headers: { token: "id-token_in-cookie" }
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" }
 }).then(async data => {
-  console.log(await data.json()) // { type: "users", successed: false, date: Date, resource: {...}, error: "403" }
+  console.log(await data.json()) // { type: "users", successed: false, date: Date, resource: null, error: "???" }
 });
 
 /* 
@@ -180,25 +178,25 @@ fetch(api + "/u/1234", {
 // put by username, successed: true
 fetch(api + "/u/@FOCKUSTY", {
   method: "PUT",
-  headers: { token: "id-token_in-cookie" },
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" },
   body: JSON.stringify({
     nickname: "fickus228",
     biography: "The Hatter"
   })
 }).then(async data => {
-  console.log(await data.json()) // { type: "users", successed: true, date: Date, resource: {...}, changed_resource: {...}, error: undefined }
+  console.log(await data.json()) // { type: "users", successed: true, date: Date, resource: {...}, changed_resource: {...}, error: null }
 });
 
 // put by id, successed: false
 fetch(api + "/u/1235", {
   method: "PUT",
-  headers: { token: "id-token_in-cookie" },
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" },
   body: JSON.stringify({
     nickname: "fickus228",
     biography: "The Hatter"
   })
 }).then(async data => {
-  console.log(await data.json()) // { type: "users", successed: false, date: Date, resource: {...}, changed_resource: undefined, error: "403" }
+  console.log(await data.json()) // { type: "users", successed: false, date: Date, null, changed_resource: null, error: "???" }
 });
 
 /* 
@@ -206,7 +204,7 @@ fetch(api + "/u/1235", {
   required:
     body: Partial<User>,
     headers: an id-token from cookies
-  method - put
+  method - PUT
 */
 ```
 
@@ -215,7 +213,7 @@ fetch(api + "/u/1235", {
 #### abbreviations
 | full          | abbreviation       |
 | ------------- | ------------------ |
-| `/users`       | `/u`              |
+| `/users`      | `/u`               |
 
 #### Routes
 | path                | query    | method       | body                | headers           | response |
@@ -230,7 +228,21 @@ fetch(api + "/u/1235", {
 ## Посты
 ### /posts/
 
-#### params
+#### query
+1. `offset`: `number`
+- По умолчанию: `0`
+- Количество постов, которые Вы хотите пропустить
+2. `count`: `number`
+- По умолчанию: `0`
+- Длина постов для загрузки
+3. `sortBy`: `string` `("likes"|"dislikes"|"followers"|"created_at"|"changed_at")`
+- По умолчанию: `"created_at"`
+- Метод сортировки постов
+4. `sortType`: `string|boolean` `("asc"|"desc"|1|-1|true|false)`
+- По умолчанию: `-1`
+- Сортировка постов по возрастанию `("asc", 1, true)` и убыванию `("desc", -1, false)`
+
+##### params
 1. `id`: `string`
 - `id` поста на сайте, поиск: `1235412`
 
@@ -239,34 +251,187 @@ fetch(api + "/u/1235", {
 <summary><a href="./types.doc.md#post">Post</a></summary>
 
 ```ts
+const POST_TYPES = ["forum", "blog"] as const
+type PostTypes = (typeof POST_TYPES)[number];
 interface Post {
   id: string;
-
   name: string;
   content: string;
   description?: string;
   comments: string[];
   followers: number;
-
   created_at: Date;
   changed_at?: Date;
-
   creator_id: string;
-
-  type: "forum" | "blog";
+  type: PostTypes;
   view_status: 0 | 1;
 
-  // Forum post:
-
-  tags: Tag[] | null;
-  status: PostStatus | null;
-
-  // Blog post:
-
-  likes: number | null;
-  dislikes: number | null;
-  reposts: number | null;
+  /* BlogPost */
+  likes: number;
+  dislikes: number;
+  reposts: number;
+  
+  /* ForumPost */
+  tags: Tag[];
+  status: PostStatus;
 }
+
+interface BlogPost extends Post {
+  likes: number;
+  dislikes: number;
+  reposts: number;
+}
+
+interface ForumPost extends Post {
+  tags: Tag[];
+  status: PostStatus;
+}
+```
+
+</details>
+
+#### examples
+
+<details>
+<summary>1. POST</summary>
+
+```ts
+// successed: true
+fetch(api + "/posts/", {
+  method: "POST",
+  headers: { 'Content-Type': 'application/json;charset=utf-8' },
+  body: JSON.stringify({
+    name: "It's my first post!",
+    content: "A + B = C?!!!!!! WOOOOOOOOOOOOOOOOW!",
+    type: "blog"
+  })
+}).then(data => console.log(await data.json())) // { type: "posts", successed: true, date: Date, error: null, created_resource: {...} }
+
+// successed: false
+fetch(api + "/posts/", {
+  method: "POST",
+  headers: { 'Content-Type': 'application/json;charset=utf-8' },
+  body: JSON.stringify({
+    name: "It's my first post!",
+    content: "A + B = C?!!!!!! WOOOOOOOOOOOOOOOOW!",
+    type: "forum"
+  })
+}).then(data => console.log(await data.json())) // { type: "posts", successed: false, date: Date, created_resuorce: null, error: "Some error: {code}"|unknown}
+
+/* 
+  returning CreateData<Post>
+  required:
+    an id-token from cookie
+    Partial<Post> & { name: string, content: string, type: "blog" | "forum" }
+  method - POST
+*/
+```
+
+</details>
+
+<details>
+<summary>2. GET</summary>
+
+```ts
+// const query = "?offset=0&count=5"
+// successed: true
+fetch(api + "/posts/" + query, {
+  method: "GET",
+  headers: { 'Content-Type': 'application/json;charset=utf-8' }
+}).then(data => console.log(await data.json())) // { type: "posts", successed: true, error: null, resource: [{...}, {...}, {...}, {...}, {...}] }
+
+// successed: false
+fetch(api + "/posts/" + query, {
+  method: "GET",
+  headers: { 'Content-Type': 'application/json;charset=utf-8' }
+}).then(data => console.log(await data.json())) // { type: "posts", successed: false, resuorce: null, error: "Some error: {code}"|unknown}
+
+/* 
+  returning GetData<Post>
+  method - GET
+*/
+```
+
+</details>
+
+<details>
+<summary>3. GET (Post)</summary>
+
+```ts
+// successed: true
+fetch(api + "/posts/1234", {
+  method: "GET",
+  headers: { 'Content-Type': 'application/json;charset=utf-8' }
+}).then(data => console.log(await data.json())) // { type: "posts", successed: true, error: null, resource: {...} }
+
+// successed: false
+fetch(api + "/posts/1234", {
+  method: "GET",
+  headers: { 'Content-Type': 'application/json;charset=utf-8' }
+}).then(data => console.log(await data.json())) // { type: "posts", successed: false, resuorce: null, error: "Some error: {code}"|unknown}
+
+/* 
+  returning GetData<Post>
+  method - GET
+*/
+```
+
+</details>
+
+<details>
+<summary>4. DELETE</summary>
+
+```ts
+// successed: true
+fetch(api + "/posts/1234", {
+  method: "DELETE",
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" }
+}).then(data => console.log(await data.json())) // { type: "posts", successed: true, error: null, resource: {...} }
+
+// successed: false
+fetch(api + "/posts/1234", {
+  method: "DELETE",
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" },
+}).then(data => console.log(await data.json())) // { type: "posts", successed: false, resuorce: null, error: "Some error: {code}"|unknown}
+
+/* 
+  returning DeleteData<Post>
+  required an id-token from cookie
+  method - DELETE
+*/
+```
+
+</details>
+
+<details>
+<summary>5. PUT</summary>
+
+```ts
+// successed: true
+fetch(api + "/posts/1234", {
+  method: "PUT",
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" },
+  body: JSON.stringify({
+    content: "I CAN CHANGE THIS POST HAHAHAHAH",
+  })
+}).then(data => console.log(await data.json())) // { type: "posts", successed: true, error: null, resource: {...} }
+
+// successed: false
+fetch(api + "/posts/1234", {
+  method: "PUT",
+  headers: { 'Content-Type': 'application/json;charset=utf-8', token: "id-token_in-cookie" },
+  body: JSON.stringify({
+    name: "I CAN CHANGE THIS POST HAHAHAHAH",
+  })
+}).then(data => console.log(await data.json())) // { type: "posts", successed: false, resuorce: null, error: "Some error: {code}"|unknown}
+
+/* 
+  returning ChangeData<Post>
+  required
+    id-token from cookie
+    Partial<Post> in body
+  method - PUT
+*/
 ```
 
 </details>
@@ -296,15 +461,11 @@ interface Post {
 ```ts
 interface Comment {
   id: string;
-
   content: string;
-
   created_at: Date;
   changed_at?: Date;
-
   author_id: string;
   post_id: string;
-
   reply?: string;
 }
 ```
