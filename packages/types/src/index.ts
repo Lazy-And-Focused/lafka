@@ -10,7 +10,7 @@ export namespace LAFka {
     export type GetData<T> = {
       type: DataType;
     } & ({
-      successed: true;
+      successed: false;
       resource: null;
       error: unknown;
     } | {
