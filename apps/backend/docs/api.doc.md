@@ -442,15 +442,15 @@ fetch(api + "/posts/1234", {
 | `/posts`      | `/p`               |
 
 #### Routes
-| path                  | method       | body                | headers           | response |
-| -----  | ------------ | ------------------  | ----------------- | -------- |
-| `/`    | post                    | `{ content: string, creator_id: string, name: string, type: string }` | `{token: string}` | [`CreateData<Post>`](./types.doc.md#createdata) |
-| `/`    | get                     | `null`  | `null` | [`CreateData<Post>`](./types.doc.md#createdata) |
-| `/:id` | get                     | `null` | `null` | [`GetData<Post>`](./types.doc.md#getdata) |
-| `/:id` | put (your post)         | `null` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
-| `/:id` | put (not your post)     | `Partial<Post> & { creator_id: string }` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
-| `/:id` | delete (your post)      | `null`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
-| `/:id` | delete (not your post)  | `{ creator_id: string }`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
+| path      | query             | method       | body                | headers           | response |
+| --------- | ------------ ---- |------------ | ------------------  | ----------------- | -------- |
+| `/`       |                   | post                    | `{ content: string, creator_id: string, name: string, type: string }` | `{token: string}` | [`CreateData<Post>`](./types.doc.md#createdata) |
+| `/`       | `offset: number\|undefined`, `count: number\|undefined`, [`sortBy: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1), [`sortType: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1) | get                     | `null`  | `null` | [`CreateData<Post>`](./types.doc.md#createdata) |
+| `/:id`    | `null` | get                     | `null` | `null` | [`GetData<Post>`](./types.doc.md#getdata) |
+| `/:id`    | `null` | put (your post)         | `null` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
+| `/:id`    | `null` | put (not your post)     | `Partial<Post> & { creator_id: string }` | `{token: string}` | [`ChangeData<Post>`](./types.doc.md#changedata) |
+| `/:id`    | `null` | delete (your post)      | `null`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
+| `/:id`    | `null` | delete (not your post)  | `{ creator_id: string }`                 | `{token: string}` | [`DeleteData<Post>`](./types.doc.md#deletedata) |
 
 ## Комментарии
 ### `/comments/`
