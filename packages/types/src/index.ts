@@ -25,6 +25,7 @@ export namespace LAFka {
     } & ({
       successed: true;
       created_resource: T;
+      error: null;
     } | {
       successed: false;
       created_resource: null;
