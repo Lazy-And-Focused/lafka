@@ -443,7 +443,7 @@ fetch(api + "/posts/1234", {
 
 #### Routes
 | path      | query             | method       | body                | headers           | response |
-| --------- | ------------ ---- |------------ | ------------------  | ----------------- | -------- |
+| --------- | ----------------- |------------ | ------------------  | ----------------- | -------- |
 | `/`       |                   | post                    | `{ content: string, creator_id: string, name: string, type: string }` | `{token: string}` | [`CreateData<Post>`](./types.doc.md#createdata) |
 | `/`       | `offset: number\|undefined`, `count: number\|undefined`, [`sortBy: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1), [`sortType: UNIQUE_TYPE\|undefined`](./api.doc.md#query-1) | get                     | `null`  | `null` | [`CreateData<Post>`](./types.doc.md#createdata) |
 | `/:id`    | `null` | get                     | `null` | `null` | [`GetData<Post>`](./types.doc.md#getdata) |
