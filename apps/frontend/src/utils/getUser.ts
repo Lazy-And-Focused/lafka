@@ -24,7 +24,7 @@ export async function getUserFromSource(): Promise<{
     }).then(async (data) => await data.json());
 
     return { result: res.resource, error: false };
-  } catch (e) {
+  } catch {
     return { result: null, error: true };
   }
 }

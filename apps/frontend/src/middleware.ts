@@ -1,7 +1,15 @@
-import type { NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+
+import { getUserFromSource } from './utils/getUser';
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {}
+export async function middleware(request: NextRequest) {
+  const user = (await getUserFromSource()).result;
+
+  if (request.nextUrl.pathname === '/auth' && user) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+}
 
 export const config = {
   matcher: [
