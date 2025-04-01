@@ -1,8 +1,8 @@
-'use client';
+'use ыукмук';
 
 import Image from 'next/image';
 import FilePencil from '../icons/FilePencil';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { getUserFromSource } from '../../utils/getUser';
 import { LAFka } from '@lafka/types';
 import Link from 'next/link';
@@ -32,16 +32,9 @@ function LoadingState() {
   );
 }
 
-function UserPanel() {
-  const [user, setUser] = useState<LAFka.User | null>(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await getUserFromSource();
-
-      if (!res.error) setUser(res.result);
-    };
-
-    fetchData();
+async function UserPanel() {
+  const user: LAFka.User | null = await getUserFromSource().then((data) => {
+    return data.result;
   });
 
   if (!user)
