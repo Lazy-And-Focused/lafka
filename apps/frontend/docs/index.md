@@ -9,7 +9,8 @@
 
 ## Содержание
 
-> [!CAUTION] Документация в разработке.
+> [!CAUTION]
+> Документация в разработке.
 
 - [Code Style (Patterns)](./patterns.md)
 
