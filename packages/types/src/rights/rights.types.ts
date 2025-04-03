@@ -1,17 +1,21 @@
 export namespace Rights {
   export class Parser {
-    public static toBigInt<T extends LazyRightsKeys>(
-      key: T,
-      right: GetKeys<T>
+    public static toBigInt<T extends Lazy.RightsKeys>(
+      type: Uppercase<T>,
+      key: Lowercase<GetKeys<Uppercase<T>>>,
+      right: GetTypes<T, Lazy.RightsDoubleKeys[T]>
     ): bigint {
-      return (Rights.Lazy.RIGHTS[key] as any)[right];
+      return (Rights.Lazy.RIGHTS[type][String(key).toUpperCase()] as any)[right];
     };
 
-    public static exist(right: bigint): boolean {
-      return (Rights.Raw.LAZY_RIGHTS.ALL & right) === right;
+    public static exist<T extends Lazy.RightsKeys>(
+      type: Lowercase<GetKeys<Uppercase<T>>> | "all",
+      right: bigint
+    ): boolean {
+      return (Rights.Raw.LAZY_ALL_RIGHTS[String(type).toUpperCase()] & right) === right;
     }
 
-    public static execute(rights: Lazy.Rights[keyof Lazy.Rights] | Lazy.Rights) {
+    public static execute<T extends object>(rights: T[keyof T] | T) {
       let raw: bigint = 0n;
       
       Object.keys(rights).forEach(k => {
@@ -147,12 +151,42 @@ export namespace Rights {
       VIEWERS_BLOCK:                  1n << 44n,
     } as const;
   
-    export const RIGHTS: Rights = {
-      ME: ME_RIGHTS,
-      USERS: USERS_RIGHTS,
-      POSTS: POSTS_RIGHTS,
-      ORGANIZATIONS: ORGANIZATIONS_RIGHTS
+    export const RIGHTS = {
+      USER: {
+        ME: ME_RIGHTS,
+        USERS: USERS_RIGHTS
+      } as const,
+
+      CONTENT: {
+        POSTS: POSTS_RIGHTS,
+        ORGANIZATIONS: ORGANIZATIONS_RIGHTS,
+      } as const
     } as const;
+    export type ConstantRightsKeys = (keyof typeof RIGHTS);
+    export type ConstantRightsDoubleKeys = {
+      [P in keyof typeof RIGHTS]: keyof (typeof RIGHTS)[P]
+    };
+
+    export const RIGHTS_KEYS = [
+      "user",
+      "content"
+    ] as const;
+    export type RightsKeys = (typeof Lazy.RIGHTS_KEYS)[number];
+
+    export const RIGHTS_DOUBLE_KEYS = {
+      "user": [
+        "me",
+        "users"
+      ] as const,
+
+      "content": [
+        "posts",
+        "organizations"
+      ] as const
+    } as const;
+    export type RightsDoubleKeys = {
+      [P in keyof typeof RIGHTS_DOUBLE_KEYS]: (typeof RIGHTS_DOUBLE_KEYS)[P][number];
+    };
     // prettier-ignore-end
   }
 
@@ -218,76 +252,100 @@ export namespace Rights {
     export const USER_RIGHTS = {
       ME: ME_RIGHTS,
       USERS: USERS_RIGHTS,
-      POSTS: POSTS_RIGHTS,
-      ORGANIZATIONS: ORGANIZATIONS_RIGHTS
     } as const;
 
     export interface UserRights {
       readonly ME: Lazy.MeRights,
       readonly USERS: Lazy.UsersRights,
-      readonly POSTS: Lazy.PostsRights,
-      readonly ORGANIZATIONS: Lazy.OrganizationsRights,
+    }
+
+    export interface PostsRights {
+      readonly [userId: string]: Lazy.PostsRights
+    }
+
+    export interface OrganizationsRights {
+      readonly [userId: string]: Lazy.OrganizationsRights
     }
     // prettier-ignore-end
   }
 
   export namespace Raw {
-    export const LAZY_ALL_RIGHTS = Parser.execute(Lazy.RIGHTS);
-    export const LAZY_ME_RIGHTS = Parser.execute(Lazy.RIGHTS.ME);
-    export const LAZY_USERS_RIGHTS = Parser.execute(Lazy.RIGHTS.USERS);
-    export const LAZY_POSTS_RIGHTS = Parser.execute(Lazy.RIGHTS.POSTS);
-    export const LAZY_ORGANIZATIONS_RIGHTS = Parser.execute(Lazy.RIGHTS.ORGANIZATIONS);
+    export const LAZY_ME_RIGHTS = Parser.execute(Lazy.RIGHTS.USER.ME);
+    export const LAZY_USERS_RIGHTS = Parser.execute(Lazy.RIGHTS.USER.USERS);
+
+    export const LAZY_POSTS_RIGHTS = Parser.execute(Lazy.RIGHTS.CONTENT.POSTS);
+    export const LAZY_ORGANIZATIONS_RIGHTS = Parser.execute(Lazy.RIGHTS.CONTENT.ORGANIZATIONS);
 
     export const DEFAULT_USER_ALL_RIGHTS = Parser.execute(Default.USER_RIGHTS);
     export const DEFAULT_USER_ME_RIGHTS = Parser.execute(Default.USER_RIGHTS.ME);
     export const DEFAULT_USER_USERS_RIGHTS = Parser.execute(Default.USER_RIGHTS.USERS);
-    export const DEFAULT_USER_POSTS_RIGHTS = Parser.execute(Default.USER_RIGHTS.POSTS);
-    export const DEFAULT_USER_ORGANIZATIONS_RIGHTS = Parser.execute(Default.USER_RIGHTS.ORGANIZATIONS);
 
-    export const LAZY_RIGHTS = {
-      ALL: LAZY_ALL_RIGHTS,
+    export const DEFAULT_POSTS_RIGHTS = Parser.execute(Default.POSTS_RIGHTS);
+    export const DEFAULT_ORGANIZATIONS_RIGHTS = Parser.execute(Default.ORGANIZATIONS_RIGHTS);
+
+    export const LAZY_ALL_RIGHTS = {
+      ALL: LAZY_ME_RIGHTS | LAZY_USERS_RIGHTS,
       
       ME: LAZY_ME_RIGHTS,
       USERS: LAZY_USERS_RIGHTS,
       POSTS: LAZY_POSTS_RIGHTS,
       ORGANIZATIONS: LAZY_ORGANIZATIONS_RIGHTS
     } as const;
-  
+
+    export const LAZY_USER_RIGHTS = {
+      ALL: LAZY_ME_RIGHTS | LAZY_USERS_RIGHTS,
+      
+      ME: LAZY_ME_RIGHTS,
+      USERS: LAZY_USERS_RIGHTS,
+    } as const;
+
     export const DEFAULT_USER_RIGHTS = {
       ALL: DEFAULT_USER_ALL_RIGHTS,
       
       ME: DEFAULT_USER_ME_RIGHTS,
       USERS: DEFAULT_USER_USERS_RIGHTS,
-      POSTS: DEFAULT_USER_POSTS_RIGHTS,
-      ORGANIZATIONS: DEFAULT_USER_ORGANIZATIONS_RIGHTS
     } as const;
   
-    export const LAZY_RIGHTS_KEYS = [
+    export const LAZY_USER_RIGHTS_KEYS = [
       "ALL",
       "ME",
       "USERS",
-      "POSTS",
-      "ORGANIZATIONS"
     ] as const;
   
     export const DEFAULT_USER_RIGHTS_KEYS = [
       "ALL",
       "ME",
       "USERS",
-      "POSTS",
-      "ORGANIZATIONS"
     ] as const;
-    
+
     export interface Rights {
-      readonly default: string /* it's a bigint */;
+      readonly me: string,
+      readonly users: [string, string /* it's a bigint */][]
+    };
 
-      readonly users: [string, string /* it's a bigint */][],
-      readonly posts: [string, string /* it's a bigint */][],
-      readonly organizations: [string, string /* it's a bigint */][],
-    }
+    export interface SampleRights {
+      readonly user: {
+        readonly default: string /* it's a bigint */;
+        readonly users: [string, string /* it's a bigint */][],
+      },
 
-    export type LazyRights = typeof LAZY_RIGHTS;
-    export type LazyRightsKeys = keyof LazyRights;
+      readonly content: {
+        readonly posts: [string, string /* it's a bigint */][],
+        readonly organizations: [string, string /* it's a bigint */][],
+      }
+    };
+
+    export type RightsKeys = [
+      "user",
+      "content"
+    ];
+
+    export type RightsDoubleKeys = {
+      [P in keyof SampleRights]: keyof SampleRights[P]
+    };
+
+    export type LazyUserRights = typeof LAZY_USER_RIGHTS;
+    export type LazyUserRightsKeys = keyof LazyUserRights;
     export type DefaultUserRights = typeof DEFAULT_USER_RIGHTS;
     export type DefaultUserRightsKeys = keyof DefaultUserRights;
   }
@@ -358,50 +416,53 @@ export namespace Rights {
   ] as const;
   export type OrganizationsRightsKeys = (typeof ORGANIZATIONS_KEYS)[number];
   
-  export const LAZY_KEYS = [
-    "ME",
-    "USERS",
-    "POSTS",
-    "ORGANIZATIONS"
-  ] as const;
-  export type LazyRightsKeys = (typeof LAZY_KEYS)[number];
-  
-  export const KEYS = [
-    "default",
-    "users",
-    "posts",
-    "organizations"
-  ] as const;
-  export type RightsKeys = (typeof KEYS)[number];
-  
-  export type GetKeys<T extends LazyRightsKeys> = ({
-    readonly ME: MeRightsKeys,
-    readonly USERS: UsersRightsKeys,
-    readonly POSTS: PostsRightsKeys,
-    readonly ORGANIZATIONS: OrganizationsRightsKeys
+  export type GetKeys<
+    T extends Lazy.ConstantRightsKeys,
+    K extends Lazy.ConstantRightsDoubleKeys[T] = Lazy.ConstantRightsDoubleKeys[T]
+  > = ({
+    readonly USER: K
+    readonly CONTENT: K
   })[T];
-  export type GetTypes<T extends RightsKeys> = ({
-    readonly default: Default.UserRights,
-    readonly users: Lazy.UsersRights
-    readonly posts: Lazy.PostsRights
-    readonly organizations: Lazy.OrganizationsRights
-  })[T];
+  export type GetTypes<
+    T extends keyof Lazy.RightsDoubleKeys,
+    K extends Lazy.RightsDoubleKeys[T]
+  > = ({
+    user: {
+      me: Lazy.MeRights,
+      users: Lazy.UsersRights,
+
+      posts: never, // for ignore type error;
+      organizations: never // for ignore type error;
+    },
+    
+    content: {
+      me: never, // for ignore type error;
+      users: never, // for ignore type error;
+
+      posts: Lazy.PostsRights,
+      organizations: Lazy.OrganizationsRights
+    }
+  })[T][K];
   
-  export type Rights = Raw.Rights; 
+  export type Rights = Raw.Rights;
 
   export interface LazyRights {
-    readonly default: Default.UserRights,
-  
-    readonly users: {
-      readonly [userId: string]: Lazy.UsersRights
+    readonly user: {
+      readonly me: Lazy.MeRights,
+    
+      readonly users: {
+        readonly [userId: string]: Lazy.UsersRights
+      },
     },
-  
-    readonly posts: {
-      readonly [postId: string]: Lazy.PostsRights
-    },
-  
-    readonly organizations: {
-      readonly [organizationId: string]: Lazy.OrganizationsRights
-    },
+
+    readonly content: {
+      readonly posts: {
+        readonly [userId: string]: Lazy.PostsRights
+      },
+    
+      readonly organizations: {
+        readonly [userId: string]: Lazy.OrganizationsRights
+      },
+    }
   };
 }
