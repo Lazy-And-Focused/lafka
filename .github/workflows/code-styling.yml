@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
-run-name: Check code by ${{ github.actor }} from '${{ github.event.head_commit.message }}'
+run-name: Check code by ${{ github.actor }} from '${{ github.event.head_commit.message }}''
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 jobs:
-  scan_and_fix:
+  backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,6 +37,34 @@ jobs:
         run: pnpm --filter backend run lint
         continue-on-error: false
 
+      - name: Save Changes ⇒ Commit formatted code
+        run: |
+          git config --global user.name '${{ github.event.head_commit.author.name }}'
+          git config --global user.email '${{ github.event.head_commit.author.username }}@${{ github.event.head_commit.author.email }}'
+          git add .
+          git commit -m '${{ github.event.head_commit.message }} (formatted ~~ backend)'
+          git push
+        continue-on-error: true
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.4.0
+
+      - uses: actions/setup-node@v4
+        name: Node.js ⇒ 20.x
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+
+      - name: pnpm ⇒ Install dependencies
+        run: pnpm install
+
       - name: "[FRONTEND] Code Style ⇒ Scan and fix"
         run: |
           pnpm --filter frontend run format
@@ -48,6 +76,6 @@ jobs:
           git config --global user.name '${{ github.event.head_commit.author.name }}'
           git config --global user.email '${{ github.event.head_commit.author.username }}@${{ github.event.head_commit.author.email }}'
           git add .
-          git commit -m '${{ github.event.head_commit.message }} (formatted)'
+          git commit -m '${{ github.event.head_commit.message }} (formatted ~~ frontend)'
           git push
         continue-on-error: true

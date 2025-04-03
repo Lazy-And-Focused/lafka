@@ -1,6 +1,6 @@
 # Lafka
 
-![example workflow](https://github.com/Lazy-And-Focused/LAFka/actions/workflows/node.js.yml/badge.svg)
+![workflow](https://github.com/Lazy-And-Focused/LAFka/actions/workflows/code-styling.yml/badge.svg)
 
 ## Описание
 
