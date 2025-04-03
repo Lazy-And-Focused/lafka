@@ -1,9 +1,4 @@
-import type { Post } from "./post.types";
+import { LAFka } from "../index";
 
-export const BP_KEYS = ["likes", "dislikes", "reposts"] as const;
-
-export interface BlogPost extends Post {
-  likes: number;
-  dislikes: number;
-  reposts: number;
-}
+export const BLOG_POST_KEYS = LAFka.BLOG_POST_KEYS;
+export type BlogPost = LAFka.BlogPost;

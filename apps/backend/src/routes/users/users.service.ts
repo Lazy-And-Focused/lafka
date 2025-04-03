@@ -49,10 +49,11 @@ export class UsersService {
     try {
       const user = await users.model.findOne(typeof data === "string" ? { id: data } : data);
 
-      if (!user) return { successed: false, error: "User not found" };
+      if (!user) return { successed: false, resource: null, error: "User not found" };
 
       return {
         successed: true,
+        error: null,
         resource: DB.Database.parse<LAFka.User>(user, "users")
       };
     } catch (error) {
@@ -60,6 +61,7 @@ export class UsersService {
 
       return {
         successed: false,
+        resource: null,
         error
       };
     }
@@ -77,8 +79,12 @@ export class UsersService {
         ? (DB.Database.parse<LAFka.User>(await users.model.findOne({ id }), "users") as T)
         : (updated as T);
 
+      if (!updated.acknowledged)
+        return { successed: false, error: "unknown error: 1", resource: null };
+
       return {
-        successed: updated.acknowledged,
+        successed: true,
+        error: null,
         resource: resource
       };
     } catch (error) {
@@ -86,6 +92,7 @@ export class UsersService {
 
       return {
         successed: false,
+        resource: null,
         error
       };
     }
@@ -100,8 +107,12 @@ export class UsersService {
 
       const deleted = await resource.delete(id);
 
+      if (!deleted.user.acknowledged || !deleted.auth_user.acknowledged)
+        return { successed: false, error: "unknown error: 2", resource: null };
+
       return {
-        successed: deleted.user.acknowledged && deleted.auth_user.acknowledged,
+        successed: true,
+        error: null,
         resource: returnUser ? (deleted.user as T) : (resource as unknown as T)
       };
     } catch (error) {
@@ -109,6 +120,7 @@ export class UsersService {
 
       return {
         successed: false,
+        resource: null,
         error
       };
     }

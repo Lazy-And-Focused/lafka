@@ -1,145 +1,221 @@
 # Types
 
+[Назад](./index.doc.md)
+
+---
+
 Просто отдельная документация по типам, дабы не открывать бесконечно файлы
-- Стоит уточнить, что все типы находятся в катологе [`packages/types`](../../../packages/types/src/index.ts)
+
+- Стоит уточнить, что все типы находятся в катологе
+  [`packages/types`](../../../packages/types/src/index.ts)
 
 ## AuthTypes
+
 ```ts
-type AuthTypes = "google" | "yandex";
+type AuthTypes = 'google' | 'yandex';
 ```
 
 ## DataType
+
 ```ts
-/* 
-  type Models = "auth_users" | "posts" | "comments" | "users"
-*/
-type DataType = Exclude<Models, "auth_users">;
+/**
+ * @Models "auth_users" | "posts" | "comments" | "users"
+ */
+type DataType = Exclude<Models, 'auth_users'>;
 // "posts" | "comments" | "users"
 ```
 
-<hr>
+---
 
 ## GetData
+
 ```ts
-interface GetData<T extends unknown> {
+type GetData<T extends unknown> = {
   type: DataType;
-  successed: boolean;
-  resource?: T;
-  error?: unknown;
-}
+} & (
+  | {
+      successed: false;
+      resource: null;
+      error: unknown;
+    }
+  | {
+      successed: true;
+      resource: T;
+      error: null;
+    }
+);
 ```
 
 ## CreateData
+
 ```ts
-interface CreateData<T extends unknown> {
+type CreateData<T extends unknown> = {
   type: DataType;
-  successed: boolean;
-  created_resource?: T;
   date: Date;
-  error?: unknown;
-}
+} & (
+  | {
+      successed: true;
+      created_resource: T;
+      error: null;
+    }
+  | {
+      successed: false;
+      created_resource: null;
+      error: unknown;
+    }
+);
 ```
 
 ## ChangeData
-```ts
-interface ChangeData<T extends unknown> {
-  type: DataType;
-  successed: boolean;
 
-  changed_resource_type: "resource"|"update"
-  changed_resource?: T|UpdateWriteOpResult;
+```ts
+export type ChangeDataSuccessed<T extends unknown> = {
+  type: DataType;
   date: Date;
-    
-  error?: unknown;
-}
+  successed: true;
+  error: null;
+} & (
+  | {
+      changed_resource: UpdateWriteOpResult;
+      changed_resource_type: 'update';
+    }
+  | {
+      changed_resource: T;
+      changed_resource_type: 'resource';
+    }
+);
+
+export type ChangeData<T extends unknown> = {
+  type: DataType;
+  date: Date;
+} & (
+  | {
+      successed: false;
+      changed_resource: null;
+      error: unknown;
+    }
+  | ChangeDataSuccessed<T>
+);
 ```
 
 ## DeleteData
+
 ```ts
-interface DeleteData<T extends unknown> {
+export type DeleteDataSuccessed<T extends unknown> = {
   type: DataType;
   successed: boolean;
-	
-  deleted_resource_type: "resource"|"delete";
-  deleted_resource?: T|DeleteResult;
+  error: null;
   date: Date;
-
-  error?: unknown;
+} & ({
+  deleted_resource_type: "delete";
+  deleted_resource: DeleteResult;
+} | {
+  deleted_resource_type: "resource";
+  deleted_resource: T;
+});
+export type DeleteData<T extends unknown> = {
+  type: DataType;
+  date: Date;
+} & ({
+  successed: false;
+  deleted_resource: null;
+  error: unknown;
+} | DeleteDataSuccessed<T>);
 }
 ```
 
-<hr>
+---
 
 ## User
+
 ```ts
 interface User {
   id: string;
-
   username: string;
   nickname?: string;
   avatar?: string;
-
   biography?: string;
   links: Link[];
-
   created_at: Date;
-
   forum_posts: string[];
   blog_posts: string[];
   followed_forum_posts: string[];
   followed_blog_posts: string[];
   blocked_posts: string[];
-
   followers: string[];
   following: string[];
+  rights: Rights.Rights;
+}
+```
+
+### Rights
+
+```ts
+interface Rights {
+  readonly default: string /* it's a bigint */;
+  readonly users: [string, string /* it's a bigint */][];
+  readonly posts: [string, string /* it's a bigint */][];
+  readonly organizations: [string, string /* it's a bigint */][];
 }
 ```
 
 ### Link
+
 ```ts
 type Link = {
   name: string;
   link: string;
-}
+};
 ```
 
-<hr>
+---
 
 ## Post
+
 ```ts
+const POST_TYPES = ['forum', 'blog'] as const;
+type PostTypes = (typeof POST_TYPES)[number];
 interface Post {
   id: string;
-
   name: string;
   content: string;
   description?: string;
   comments: string[];
   followers: number;
-
   created_at: Date;
   changed_at?: Date;
-
   creator_id: string;
-
-  type: "forum" | "blog";
+  type: PostTypes;
   view_status: 0 | 1;
 
-  // Forum post:
+  /* BlogPost */
+  likes: number;
+  dislikes: number;
+  reposts: number;
 
-  tags: Tag[] | null;
-  status: PostStatus | null;
+  /* ForumPost */
+  tags: Tag[];
+  status: PostStatus;
+}
 
-  // Blog post:
+interface BlogPost extends Post {
+  likes: number;
+  dislikes: number;
+  reposts: number;
+}
 
-  likes: number | null;
-  dislikes: number | null;
-  reposts: number | null;
+interface ForumPost extends Post {
+  tags: Tag[];
+  status: PostStatus;
 }
 ```
 
 ### Tag
+
+- [Tag](../../../packages/types/src/index.ts)
+
 ```ts
-type Tags = "?";
+type Tags = '?';
 
 type Tag = {
   id: string;
@@ -148,27 +224,25 @@ type Tag = {
 ```
 
 ### PostStatus
+
 ```ts
-type PostStatus = "closed" | "open" | "blocked";
+type PostStatus = 'closed' | 'open' | 'blocked';
 ```
 
-<hr>
+---
 
 ## Comment
+
 ```ts
 interface Comment {
   id: string;
-
   content: string;
-
   created_at: Date;
   changed_at?: Date;
-
   author_id: string;
   post_id: string;
-
   reply?: string;
 }
 ```
 
-<hr>
+---

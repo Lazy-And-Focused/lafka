@@ -36,11 +36,22 @@ export class PostsContoller {
   @Public()
   @Get(POSTS_ROUTES.GET)
   public async getPosts(
+    @Req() req: Request,
     @Query("offset") offset?: string,
     @Query("count") count?: string,
     @Query("sortBy") sortBy?: string,
     @Query("sortType") sortType?: string
   ): Promise<LAFka.Response.GetData<LAFka.Post[]>> {
+    const { successed } = Hash.parse(req);
+
+    if (!successed)
+      return {
+        successed: false,
+        type: "posts",
+        error: "",
+        resource: null
+      };
+
     const posts = await this.postsService.getPosts({
       offset, count, sortBy, sortType
     });
@@ -51,8 +62,19 @@ export class PostsContoller {
   @Public()
   @Get(POSTS_ROUTES.GET_ONE)
   public async getPost(
+    @Req() req: Request,
     @Param("id") id: string
   ): Promise<LAFka.Response.GetData<LAFka.Post>> {
+    const { successed } = Hash.parse(req);
+
+    if (!successed)
+      return {
+        successed: false,
+        error: "Hash parse error",
+        resource: null,
+        type: "posts"
+      };
+
     const post = await this.postsService.getPost(id);
 
     return {...post, type: "posts"};
@@ -68,6 +90,8 @@ export class PostsContoller {
     if (!successed)
       return {
         date,
+        created_resource: null,
+        error: "Hash parse error",
         successed: false,
         type: "posts"
       };
@@ -75,10 +99,13 @@ export class PostsContoller {
     const body = DB.Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
 
+    if (!post.successed)
+      return { successed: false, created_resource: null, error: post.error, date, type: "posts" };
+
     return {
       successed: post.successed,
       created_resource: post.resource,
-      error: post.error,
+      error: null,
       date,
       type: "posts"
     };

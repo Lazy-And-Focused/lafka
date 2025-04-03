@@ -1,4 +1,6 @@
 import { LAFka } from "lafka/types";
+import { UpdateWriteOpResult } from "mongoose";
+import { DeleteResult } from "lafka/database/types/mongodb.types";
 import DB from "lafka/database";
 
 import { Request } from "express";
@@ -46,7 +48,7 @@ export class UsersController {
     const formatted = UsersService.formatGetData<false>(identifier, false);
 
     if (formatted instanceof Error)
-      return { successed: false, error: formatted.message, type: "users" };
+      return { successed: false, error: formatted.message, resource: null, type: "users" };
     const formattedIdentifier = UsersService.formatGettedData(formatted);
 
     const value = await api.getCache<LAFka.User>(
@@ -54,7 +56,7 @@ export class UsersController {
       this.cacheManager,
       cache
     );
-    if (value) return { successed: true, resource: value, type: "users" };
+    if (value) return { successed: true, resource: value, error: null, type: "users" };
 
     const user = await this.usersService.getUser(formatted);
     this.cacheManager.set<LAFka.User>(`user-${formattedIdentifier}`, user.resource);
@@ -72,10 +74,10 @@ export class UsersController {
   ): Promise<LAFka.Response.GetData<LAFka.User>> {
     const { successed, profile_id } = Hash.parse(req);
 
-    if (!successed) return { successed: false, type: "users" };
+    if (!successed) return { successed: false, error: "Hash parse error", resource: null, type: "users" };
 
     const value = await api.getCache<LAFka.User>(`user-${profile_id}`, this.cacheManager, cache);
-    if (value) return { successed: true, resource: value, type: "users" };
+    if (value) return { successed: true, error: null, resource: value, type: "users" };
 
     const user = await this.usersService.getUser(profile_id);
     this.cacheManager.set<LAFka.User>(`user-${profile_id}`, user.resource);
@@ -98,14 +100,14 @@ export class UsersController {
         successed: false,
         error: id.message,
         date,
-        changed_resource_type: "resource",
+        changed_resource: null,
         type: "users"
       };
 
     const { successed } = Hash.parse(req);
 
     if (!successed)
-      return { successed: false, date, changed_resource_type: "resource", type: "users" };
+      return { successed: false, error: "Hash parse error", date, changed_resource: null, type: "users" };
     const user: Partial<LAFka.User> = DB.Database.parse(req.body, "users");
 
     (async () => {
@@ -120,11 +122,15 @@ export class UsersController {
 
     const data = await this.usersService.updateUser(id, user, returnUser === "true");
 
+    if (!data.successed)
+      return { successed: false, type: "users", error: data.error, date, changed_resource: null };
+
     return {
-      successed: data.successed,
+      successed: true,
       date,
+      error: null,
       changed_resource_type: returnUser === "true" ? "resource" : "update",
-      changed_resource: data.resource,
+      changed_resource: data.resource as LAFka.User & UpdateWriteOpResult,
       type: "users"
     };
   }
@@ -143,13 +149,13 @@ export class UsersController {
         successed: false,
         error: id.message,
         date,
-        deleted_resource_type: "resource",
+        deleted_resource: null,
         type: "users"
       };
 
     const { successed } = Hash.parse(req);
     if (!successed)
-      return { successed: false, date, deleted_resource_type: "resource", type: "users" };
+      return { successed: false, deleted_resource: null, date, error: "Hash parse error", type: "users" };
 
     this.cacheManager.del(`user-${id}`);
 
@@ -160,7 +166,8 @@ export class UsersController {
       date,
       deleted_resource_type: returnUser === "true" ? "resource" : "delete",
       type: "users",
-      deleted_resource: data.resource
+      error: null,
+      deleted_resource: data.resource as LAFka.User & DeleteResult
     };
   }
 }

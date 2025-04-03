@@ -47,12 +47,13 @@ export class PostsService {
       sort: { [filter.sortBy]: filter.sortType }
     }});
 
-    if (!data.successed || !data.data) return { successed: false, error: data.text };
-    if (data.data.length === 0) return { successed: false, resource: [], error: "Posts not found" };
+    if (!data.successed || !data.data) return { successed: false, resource: null, error: data.text };
+    if (data.data.length === 0) return { successed: false, resource: null, error: "Posts not found" };
 
     return {
       successed: true,
-      resource: data.data.map(p => DB.Database.parse(p, "posts"))
+      resource: data.data.map(p => DB.Database.parse(p, "posts")),
+      error: null
     }
   }
 
@@ -60,43 +61,46 @@ export class PostsService {
     const data = await posts.getData({filter: {id}});
     
     if (!data.successed || !data.data || data.data.length === 0)
-      return { successed: false, error: "Post not found" };
+      return { successed: false, resource: null, error: "Post not found" };
   
     return {
       successed: true,
-      resource: data.data[0]
+      resource: data.data[0],
+      error: null
     };
   }
 
   public async createPost(userId: string, post: Constructors.posts): Promise<ServiceResponse<LAFka.Post>> {
     const user = (await users.getData({filter: {id: userId}})).data;
 
-    if (!user || !user[0]) return { successed: false, error: "User not found"};
+    if (!user || !user[0]) return { successed: false, resource: null, error: "User not found"};
 
     if (!new Rights.User(user[0]).defaultHas(RightsTypes.Default.ME_RIGHTS.POSTS_CREATE))
-      return { successed: false, error: "403 Forbidenn" };
+      return { successed: false, resource: null, error: "403 Forbidenn" };
 
     for (const required of REQUIRED_DATA_TO_CREATE_POST) {
       if (!Object.keys({...post, creator_id: userId}).includes(required)) {
         return {
           successed: false,
-          error: "there is no required data"
+          error: "there is no required data",
+          resource: null
         };
       }
     }
 
     return {
       successed: true,
-      resource: DB.Database.parse(await new DB.Post({...post, creator_id: userId}).init(), "posts")
+      resource: DB.Database.parse(await new DB.Post({...post, creator_id: userId}).init(), "posts"),
+      error: null,
     };
   }
 
   public async putPost(user: LAFka.User): Promise<ServiceResponse<LAFka.Post>> {
-    return { successed: false, error: "the method has not been initialized" }
+    return { successed: false, resource: null, error: "the method has not been initialized" }
   }
 
   public async deletePost(user: LAFka.User): Promise<ServiceResponse<LAFka.Post>> {
-    return { successed: false, error: "the method has not been initialized" }
+    return { successed: false, resource: null, error: "the method has not been initialized" }
   }
 
   private parseFilter(data: Record<keyof Filter, string>): Filter {

@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 import MessageUser from './icons/MessageUser';
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className='section-block grid grid-cols-2'>
       <div className='post'>
