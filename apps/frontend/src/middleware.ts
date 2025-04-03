@@ -6,7 +6,9 @@ import { getUserFromSource } from './utils/getUser';
 export async function middleware(request: NextRequest) {
   const user = (await getUserFromSource()).result;
 
-  if (request.nextUrl.pathname === '/auth' && user) {
+  const pathname = request.nextUrl.pathname;
+
+  if (pathname === '/auth' && user) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 }

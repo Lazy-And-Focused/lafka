@@ -1,4 +1,4 @@
-'use ыукмук';
+'use server';
 
 import Image from 'next/image';
 import FilePencil from '../icons/FilePencil';
@@ -7,7 +7,7 @@ import { getUserFromSource } from '../../utils/getUser';
 import { LAFka } from '@lafka/types';
 import Link from 'next/link';
 
-export default function Root() {
+export default async function Root() {
   return (
     <Suspense fallback={<LoadingState />}>
       <UserPanel />
