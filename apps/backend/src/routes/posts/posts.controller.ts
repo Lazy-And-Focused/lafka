@@ -18,6 +18,7 @@ import { Cache } from "cache-manager";
 
 import { POSTS_CONTROLLER, POSTS_ROUTES } from "./posts.routes";
 import { PostsService } from "./posts.service";
+import { Public } from "decorators/public.decorator";
 
 import { AuthGuard } from "guards/auth/auth.guard";
 
@@ -32,23 +33,14 @@ export class PostsContoller {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
+  @Public()
   @Get(POSTS_ROUTES.GET)
   public async getPosts(
-    @Req() req: Request,
     @Query("offset") offset?: string,
     @Query("count") count?: string,
     @Query("sortBy") sortBy?: string,
     @Query("sortType") sortType?: string
   ): Promise<LAFka.Response.GetData<LAFka.Post[]>> {
-    const { successed } = Hash.parse(req);
-
-    if (!successed)
-      return {
-        successed: false,
-        type: "posts",
-        resource: []
-      };
-
     const posts = await this.postsService.getPosts({
       offset, count, sortBy, sortType
     });
@@ -56,19 +48,11 @@ export class PostsContoller {
     return {...posts, type: "posts" }
   }
 
+  @Public()
   @Get(POSTS_ROUTES.GET_ONE)
   public async getPost(
-    @Req() req: Request,
     @Param("id") id: string
   ): Promise<LAFka.Response.GetData<LAFka.Post>> {
-    const { successed } = Hash.parse(req);
-
-    if (!successed)
-      return {
-        successed: false,
-        type: "posts"
-      };
-
     const post = await this.postsService.getPost(id);
 
     return {...post, type: "posts"};
@@ -90,7 +74,6 @@ export class PostsContoller {
 
     const body = DB.Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
-
 
     return {
       successed: post.successed,

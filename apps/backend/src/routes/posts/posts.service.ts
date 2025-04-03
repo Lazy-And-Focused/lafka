@@ -5,8 +5,6 @@ import DB, { Models } from "lafka/database";
 import { LAFka, Rights as RightsTypes } from "lafka/types";
 import { Rights } from "@lafka/rights";
 
-import { UpdateWriteOpResult } from "mongoose";
-import { DeleteResult } from "lafka/database/types/mongodb.types";
 import { ServiceResponse } from "lafka/types/service.types";
 
 const { posts, users } = new Models();
