@@ -1,27 +1,47 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "displayName": "Frontend",
+  "version": "0.3.1",
+  "description": "Frontend for LAFka.",
+  "license": "MIT",
   "private": true,
+  "author": {
+    "name": "Lazy-And-Focused",
+    "url": "https://laf-info.netlify.app/"
+  },
+  "contributors": [
+    {
+      "name": "lanvalird",
+      "email": "strazhognay@gmail.com",
+      "url": "http://lanvalird.netlify.app/"
+    }
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier . --check --write"
   },
   "dependencies": {
+    "next": "15.2.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.1.3"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "eslint": "^9",
+    "@lafka/types": "workspace:^",
+    "eslint": "catalog:",
     "eslint-config-next": "15.1.3",
-    "@eslint/eslintrc": "^3"
+    "eslint-config-prettier": "catalog:",
+    "postcss": "^8",
+    "prettier": "catalog:",
+    "prettier-config-laf": "workspace:^",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^3.4.1",
+    "typescript": "catalog:"
   }
 }

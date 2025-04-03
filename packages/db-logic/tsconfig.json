@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
+        "target": "ES2024",
         "module": "CommonJS",
         "outDir": "./dist",
         "removeComments": true,
@@ -12,11 +12,13 @@
         "paths": {
             "database/*": ["src/database/*"],
             "classes/*": ["src/classes/*"],
-            "types/*": [
+            "lafka/types": [ "node_modules/@lafka/types/dist" ],
+            "lafka/types/*": [
                 "src/types/*",
-                "node_modules/@types/lafka/dist/*"
+                "node_modules/@lafka/types/dist/*"
             ]
         }
     },
+    "include": [ "src" ],
     "exclude": [ "node_modules", "dist" ]
 }

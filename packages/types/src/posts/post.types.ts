@@ -1,19 +1,6 @@
-interface Post {
-	id: string;
+import { LAFka } from "../index";
 
-	name: string;
-	content: string;
-	description?: string;
-	comments: string[];
-	followers: number;
-
-	created_at: Date;
-	changed_at?: Date;
-
-	creator_id: string;
-
-	type: "forum" | "blog";
-	view_status: 0 | 1;
-}
-
-export { Post };
+export const POST_KEYS = LAFka.POST_KEYS;
+export const POST_TYPES = LAFka.POST_TYPES;
+export type PostTypes = LAFka.PostTypes;
+export type Post = LAFka.Post;

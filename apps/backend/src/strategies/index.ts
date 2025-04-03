@@ -1,11 +1,11 @@
 import GeneralStrategy from "./general.stategy";
 
 class Passport extends GeneralStrategy {
-	public constructor() {
-		super();
+  public constructor() {
+    super();
 
-		this.auth.init();
-	}
+    this.auth.init();
+  }
 }
 
 export default Passport;
