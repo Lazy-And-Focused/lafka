@@ -318,7 +318,7 @@ export namespace Rights {
       "USERS",
     ] as const;
 
-    export interface Rights {
+    export interface UserRights {
       readonly me: string,
       readonly users: [string, string /* it's a bigint */][]
     };
@@ -444,7 +444,7 @@ export namespace Rights {
     }
   })[T][K];
   
-  export type Rights = Raw.Rights;
+  export type UserRights = Raw.UserRights;
 
   export interface LazyRights {
     readonly user: {

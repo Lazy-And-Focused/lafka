@@ -161,7 +161,7 @@ export namespace LAFka {
     followers: string[];
     following: string[];
 
-    rights: Rights.Rights;
+    rights: Rights.UserRights;
   }
 
 
