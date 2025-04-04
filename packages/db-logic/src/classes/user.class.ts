@@ -45,9 +45,7 @@ class User<T extends boolean = false> implements LAFka.User {
       nickname: data.nickname || undefined,
       biography: data.biography || undefined,
       rights: data.rights || {
-        default: `${Rights.Raw.DEFAULT_USER_ALL_RIGHTS}`,
-        organizations: [],
-        posts: [],
+        me: `${Rights.Raw.DEFAULT_USER_ME_RIGHTS}`,
         users: []
       },
     };
@@ -195,7 +193,7 @@ class User<T extends boolean = false> implements LAFka.User {
     return this.data.following;
   }
 
-  public get rights(): Rights.Rights {
+  public get rights(): Rights.Raw.UserRights {
     return this.data.rights;
   }
 
