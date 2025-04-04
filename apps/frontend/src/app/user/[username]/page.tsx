@@ -15,12 +15,15 @@ export default async function User({
   if (!isValidParams) return 'Неверно сформулированный запрос';
 
   try {
-    const res = fetch('https://localhost:3001/api/users/' + username, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
+    const res = fetch(
+      process.env.NEXT_PUBLIC_BACKEND_API + '/users/' + username,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
       },
-    }).then((data) => data.json());
+    ).then((data) => data.json());
 
     const user: LAFka.User = (await res).resource;
 

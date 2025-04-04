@@ -12,7 +12,7 @@ export async function getUserFromSource(): Promise<{
   if (!token) return { result: null, error: false };
 
   try {
-    const res = await fetch('http://localhost:3001/api/users/', {
+    const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/users/', {
       method: 'GET',
       headers: {
         token,
