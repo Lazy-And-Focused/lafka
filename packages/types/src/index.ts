@@ -4,97 +4,6 @@ import { Rights } from "./rights/rights.types";
 export { Rights } from "./rights/rights.types";
 
 export namespace LAFka {
-  export namespace Response {
-    export type DataType = Exclude<Database.Models, "auth_users">;
-    
-    export type GetData<T> = {
-      type: DataType;
-    } & ({
-      successed: false;
-      resource: null;
-      error: unknown;
-    } | {
-      successed: true;
-      resource: T;
-      error: null;
-    });
-    
-    export type CreateData<T> = {
-      type: DataType;
-      date: Date;
-    } & ({
-      successed: true;
-      created_resource: T;
-      error: null;
-    } | {
-      successed: false;
-      created_resource: null;
-      error: unknown;
-    });
-    
-    export type ChangeDataSuccessed<T> = {
-      type: DataType;
-      date: Date;
-      successed: true;
-      error: null;
-    } & ({
-      changed_resource: UpdateWriteOpResult;
-      changed_resource_type: "update";
-    } | {
-      changed_resource: T;
-      changed_resource_type: "resource";
-    });
-    
-    export type ChangeData<T> = {
-      type: DataType;
-      date: Date;
-    } & ({
-      successed: false;
-      changed_resource: null;
-      error: unknown;
-    } | ChangeDataSuccessed<T>);
-    
-    export type DeleteDataSuccessed<T> = {
-      type: DataType;
-      successed: boolean;
-      error: null;
-      date: Date;
-    } & ({
-      deleted_resource_type: "delete";
-      deleted_resource: DeleteResult;
-    } | {
-      deleted_resource_type: "resource";
-      deleted_resource: T;
-    });
-
-    export type DeleteData<T> = {
-      type: DataType;
-      date: Date;
-    } & ({
-      successed: false;
-      deleted_resource: null;
-      error: unknown;
-    } | DeleteDataSuccessed<T>);
-  }
-
-  export namespace Database {
-    export const MODELS = ["auth_users", "posts", "comments", "users"] as const;
-    export type Models = (typeof MODELS)[number];
-
-    export const KEYS = {
-      auth_users: LAFka.AUTH_USER_KEYS,
-      posts: [...LAFka.POST_KEYS, ...LAFka.FORUM_POST_KEYS, ...LAFka.BLOG_POST_KEYS],
-      comments: LAFka.COMMENT_KEYS,
-      users: LAFka.USER_KEYS,
-    
-      blog_posts: LAFka.BLOG_POST_KEYS,
-      forum_posts: LAFka.FORUM_POST_KEYS
-    } as const;
-    
-  }
-
-  
-
   // AuthUsers types & constants
 
 
@@ -273,3 +182,91 @@ export namespace LAFka {
     link: string;
   };
 }
+
+export namespace LAFka.Database {
+  export const MODELS = ["auth_users", "posts", "comments", "users"] as const;
+  export type Models = (typeof MODELS)[number];
+
+  export const KEYS = {
+    auth_users: LAFka.AUTH_USER_KEYS,
+    posts: [...LAFka.POST_KEYS, ...LAFka.FORUM_POST_KEYS, ...LAFka.BLOG_POST_KEYS],
+    comments: LAFka.COMMENT_KEYS,
+    users: LAFka.USER_KEYS,
+  
+    blog_posts: LAFka.BLOG_POST_KEYS,
+    forum_posts: LAFka.FORUM_POST_KEYS
+  } as const;
+};
+
+export namespace LAFka.Response {
+  export type DataType = Exclude<LAFka.Database.Models, "auth_users">;
+  
+  export type GetData<T> = {
+    type: DataType;
+  } & ({
+    successed: false;
+    resource: null;
+    error: unknown;
+  } | {
+    successed: true;
+    resource: T;
+    error: null;
+  });
+  
+  export type CreateData<T> = {
+    type: DataType;
+    date: Date;
+  } & ({
+    successed: true;
+    created_resource: T;
+    error: null;
+  } | {
+    successed: false;
+    created_resource: null;
+    error: unknown;
+  });
+  
+  export type ChangeDataSuccessed<T> = {
+    type: DataType;
+    date: Date;
+    successed: true;
+    error: null;
+  } & ({
+    changed_resource: UpdateWriteOpResult;
+    changed_resource_type: "update";
+  } | {
+    changed_resource: T;
+    changed_resource_type: "resource";
+  });
+  
+  export type ChangeData<T> = {
+    type: DataType;
+    date: Date;
+  } & ({
+    successed: false;
+    changed_resource: null;
+    error: unknown;
+  } | ChangeDataSuccessed<T>);
+  
+  export type DeleteDataSuccessed<T> = {
+    type: DataType;
+    successed: boolean;
+    error: null;
+    date: Date;
+  } & ({
+    deleted_resource_type: "delete";
+    deleted_resource: DeleteResult;
+  } | {
+    deleted_resource_type: "resource";
+    deleted_resource: T;
+  });
+
+  export type DeleteData<T> = {
+    type: DataType;
+    date: Date;
+  } & ({
+    successed: false;
+    deleted_resource: null;
+    error: unknown;
+  } | DeleteDataSuccessed<T>);
+};
