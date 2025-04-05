@@ -1,254 +1,257 @@
-import { LAFka } from "lafka/types";
-
 import Database, { Constructors } from "database/models.database";
-import type {
-	CreateData,
-	CreatePickData,
-	Status as StatusType
-} from "lafka/types/mongodb.types";
+
+import { LAFka, Rights } from "lafka/types";
+
+import type { CreateData, PickCreateData, Status as StatusType } from "lafka/types/mongodb.types";
 import { Status, Error } from "lafka/types/status.classes";
 
 import Post from "./post.class";
 
+import { Helpers } from "./helpers";
+
 enum CreatePost {
-	forum = "forum_posts",
-	blog = "blog_posts",
-	followed_forum = "followed_forum_posts",
-	followed_blog = "followed_blog_posts",
-	blocked = "blocked_posts"
+  forum = "forum_posts",
+  blog = "blog_posts",
+  followed_forum = "followed_forum_posts",
+  followed_blog = "followed_blog_posts",
+  blocked = "blocked_posts"
 }
 
 type PostTypes = "forum" | "blog" | "followed_forum" | "followed_blog" | "blocked";
 type Data = "username" | "nickname" | "biography" | "avatar" | "links";
 
 class User<T extends boolean = false> implements LAFka.User {
-	private readonly _users = new Database().users;
-	
-	private _data: LAFka.User;
-	private initialized: boolean = false;
+  private readonly database = new Database();
+  
+  private data: LAFka.User;
+  private initialized: boolean = false;
 
-	public constructor(
-		data: Constructors.users<T>
-	) {
-		if (!data.username && !data.id)
-			throw new Error("id and username is not defined");
+  public constructor(data: Constructors.users<T>) {
+    if (!data.username && !data.id) throw new Error("id and username is not defined");
 
-		this._data = {
-			id: "",
-			username: "",
-			created_at: new Date(),
-			blocked_posts: [],
-			blog_posts: [],
-			followed_blog_posts: [],
-			followed_forum_posts: [],
-			followers: [],
-			following: [],
-			forum_posts: [],
-			links: [],
-			avatar: undefined,
-			nickname: undefined,
-			biography: undefined,
-			...data
-		}
-	}
+    this.data = {
+      id: "",
+      username: data.username || "",
+      created_at: data.created_at || new Date(),
+      blocked_posts: data.blocked_posts || [],
+      blog_posts: data.blog_posts || [],
+      followed_blog_posts: data.followed_blog_posts || [],
+      followed_forum_posts: data.followed_forum_posts || [],
+      followers: data.followers || [],
+      following: data.following || [],
+      forum_posts: data.forum_posts || [],
+      links: data.links || [],
+      avatar: data.avatar || undefined,
+      nickname: data.nickname || undefined,
+      biography: data.biography || undefined,
+      rights: data.rights || {
+        me: `${Rights.Raw.Default.ME}`,
+        users: []
+      },
+    };
+  }
 
-	public readonly init = async (): Promise<T extends true ? (this|null) : (this)> => {
-		if (this.initialized) return this;
+  public async init(): Promise<T extends true ? this | null : this> {
+    if (this.initialized) return this;
 
-		const data = this._data;
-		const filter = !!data.id
-			? { id: data.id, username: data.username }
-			: { username: data.username };
+    const userData = this.data;
+    const filter = !!userData.id
+      ? { id: userData.id, username: userData.username }
+      : { username: userData.username };
 
-		const status: StatusType<LAFka.User[]> = await this._users.getData({
-			filter: { ...filter }
-		});
+    const gettedUser: StatusType<LAFka.User[]> = await this.database.users.getData({
+      filter: { ...filter }
+    });
 
-		if (status.type === 0 || !status.data) {
-			if (filter.id && !filter.username)
-				return null as any;
+    if (!gettedUser.successed || !gettedUser.data) {
+      if (filter.id && !filter.username) return null as any;
 
-			const user = await this._users.create(data);
+      const user = await this.database.users.create(userData);
+      this.initialized = true;
 
-			this.paste(data, user);
-		} else {
-			const user = status.data[0];
-			const updateData = this.paste(data, user);
+      return this.paste(userData, user);
+    } else {
+      const user = gettedUser.data[0];
+      const updateData = this.paste(userData, user);
 
-			this._users.update({
-				filter: { username: data.username },
-				update: {
-					created_at: updateData._data.created_at,
-					blocked_posts: updateData._data.blocked_posts,
-					blog_posts: updateData._data.blog_posts,
-					followed_blog_posts: updateData._data.followed_blog_posts,
-					followed_forum_posts: updateData._data.followed_forum_posts,
-					followers: updateData._data.followers,
-					following: updateData._data.following,
-					forum_posts: updateData._data.forum_posts,
-					links: updateData._data.links,
-					avatar: updateData._data.avatar,
-					nickname: updateData._data.nickname,
-					biography: updateData._data.biography
-				}
-			});
-		}
+      this.database.users.update({
+        filter: { username: userData.username },
+        update: Helpers.parse(updateData.data, "users")
+      });
+      this.initialized = true;
 
-		this.initialized = true;
+      return updateData;
+    }
+  };
 
-		return this;
-	};
+  public static async delete(id: string)  {
+    const db = new Database();
+    const auth_user = await db.auth_users.delete({ filter: { profile_id: id } });
+    const user = await db.users.delete({ id: id });
 
-	private readonly paste = (data: CreateData<LAFka.User>, user: LAFka.User) => {
-		this._data = {
-			...data,
-			...user
-		};
+    return { auth_user, user };
+  };
 
-		return this;
-	};
+  public async delete(id?: string) {
+    return await User.delete(id || this.data.id);
+  };
 
-	private readonly getDatabaseUser = async (id?: string) => {
-		const { data } = await this._users.getData({filter: {id: id||this._data.id}});
+  public async updateData(data: string | LAFka.Link[], type: Data) {
+    if (typeof data === "string" && type !== "links") {
+      this.data[type] === data;
+      
+      await this.database.users.update({
+        filter: { id: this.data.id },
+        update: { [type]: data }
+      });
+    } else if (Array.isArray(data) && type === "links") {
+      this.data[type].push(...data);
 
-		return data ? data[0] : null;
-	};
+      await this.database.users.push({
+        filter: { id: this.data.id },
+        update: { [type]: data }
+      });
+    } else {
+      return new Error("type mismatch");
+    }
 
-	private async addPosts(posts: string[], type: PostTypes) {
-		this._data[CreatePost[type]].push(...posts);
+    return new Status({ successed: true, text: type + " updated", data: type + " updated", error: undefined });
+  };
 
-		return await this._users.push({
-			filter: { id: this._data.id },
-			update: { [CreatePost[type]]: posts }
-		});
-	}
+  public async createPost(
+    post: PickCreateData<LAFka.LazyPost, "content" | "name" | "type">
+  ) {
+    const created = await new Post({ ...post, creator_id: this.data.id }).init();
 
-	private async followController(
-		following: string,
-		action: "follow" | "unfollow"
-	): Promise<StatusType<any>> {
-		const followingUser = await this.getDatabaseUser(following);
-		const user = await this.getDatabaseUser();
+    return {
+      response: await this.addPosts([created.id], post.type),
+      post: created
+    };
+  }
 
-		if (!followingUser || !user) return new Error("user not found");
+  public async follow(following: string) {
+    return await this.followController(following, "follow");
+  }
 
-		if (action === "follow") {
-			followingUser.followers.push(this._data.id);
-			user.following.push(following);
-		} else {
-			followingUser.followers = followingUser.followers.filter(
-				(id) => id !== this._data.id
-			);
-			user.following = user.following.filter((id) => id !== following);
-		}
+  public async unfollow(unfollowing: string) {
+    return await this.followController(unfollowing, "unfollow");
+  }
 
-		this._users.update({
-			filter: { id: followingUser.id },
-			update: { followers: followingUser.followers }
-		});
+  public get id(): string {
+    return this.data.id;
+  }
 
-		this._users.update({
-			filter: { id: user.id },
-			update: { followers: user.following }
-		});
+  public get username(): string {
+    return this.data.username;
+  }
 
-		return new Status({ type: 1, text: action + "ing!" });
-	}
+  public get nickname(): string | undefined {
+    return this.data.nickname || undefined;
+  }
 
-	public readonly updateData = async (data: string | LAFka.Link[], type: Data) => {
-		if (typeof data === "string" && type !== "links") {
-			this._data[type] === data;
-			await this._users.update({
-				filter: { id: this._data.id },
-				update: { [type]: data }
-			});
-		} else if (Array.isArray(data) && type === "links") {
-			this._data[type].push(...data);
-			await this._users.push({
-				filter: { id: this._data.id },
-				update: { [type]: data }
-			});
-		} else {
-			return new Error("type mismatch");
-		}
+  public get biography(): string {
+    return this.data.biography || "";
+  }
 
-		return new Status({ type: 1, text: type + " updated" });
-	};
+  public get links(): LAFka.Link[] {
+    return this.data.links;
+  }
 
-	public async createPost(
-		post: CreatePickData<LAFka.BlogAndForumPost, "content" | "name" | "type">
-	) {
-		const created = await new Post({ ...post, creator_id: this._data.id }).init();
+  public get avatar(): string | undefined {
+    return this.data.avatar;
+  }
 
-		return {
-			response: await this.addPosts([created.id], post.type),
-			post: created
-		};
-	}
+  public get created_at(): Date {
+    return this.data.created_at;
+  }
 
-	public async follow(following: string) {
-		return await this.followController(following, "follow");
-	}
+  public get forum_posts(): string[] {
+    return this.data.forum_posts;
+  }
 
-	public async unfollow(unfollowing: string) {
-		return await this.followController(unfollowing, "unfollow");
-	}
+  public get blog_posts(): string[] {
+    return this.data.blog_posts;
+  }
 
-	public get id(): string {
-		return this._data.id;
-	}
+  public get followed_forum_posts(): string[] {
+    return this.data.followed_forum_posts;
+  }
 
-	public get username(): string {
-		return this._data.username;
-	}
+  public get followed_blog_posts(): string[] {
+    return this.data.followed_blog_posts;
+  }
 
-	public get nickname(): string | undefined {
-		return this._data.nickname || undefined;
-	}
+  public get blocked_posts(): string[] {
+    return this.data.blocked_posts;
+  }
 
-	public get biography(): string {
-		return this._data.biography || "";
-	}
+  public get followers(): string[] {
+    return this.data.followers;
+  }
 
-	public get links(): LAFka.Link[] {
-		return this._data.links;
-	}
+  public get following(): string[] {
+    return this.data.following;
+  }
 
-	public get avatar(): string | undefined {
-		return this._data.avatar;
-	}
+  public get rights(): Rights.Raw.Rights["user"] {
+    return this.data.rights;
+  }
 
-	public get created_at(): Date {
-		return this._data.created_at;
-	}
+  private readonly paste = (data: CreateData<LAFka.User>, user: LAFka.User) => {
+    this.data = Helpers.parse<LAFka.User>({
+      ...data,
+      ...user,
 
-	public get forum_posts(): string[] {
-		return this._data.forum_posts;
-	}
+      id: user.id
+    }, "users");
 
-	public get blog_posts(): string[] {
-		return this._data.blog_posts;
-	}
+    return this;
+  };
 
-	public get followed_forum_posts(): string[] {
-		return this._data.followed_forum_posts;
-	}
+  private readonly getDatabaseUser = async (id?: string) => {
+    const { data } = await this.database.users.getData({ filter: { id: id || this.data.id } });
 
-	public get followed_blog_posts(): string[] {
-		return this._data.followed_blog_posts;
-	}
+    return data ? data[0] : null;
+  };
 
-	public get blocked_posts(): string[] {
-		return this._data.blocked_posts;
-	}
+  private async addPosts(posts: string[], type: PostTypes) {
+    this.data[CreatePost[type]].push(...posts);
 
-	public get followers(): string[] {
-		return this._data.followers;
-	}
+    return await this.database.users.push({
+      filter: { id: this.data.id },
+      update: { [CreatePost[type]]: posts }
+    });
+  }
 
-	public get following(): string[] {
-		return this._data.following;
-	}
+  private async followController(
+    following: string,
+    action: "follow" | "unfollow"
+  ): Promise<StatusType<any, any, boolean>> {
+    const followingUser = await this.getDatabaseUser(following);
+    const user = await this.getDatabaseUser();
+
+    if (!followingUser || !user) return new Error("user not found");
+
+    if (action === "follow") {
+      followingUser.followers.push(this.data.id);
+      user.following.push(following);
+    } else {
+      followingUser.followers = followingUser.followers.filter((id) => id !== this.data.id);
+      user.following = user.following.filter((id) => id !== following);
+    }
+
+    this.database.users.update({
+      filter: { id: followingUser.id },
+      update: { followers: followingUser.followers }
+    });
+
+    this.database.users.update({
+      filter: { id: user.id },
+      update: { followers: user.following }
+    });
+
+    return new Status({ successed: true, text: action + "ing!", data: action + "ing!", error: undefined });
+  }
 }
 
 export default User;

@@ -1,139 +1,161 @@
-import { LAFka } from "lafka/types";
-
 import Database, { Constructors } from "database/models.database";
 
+import { LAFka } from "lafka/types";
+
+import { CreateData } from "lafka/types/mongodb.types";
+import { Helpers } from "./helpers";
+
 class AuthUser implements LAFka.AuthUser {
-	private _data: LAFka.AuthUser;
-	private readonly _filter_options: {
-		profile: {
-			profile_id: string,
-			type: LAFka.AuthTypes
-		},
-		service: {
-			service_id: string,
-			type: LAFka.AuthTypes
-		}
-	};
-	private readonly _tokens: {
-		access_token: string
-		refresh_token?: string
-	};
-	
-	private readonly _database: Database = new Database();
+  private readonly filter_options: {
+    profile: {
+      profile_id: string;
+      type: LAFka.AuthTypes;
+    };
+    service: {
+      service_id: string;
+      type: LAFka.AuthTypes;
+    };
+  };
 
-	public constructor(data: Constructors.auth_users) {
-		this._data = {
-			id: "",
-			created_at: new Date(),
-			...data,
-		}
+  private readonly tokens: {
+    access_token: string;
+    refresh_token?: string;
+  };
 
-		this._tokens = {
-			access_token: data.access_token,
-			refresh_token: data.refresh_token
-		};
+  private readonly database = new Database();
+  private data: LAFka.AuthUser;
 
-		this._filter_options = {
-			profile: {
-				profile_id: data.profile_id || "null",
-				type: data.type
-			},
-			service: {
-				service_id: data.profile_id || "null",
-				type: data.type
-			}
-		};
-	}
+  public constructor(data: Constructors.auth_users) {
+    this.data = {
+      id: "",
+      created_at: new Date(),
+      ...data
+    };
 
-	public async init() {
-		const userData = this._data;
+    this.tokens = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token
+    };
 
-		if (userData.profile_id !== "null") {
-			const { data } = (
-				await this._database.auth_users.getData({
-					filter: this._filter_options.profile
-				})
-			);
+    this.filter_options = {
+      profile: {
+        profile_id: data.profile_id || "null",
+        type: data.type
+      },
+      service: {
+        service_id: data.profile_id || "null",
+        type: data.type
+      }
+    };
+  }
 
-			if (data && data[0] && data.length === 1) {
-				await this._database.auth_users.update({
-					filter: data[0],
-					update: this._tokens
-				});
+  public async init() {
+    const authUserData = this.data;
 
-				return this;
-			} else if (data && data.length > 1) {
-				for (const u of data) {
-					this._database.auth_users.delete({id: u.id})
-				}
-			}
-		}
+    if (authUserData.profile_id !== "null") {
+      const { data } = await this.database.auth_users.getData({
+        filter: this.filter_options.profile
+      });
 
-		const { data } = (
-			await this._database.auth_users.getData({
-				filter: this._filter_options.service
-			})
-		);
+      if (data && data[0] && data.length === 1) {
+        await this.database.auth_users.update({
+          filter: data[0],
+          update: this.tokens
+        });
 
-		if (data && data[0]) {
-			await this._database.auth_users.update({
-				filter: this._filter_options.service,
-				update: {
-					service_id: userData.service_id,
-					...this._tokens
-				}
-			});
+        return this.paste(this.data, data[0]);
+      } else if (data && data.length > 1) {
+        for (const u of data) {
+          this.database.auth_users.delete({ id: u.id });
+        }
+      }
+    }
 
-			return this;
-		} else {
-			await this._database.auth_users.create({...userData});
+    const { data: gettedAuthUser } = await this.database.auth_users.getData({
+      filter: this.filter_options.service
+    });
 
-			return this;
-		}
-	}
+    if (gettedAuthUser && gettedAuthUser[0]) {
+      await this.database.auth_users.update({
+        filter: this.filter_options.service,
+        update: {
+          service_id: authUserData.service_id,
+          ...this.tokens
+        }
+      });
 
-	public async updateProfileId(id: string): Promise<LAFka.User | null> {
-		await this._database.auth_users.update({
-			filter: { id: this._data.id },
-			update: { profile_id: id }
-		});
+      return this.paste(this.data, gettedAuthUser[0]);
+    } else {
+      const createdAuthUser = await this.database.auth_users.create({ ...authUserData });
 
-		this._data.profile_id = id;
+      return this.paste(this.data, createdAuthUser);
+    }
+  }
 
-		const { data } = await this._database.users.getData({filter: { id: this.profile_id }})
+  public static async delete(userId: string) {
+    const db = new Database();
+    const auth_user = await db.auth_users.delete({ profile_id: userId });
+    const user = await db.users.delete({ id: userId });
 
-		return data	
-			? data[0]
-			: null;
-	}
+    return { auth_user, user };
+  }
 
-	public get id(): string {
-		return this._data.id;
-	}
+  public async delete(userId?: string) {
+    return AuthUser.delete(userId || this.data.profile_id);
+  }
 
-	public get profile_id(): string {
-		return this._data.profile_id;
-	}
+  public async updateProfileId(id: string): Promise<LAFka.User | null> {
+    await this.database.auth_users.update({
+      filter: { id: this.data.id },
+      update: { profile_id: id }
+    });
 
-	public get service_id(): string {
-		return this._data.service_id;
-	}
+    this.data.profile_id = id;
 
-	public get created_at(): Date {
-		return this._data.created_at;
-	}
+    const { data } = await this.database.users.getData({ filter: { id: this.profile_id } });
 
-	public get access_token(): string {
-		return this._data.access_token;
-	}
+    return data ? data[0] : null;
+  }
 
-	public get refresh_token(): string | undefined {
-		return this._data.refresh_token;
-	}
+  public get id(): string {
+    return this.data.id;
+  }
 
-	public get type(): LAFka.AuthTypes {
-		return this._data.type;
-	}
+  public get profile_id(): string {
+    return this.data.profile_id;
+  }
+
+  public get service_id(): string {
+    return this.data.service_id;
+  }
+
+  public get created_at(): Date {
+    return this.data.created_at;
+  }
+
+  public get access_token(): string {
+    return this.data.access_token;
+  }
+
+  public get refresh_token(): string | undefined {
+    return this.data.refresh_token;
+  }
+
+  public get type(): LAFka.AuthTypes {
+    return this.data.type;
+  }
+
+  private readonly paste = (data: CreateData<LAFka.AuthUser>, user: LAFka.AuthUser) => {
+    this.data = Helpers.parse<LAFka.AuthUser>({
+      ...data,
+      ...user,
+
+      id: user.id
+    }, "auth_users");
+
+    return this;
+  };
+
 }
 
 export default AuthUser;

@@ -22,6 +22,7 @@
     "mongoose": "catalog:"
   },
   "devDependencies": {
+    "@lafka/rights": "workspace:^",
     "@lafka/types": "workspace:^",
     "@types/node": "catalog:",
     "nodemon": "catalog:",

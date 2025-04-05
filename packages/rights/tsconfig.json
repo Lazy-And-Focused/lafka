@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ES2024",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "removeComments": true,
+        "declaration": true,
+        "allowJs": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true, 
+        "baseUrl": "./",
+        "paths": {
+            "lafka/database": [ "node_modules/@lafka/db-logic/dist" ],
+            "lafka/database/*": [
+                "node_modules/@lafka/db-logic/dist/*"
+            ],
+            "lafka/types": [ "node_modules/@lafka/types/dist" ],
+            "lafka/types/*": [
+                "src/types/*",
+                "node_modules/@lafka/types/dist/*"
+            ]
+        }
+    },
+    "include": [ "src" ],
+    "exclude": [ "node_modules", "dist" ]
+}

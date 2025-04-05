@@ -1,15 +1,7 @@
-export const authTypes = ["google", "yandex"] as const;
+import { LAFka } from "../index";
 
-export type AuthTypes = (typeof authTypes)[number];
+export const AUTH_TYPES = LAFka.AUTH_TYPES;
+export type AuthTypes = LAFka.AuthTypes;
 
-interface AuthUser {
-	id: string;
-	profile_id: string;
-	service_id: string;
-	access_token: string;
-	refresh_token?: string;
-	created_at: Date;
-	type: AuthTypes;
-}
-
-export { AuthUser };
+export const AUTH_USER_KEYS = LAFka.AUTH_USER_KEYS;
+export type AuthUser = LAFka.AuthUser;

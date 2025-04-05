@@ -2,255 +2,257 @@ import Database, { Constructors } from "../database/models.database";
 
 import { LAFka } from "lafka/types";
 
-import type { CreateData, CreatePickData } from "lafka/types/mongodb.types";
+import type { CreateData, PickCreateData } from "lafka/types/mongodb.types";
 
 import Comment from "./comment.class";
+import { Helpers } from "./helpers";
 
-class Post implements LAFka.Post {
-	private _data: LAFka.BlogAndForumPost;
-	private initialized: boolean = false;
+class Post implements LAFka.LazyPost {
+  private readonly database = new Database();
 
-	private readonly _posts = new Database().posts;
+  private data: LAFka.LazyPost;
+  private initialized: boolean = false;
 
-	public constructor(
-		data: Constructors.posts
-	) {
-		this._data = {
-			id: "",
-			created_at: new Date(),
+  public constructor(data: Constructors.posts) {
+    this.data = {
+      id: "",
+      created_at: data.created_at || new Date(),
 
-			likes: 0,
-			dislikes: 0,
-			reposts: 0,
+      content: data.content,
+      creator_id: data.creator_id,
+      name: data.name,
+      type: data.type,
 
-			followers: 0,
-			comments: [],
+      likes: data.likes || 0,
+      dislikes: data.dislikes || 0,
+      reposts: data.reposts || 0,
 
-			view_status: 1,
+      followers: data.followers || 0,
+      comments: data.comments || [],
 
-			tags: [],
-			status: "open",
+      view_status: data.view_status || 1,
 
-			...data,
-		}
-	}
+      tags: data.tags || [],
+      status: data.status || "open"
+    };
+  }
 
-	public readonly init = async () => {
-		if (this.initialized) return this;
+  public readonly init = async () => {
+    if (this.initialized) return this;
 
-		const data = this._data;
+    const postData = this.data;
 
-		const create = async () => {
-			if (this.initialized) return this;
-			this.initialized = true;
+    const create = async () => {
+      if (this.initialized) return this;
+      this.initialized = true;
 
-			const post = await this._posts.create(data);
+      const post = await this.database.posts.create(postData);
 
-			return this.paste(data, post);
-		};
+      return this.paste(postData, post);
+    };
 
-		if (data.id) {
-			const { data: gettedPost } = await this._posts.getData({
-				filter: { id: data.id }
-			});
+    if (postData.id) {
+      const { data: gettedPost } = await this.database.posts.getData({
+        filter: { id: postData.id }
+      });
 
-			if (gettedPost) {
-				this.initialized = true;
-				return this.paste(data, gettedPost[0]);
-			}
-		}
+      if (gettedPost) {
+        this.initialized = true;
+        return this.paste(postData, gettedPost[0]);
+      }
+    }
 
-		await create();
+    await create();
 
-		return this;
-	};
+    return this;
+  };
 
-	private readonly paste = (
-		data: CreateData<LAFka.BlogAndForumPost> & { id?: string },
-		post: LAFka.BlogAndForumPost
-	) => {
-		this._data = {
-			...data,
-			...post
-		};
+  public async createComment(comment: PickCreateData<LAFka.Comment, "author_id" | "content">) {
+    const created = await new Comment({
+      post_id: this.data.id,
+      ...comment
+    }).init();
 
-		return this;
-	};
+    return {
+      response: this.addComments([created.id]),
+      comment: created
+    };
+  }
 
-	private readonly changed = () => {
-		this._data.changed_at = new Date();
-	};
+  public readonly addTags = async (tags: LAFka.Tag[]) => {
+    if (this.data.type !== "forum") return "this is a blog post";
 
-	private readonly addComments = async (comments: string[]) => {
-		this._data.comments.push(...comments);
+    this.data.tags.push(...tags);
 
-		return await this._posts.push({
-			filter: { id: this._data.id },
-			update: { comments: comments }
-		});
-	};
+    return await this.database.posts.push({
+      filter: { id: this.data.id },
+      update: { tags: tags }
+    });
+  };
 
-	public async createComment(
-		comment: CreatePickData<LAFka.Comment, "author_id" | "content">
-	) {
-		const created = await new Comment({
-			post_id: this._data.id,
-			...comment
-		}).init();
+  public addLikes = async (likes: number) => {
+    if (this.data.type != "blog") return "this is a forum posts";
 
-		return {
-			response: this.addComments([created.id]),
-			comment: created
-		};
-	}
+    this.data.likes += likes;
 
-	public readonly addTags = async (tags: LAFka.Tag[]) => {
-		if (this._data.type !== "forum") return "this is a blog post";
+    return await this.database.posts.update({
+      filter: { id: this.data.id },
+      update: { likes: this.data.likes }
+    });
+  };
 
-		this._data.tags.push(...tags);
+  public addDislikes = async (dislikes: number) => {
+    if (this.data.type != "blog") return "this is a forum posts";
 
-		return await this._posts.push({
-			filter: { id: this._data.id },
-			update: { tags: tags }
-		});
-	};
+    this.data.dislikes += dislikes;
 
-	public addLikes = async (likes: number) => {
-		if (this._data.type != "blog") return "this is a forum posts";
+    return await this.database.posts.update({
+      filter: { id: this.data.id },
+      update: { dislikes: this.data.dislikes }
+    });
+  };
 
-		this._data.likes += likes;
+  public addReposts = async (reposts: number) => {
+    if (this.data.type != "blog") return "this is a forum posts";
 
-		return await this._posts.update({
-			filter: { id: this._data.id },
-			update: { likes: this._data.likes }
-		});
-	};
+    this.data.reposts += reposts;
 
-	public addDislikes = async (dislikes: number) => {
-		if (this._data.type != "blog") return "this is a forum posts";
+    return await this.database.posts.update({
+      filter: { id: this.data.id },
+      update: { reposts: this.data.reposts }
+    });
+  };
 
-		this._data.dislikes += dislikes;
+  public set name(data: string) {
+    this.changed();
 
-		return await this._posts.update({
-			filter: { id: this._data.id },
-			update: { dislikes: this._data.dislikes }
-		});
-	};
+    this.data.name = data;
+  }
 
-	public addReposts = async (reposts: number) => {
-		if (this._data.type != "blog") return "this is a forum posts";
+  public set content(data: string) {
+    this.changed();
 
-		this._data.reposts += reposts;
+    this.data.content = data;
+  }
 
-		return await this._posts.update({
-			filter: { id: this._data.id },
-			update: { reposts: this._data.reposts }
-		});
-	};
+  public set description(data: string) {
+    this.changed();
 
-	public set name(data: string) {
-		this.changed();
+    this.data.description = data;
+  }
 
-		this._data.name = data;
-	}
+  public set followers(followers: number) {
+    this.data.followers = followers;
+  }
 
-	public set content(data: string) {
-		this.changed();
+  public get id(): string {
+    return this.data.id;
+  }
 
-		this._data.content = data;
-	}
+  public get created_at() {
+    return this.data.created_at;
+  }
 
-	public set description(data: string) {
-		this.changed();
+  public get changed_at() {
+    return this.data.changed_at;
+  }
 
-		this._data.description = data;
-	}
+  public get creator_id() {
+    return this.data.creator_id;
+  }
 
-	public set followers(followers: number) {
-		this._data.followers = followers;
-	}
+  public get view_status() {
+    return this.data.view_status;
+  }
 
-	public get id(): string {
-		return this._data.id;
-	}
+  public get name(): string {
+    return this.data.name;
+  }
 
-	public get created_at() {
-		return this._data.created_at;
-	}
+  public get content(): string {
+    return this.data.content;
+  }
 
-	public get changed_at() {
-		return this._data.changed_at;
-	}
+  public get description(): string | undefined {
+    return this.data.description;
+  }
 
-	public get creator_id() {
-		return this._data.creator_id;
-	}
+  public get comments(): string[] {
+    return this.data.comments;
+  }
 
-	public get view_status() {
-		return this._data.view_status;
-	}
+  public get followers(): number {
+    return this.data.followers;
+  }
 
-	public get name(): string {
-		return this._data.name;
-	}
+  public get createdAt(): Date {
+    return this.data.created_at;
+  }
 
-	public get content(): string {
-		return this._data.content;
-	}
+  public get changedAt(): Date | undefined {
+    return this.data.changed_at;
+  }
 
-	public get description(): string | undefined {
-		return this._data.description;
-	}
+  public get type(): "forum" | "blog" {
+    return this.data.type;
+  }
 
-	public get comments(): string[] {
-		return this._data.comments;
-	}
+  public get likes(): number {
+    if (this.data.type != "blog") return 0;
 
-	public get followers(): number {
-		return this._data.followers;
-	}
+    return this.data.likes;
+  }
 
-	public get createdAt(): Date {
-		return this._data.created_at;
-	}
+  public get dislikes(): number {
+    if (this.data.type != "blog") return 0;
 
-	public get changedAt(): Date | undefined {
-		return this._data.changed_at;
-	}
+    return this.data.dislikes;
+  }
 
-	public get type(): "forum" | "blog" {
-		return this._data.type;
-	}
+  public get reposts(): number {
+    if (this.data.type != "blog") return 0;
 
-	public get likes(): number {
-		if (this._data.type != "blog") return 0;
+    return this.data.reposts;
+  }
 
-		return this._data.likes;
-	}
+  public get tags(): LAFka.Tag[] {
+    if (this.data.type != "forum") return [];
 
-	public get dislikes(): number {
-		if (this._data.type != "blog") return 0;
+    return this.data.tags;
+  }
 
-		return this._data.dislikes;
-	}
+  public get status(): LAFka.PostStatus {
+    if (this.data.type !== "forum") return "blocked";
 
-	public get reposts(): number {
-		if (this._data.type != "blog") return 0;
+    return this.data.status;
+  }
 
-		return this._data.reposts;
-	}
+  private readonly paste = (
+    data: CreateData<LAFka.LazyPost> & { id?: string },
+    post: LAFka.LazyPost
+  ) => {
+    this.data = Helpers.parse<LAFka.LazyPost>({
+      ...data,
+      ...post,
 
-	public get tags(): LAFka.Tag[] {
-		if (this._data.type != "forum") return [];
+      id: post.id
+    }, "posts");
 
-		return this._data.tags;
-	}
+    return this;
+  };
 
-	public get status(): LAFka.PostStatus {
-		if (this._data.type !== "forum") return "blocked";
+  private readonly changed = () => {
+    this.data.changed_at = new Date();
+  };
 
-		return this._data.status;
-	}
+  private readonly addComments = async (comments: string[]) => {
+    this.data.comments.push(...comments);
+
+    return await this.database.posts.push({
+      filter: { id: this.data.id },
+      update: { comments: comments }
+    });
+  };
 }
 
 export default Post;

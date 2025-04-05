@@ -1,19 +1,13 @@
-interface Post {
-	id: string;
+import { LAFka } from "../index";
 
-	name: string;
-	content: string;
-	description?: string;
-	comments: string[];
-	followers: number;
+export const BLOG_POST_KEYS = LAFka.BLOG_POST_KEYS;
+export const FORUM_POST_KEYS = LAFka.FORUM_POST_KEYS;
 
-	created_at: Date;
-	changed_at?: Date;
+export const POST_KEYS = LAFka.POST_KEYS;
+export const POST_TYPES = LAFka.POST_TYPES;
+export const POST_STATUS = LAFka.POST_STATUS;
 
-	creator_id: string;
-
-	type: "forum" | "blog";
-	view_status: 0 | 1;
-}
-
-export { Post };
+export type PostTypes = LAFka.PostTypes;
+export type PostStatus = LAFka.PostStatus;
+export type LazyPost = LAFka.LazyPost;
+export type Post = LAFka.Post;

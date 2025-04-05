@@ -1,109 +1,115 @@
 import { Model, UpdateWriteOpResult } from "mongoose";
 
 import {
-	CreateData,
-	Filter,
-	FindOptions,
-	UpdateOptions,
-	Status as DatabaseStatus,
-	CreateModelData,
-	Models,
-	DeleteResult,
-	PickTypeInObject
+  CreateData,
+  Filter,
+  FindOptions,
+  UpdateOptions,
+  Status as DatabaseStatus,
+  CreateModelData,
+  Models,
+  DeleteResult,
+  PickTypeInObject
 } from "lafka/types/mongodb.types";
 
-import getData from "./helpers/get-data.helper";
-import getAllModels from "./helpers/get-all-models.helper";
-import deleteModel from "./helpers/delete-model.helper";
+import { Schemas } from "../database/schemas/index";
+
+import { Helpers } from "./helpers";
 
 export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
-	name: Models;
-	model: Model<T>;
-	id: Promise<string>;
-	
-	findLast: () => Promise<T>;
-	generateId: () => Promise<string>;
-	
-	create: (doc: CreateData<T> & K) => CreateModelData<T>;
-	update: (options: UpdateOptions<T>) => Promise<UpdateWriteOpResult>;
-	push: (options: {filter: Filter<T>, update: Partial<PickTypeInObject<T, any[]>>}) => Promise<UpdateWriteOpResult>;
-	delete: (filter: Filter<T>) => Promise<DeleteResult>;
-	
-	getData: (options: FindOptions<T>) => Promise<DatabaseStatus<T[]>>;
-	deleteModel: () => Promise<DatabaseStatus>;
+  name: Models;
+  model: Model<T>;
+  id: Promise<string>;
+
+  findLast: () => Promise<T>;
+  generateId: () => Promise<string>;
+
+  create: (doc: CreateData<T> & K) => CreateModelData<T>;
+  update: (options: UpdateOptions<T>) => Promise<UpdateWriteOpResult>;
+  push: (options: {
+    filter: Filter<T>;
+    update: Partial<PickTypeInObject<T, any[]>>;
+  }) => Promise<UpdateWriteOpResult>;
+  delete: (filter: Filter<T>) => Promise<DeleteResult>;
+
+  getData: (options: FindOptions<T>) => Promise<DatabaseStatus<T[]>>;
+  deleteModel: () => Promise<DatabaseStatus>;
 }
 
 class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType<T, K> {
-	private readonly _model: Model<T>;
+  private readonly _model: Model<T>;
 
-	public constructor(model: Model<T>) {
-		this._model = model;
-	}
+  public constructor(model: Model<T>) {
+    this._model = model;
+  }
 
-	public get name(): Models {
-		return this._model.modelName as Models;
-	}
+  public get name(): Models {
+    return this._model.modelName as Models;
+  }
 
-	public get model() {
-		return this._model;
-	}
+  public get model() {
+    return this._model;
+  }
 
-	public findLast = async (): Promise<Readonly<T>> => {
-		return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;
-	}
+  public static parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => Helpers.parse<T>(data, type);
 
-	public generateId = async (): Promise<string> => {
-		const id = await this._model.countDocuments();
+  public findLast = async (): Promise<Readonly<T>> => {
+    return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;
+  };
 
-		return `${(id === 0 ? 0 : (+(await this.findLast()).id)) + 1}`;
-	};
+  public generateId = async (): Promise<string> => {
+    const id = await this._model.countDocuments();
 
-	public create = async (doc: CreateData<T> & K) => {
-		return await this._model.create({
-			...doc,
-			id: await this.id
-		});
-	};
+    return `${(id === 0 ? 0 : +(await this.findLast()).id) + 1}`;
+  };
 
-	public update = async (options: UpdateOptions<T>) => {
-		return await this._model.updateOne(options.filter, options.update);
-	};
+  public create = async (doc: CreateData<T> & K) => {
+    return await this._model.create({
+      ...doc,
+      id: await this.id
+    });
+  };
 
-	public push = async(options: {filter: Filter<T>, update: Partial<PickTypeInObject<T, any[]>>}) => {
-		const data = await this._model.updateOne(options.filter, {
-			$push: {
-				...options.update as any
-			}
-		});
+  public update = async (options: UpdateOptions<T>) => {
+    return await this._model.updateOne(options.filter, options.update || {});
+  };
 
-		return data;
-	};
+  public push = async (options: {
+    filter: Filter<T>;
+    update: Partial<PickTypeInObject<T, any[]>>;
+  }) => {
+    const data = await this._model.updateOne(options.filter, {
+      $push: {
+        ...(options.update as any)
+      }
+    });
 
-	public delete = async (filter: Filter<T>) => {
-		return await this._model.deleteOne(filter);
-	};
+    return data;
+  };
 
-	public getData = async (
-		options: FindOptions<T>
-	): Promise<DatabaseStatus<T[]>> => {
-		return await getData<T>(this._model, options);
-	};
+  public delete = async (filter: Filter<T>) => {
+    return await this._model.deleteOne({ ...filter });
+  };
 
-	public deleteModel = async (): Promise<DatabaseStatus> => {
-		return await deleteModel(this._model.name);
-	};
+  public getData = async (options: FindOptions<T>): Promise<DatabaseStatus<T[]>> => {
+    return await Helpers.getData<T>(this._model, options);
+  };
 
-	public static getAllModels = async (): Promise<DatabaseStatus> => {
-		return await getAllModels();
-	};
+  public deleteModel = async (): Promise<DatabaseStatus> => {
+    return await Helpers.deleteModel(this._model.name);
+  };
 
-	public static deleteModel = async (name: string): Promise<DatabaseStatus> => {
-		return await deleteModel(name);
-	};
+  public static getAllModels = async (): Promise<DatabaseStatus> => {
+    return await Helpers.getAllModels();
+  };
 
-	get id(): Promise<string> {
-		return this.generateId();
-	}
+  public static deleteModel = async (name: string): Promise<DatabaseStatus> => {
+    return await Helpers.deleteModel(name);
+  };
+
+  get id(): Promise<string> {
+    return this.generateId();
+  }
 }
 
 export default Database;

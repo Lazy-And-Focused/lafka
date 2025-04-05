@@ -1,4 +1,4 @@
-import GeneralStrategy from './general.stategy';
+import GeneralStrategy from "./general.stategy";
 
 class Passport extends GeneralStrategy {
   public constructor() {

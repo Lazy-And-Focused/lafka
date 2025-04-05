@@ -1,38 +1,55 @@
 import { Status as StatusType } from "./mongodb.types";
 
-class Error<T extends any = any> implements StatusType<T> {
-	public readonly text: string;
-	public readonly error: string;
-	public readonly type: 0 = 0;
-	public readonly data?: T;
+class Error<
+  Data extends any = any,
+  Error extends string = string,
+> implements StatusType<
+  Data, Error, true
+> {
+  public readonly successed = false;
+  public readonly text: string;
+  public readonly error: Error;
+  public readonly data: Data|undefined;
 
-	public constructor(
-		error: string,
-		data?: {
-			text?: string;
-			data?: T;
-		}
-	) {
-		this.text = data?.text ? data.text : "Произошла ошибка на стороне сервера";
+  public constructor(
+    error: Error,
+    data?: {
+      text?: string;
+      data?: Data;
+    }
+  ) {
+    this.text = data?.text ? data?.text : "Произошла ошибка на стороне сервера";
 
-		this.data = data?.data;
-		this.error = error;
-	}
+    this.data = data?.data;
+    this.error = error;
+  }
 }
 
-class Status<T extends any = any> implements StatusType<T> {
-	public readonly error = null;
+class Status<
+  Data extends any = any,
+  Error extends any = undefined,
+  isError extends boolean = Error extends undefined ? false : true
+> implements StatusType<
+  Data, Error, isError
+> {
+  public readonly successed: isError extends true ? false : true;
 
-	public readonly type: 0 | 1;
-	public readonly text: string;
-	public readonly data?: T;
+  public readonly text: string;
+  public readonly data: isError extends true ? Data|undefined : Data;
+  public readonly error: isError extends true ? Error : undefined;
+  
+  public constructor(data: StatusType<Data, Error, isError> & { text?: string }) {
+    this.successed = data.successed;
 
-	public constructor(data: Partial<StatusType> & { type: 0 | 1 }) {
-		this.type = data.type;
+    this.error = data.error;
 		this.data = data.data;
 
-		this.text = data.text ? data.text : data.type === 1 ? "Successed" : "Fail";
-	}
+		this.text = data?.text
+      ? data.text
+      : data.successed
+        ? "Successed"
+        : "Fail";
+  }
 }
 
 export { Error, Status };

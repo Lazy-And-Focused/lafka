@@ -9,6 +9,7 @@
     "target": "ES2024",
     "sourceMap": true,
     "outDir": "./dist",
+    "esModuleInterop": true,
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -26,6 +27,7 @@
         "src/types/*"
       ],
       "api/*": [ "src/api/*" ],
+      "services/*": [ "src/services/*" ],
       "routes/*": [ "src/routes/*" ],
       "middleware/*": [ "src/middleware/*" ],
       "strategies/*": [ "src/strategies/*" ],

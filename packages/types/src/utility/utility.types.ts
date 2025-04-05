@@ -1,12 +1,11 @@
-export type PostStatus = "closed" | "open" | "blocked";
-export type Tags = "Лох";
+import { LAFka } from "../index";
 
-export type Tag = {
-	id: string;
-	name: Tags;
-};
+export const POST_STATUS = LAFka.POST_STATUS;
+export const TAGS = LAFka.TAGS
 
-export type Link = {
-	name: string;
-	link: string;
-};
+export type PostStatus = LAFka.PostStatus
+export type Tags = LAFka.Tags;
+export type LazyTags = LAFka.LazyTags;
+
+export type Tag = LAFka.Tag;
+export type Link = LAFka.Link;

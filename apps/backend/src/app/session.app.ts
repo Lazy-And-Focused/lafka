@@ -1,9 +1,9 @@
-import { INestApplication } from '@nestjs/common';
-import { Express } from 'express';
+import { INestApplication } from "@nestjs/common";
+import { Express } from "express";
 
-import { MongoClient } from 'mongodb';
+import { MongoClient } from "mongodb";
 
-import Api from 'api/index.api';
+import Api from "api/index.api";
 
 const api = new Api();
 
@@ -15,10 +15,9 @@ class Session {
   private readonly _save_uninitialized: boolean = false;
 
   private readonly _cookie: { maxAge: number } = {
-    maxAge: 60000 * 60 * 24 * 7,
+    maxAge: 60000 * 60 * 24 * 7
   };
-  private readonly _mongo_url: string =
-    api.env.MONGO_URL || 'mongodb://127.0.0.1/lafka';
+  private readonly _mongo_url: string = api.env.MONGO_URL;
 
   constructor(
     secret: string,
@@ -28,14 +27,13 @@ class Session {
       saveUninitialized?: boolean;
       cookie?: { maxAge: number };
       mongoUrl?: string;
-    },
+    }
   ) {
     this._secret = secret;
     this._app = app;
 
     this._resave = data?.resave || this._resave;
-    this._save_uninitialized =
-      data?.saveUninitialized || this._save_uninitialized;
+    this._save_uninitialized = data?.saveUninitialized || this._save_uninitialized;
     this._cookie = data?.cookie || this._cookie;
     this._mongo_url = data?.mongoUrl || this._mongo_url;
   }
@@ -44,13 +42,13 @@ class Session {
     const client = new MongoClient(this._mongo_url);
 
     this._app.use(
-      require('express-session')({
+      require("express-session")({
         secret: this._secret,
         resave: this._resave,
         saveUninitialized: this._save_uninitialized,
         cookie: this._cookie,
-        store: require('connect-mongo').create({ client }),
-      }),
+        store: require("connect-mongo").create({ client })
+      })
     );
   }
 }

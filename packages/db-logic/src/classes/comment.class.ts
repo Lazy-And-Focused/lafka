@@ -1,104 +1,106 @@
-import { LAFka } from "lafka/types";
-
 import Database, { Constructors } from "database/models.database";
 
+import { LAFka } from "lafka/types";
+import { Helpers } from "./helpers";
+
 class Comment implements LAFka.Comment {
-	private readonly _comments = new Database().comments;
+  private readonly database = new Database();
 
-	private initialized: boolean = false;
-	private _data: LAFka.Comment;
+  private initialized: boolean = false;
+  private data: LAFka.Comment;
 
-	public constructor(
-		data: Constructors.comments
-	) {
-		const now = new Date();
+  public constructor(data: Constructors.comments) {
+    const now = new Date();
 
-		this._data = {
-			id: "",
-			created_at: now,
-			...data
-		};
-	}
+    this.data = {
+      id: "",
+      created_at: data.created_at || now,
+      author_id: data.author_id,
+      content: data.content,
+      post_id: data.post_id,
+      reply: data.reply || undefined,
+    };
+  }
 
-	public init = async () => {
-		if (this.initialized) return this;
-		const data = this._data;
+  public init = async () => {
+    if (this.initialized) return this;
+    const commentData = this.data;
 
-		const create = async () => {
-			if (this.initialized) return this;
+    const create = async () => {
+      if (this.initialized) return this;
 
-			this.initialized = true;
+      this.initialized = true;
 
-			const comment = await this._comments.create({
-				...data, changed_at: undefined
-			});
+      const createdComment = await this.database.comments.create({
+        ...commentData,
+        changed_at: undefined
+      });
 
-			return this.paste(data, comment);
-		};
+      return this.paste(commentData, createdComment);
+    };
 
-		if (data.id) {
-			const comment = await this._comments.model.findOne({ id: data.id });
+    if (commentData.id) {
+      const foundComment = await this.database.comments.model.findOne({ id: commentData.id });
 
-			if (comment) {
-				this.initialized = true;
-				return this.paste(data, comment);
-			}
-		}
+      if (foundComment) {
+        this.initialized = true;
+        return this.paste(commentData, foundComment);
+      }
+    }
 
-		await create();
+    await create();
 
-		return this;
-	};
+    return this;
+  };
 
-	private paste(
-		data: Constructors.comments & { created_at: Date },
-		comment: LAFka.Comment
-	) {
-		this._data = {
-			...data,
-			...comment
-		};
+  private paste(data: Constructors.comments & { created_at: Date }, comment: LAFka.Comment) {
+    this.data = Helpers.parse({
+      ...data,
+      ...comment,
 
-		return this;
-	}
+      id: comment.id
+    }, "comments");
 
-	private changed() {
-		this._data.changed_at = new Date();
-	};
+    return this;
+  }
 
-	public set content(content: string) {
-		this.changed();
+  private changed() {
+    this.data.changed_at = new Date();
+  }
 
-		this._data.content = content;
-	}
+  public set content(content: string) {
+    this.changed();
 
-	public get id(): string {
-		return this._data.id;
-	}
+    this.data.content = content;
+  }
 
-	public get content(): string {
-		return this._data.content;
-	}
+  public get id(): string {
+    return this.data.id;
+  }
 
-	public get created_at(): Date {
-		return this._data.created_at;
-	}
+  public get content(): string {
+    return this.data.content;
+  }
 
-	public get author_id(): string {
-		return this._data.author_id;
-	}
+  public get created_at(): Date {
+    return this.data.created_at;
+  }
 
-	public get post_id(): string {
-		return this._data.post_id;
-	}
+  public get author_id(): string {
+    return this.data.author_id;
+  }
 
-	public get reply(): string | undefined {
-		return this._data.reply;
-	}
+  public get post_id(): string {
+    return this.data.post_id;
+  }
 
-	public get changed_at(): Date | undefined {
-		return this._data.changed_at;
-	}
+  public get reply(): string | undefined {
+    return this.data.reply;
+  }
+
+  public get changed_at(): Date | undefined {
+    return this.data.changed_at;
+  }
 }
 
 export default Comment;

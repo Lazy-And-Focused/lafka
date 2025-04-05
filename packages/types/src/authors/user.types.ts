@@ -1,25 +1,4 @@
-import type { Link } from "../utility/utility.types";
+import { LAFka } from "../index";
 
-interface User {
-	id: string;
-
-	username: string;
-	nickname?: string;
-	avatar?: string;
-
-	biography?: string;
-	links: Link[];
-
-	created_at: Date;
-
-	forum_posts: string[];
-	blog_posts: string[];
-	followed_forum_posts: string[];
-	followed_blog_posts: string[];
-	blocked_posts: string[];
-
-	followers: string[];
-	following: string[];
-}
-
-export { User };
+export const USER_KEYS = LAFka.USER_KEYS
+export type User = LAFka.User;
