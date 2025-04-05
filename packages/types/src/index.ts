@@ -70,7 +70,7 @@ export namespace LAFka {
     followers: string[];
     following: string[];
 
-    rights: Rights.UserRights;
+    rights: Rights.Raw.Rights["content"]["posts"];
   }
 
 
@@ -105,17 +105,7 @@ export namespace LAFka {
 
 
   export const BLOG_POST_KEYS = ["likes", "dislikes", "reposts"] as const;
-  export interface BlogPost extends Post {
-    likes: number;
-    dislikes: number;
-    reposts: number;
-  }
-
   export const FORUM_POST_KEYS = ["tags", "status"] as const;
-  export interface ForumPost extends Post {
-    tags: Tag[];
-    status: PostStatus;
-  }
 
   export const POST_KEYS = [
     "id",
@@ -132,7 +122,42 @@ export namespace LAFka {
   ] as const;
   export const POST_TYPES = ["forum", "blog"] as const
   export type PostTypes = (typeof POST_TYPES)[number];
-  export interface Post {
+
+  export type Post = {
+    id: string;
+
+    name: string;
+    content: string;
+    description?: string;
+    comments: string[];
+    followers: number;
+
+    created_at: Date;
+    changed_at?: Date;
+
+    creator_id: string;
+
+    view_status: 0 | 1;
+    rights: Rights.Raw.Rights["content"]["posts"]
+  } & ({
+    /** forum */
+    tags: Tag[];
+    /** forum */
+    status: PostStatus;
+
+    type: "forum"
+  } | {
+    /** blog */
+    likes: number;
+    /** blog */
+    dislikes: number;
+    /** blog */
+    reposts: number;
+
+    type: "blog"
+  });
+
+  export interface LazyPost {
     id: string;
 
     name: string;
@@ -148,33 +173,62 @@ export namespace LAFka {
 
     type: PostTypes;
     view_status: 0 | 1;
+
+    // ForumPost
+    
+    /** forum */
+    tags: Tag[];
+    /** forum */
+    status: PostStatus;
+
+    // BlogPost
+
+    /** blog */
+    likes: number;
+    /** blog */
+    dislikes: number;
+    /** blog */
+    reposts: number;
   }
 
-  export type BlogAndForumPost = BlogPost & ForumPost;
+
+  // Organizations types & constants
+
+
+  export interface Organization {
+    id: string;
+    
+    owner_id: string;
+    creator_id: string;
+    members: string[];
+
+    rights: Rights.Raw.Rights["content"]["organizations"]
+  }
 
 
   // Utility types & constants
 
 
   export const POST_STATUS = {
+    blocked: "blocked",
     closed: "closed",
     open: "open",
-    blocked: "blocked"
   } as const;
   export type PostStatus = (typeof POST_STATUS)[keyof typeof POST_STATUS];
   export const TAGS = [
-    "Программирование",
-    "Социальные сети",
-    "Дизайн",
-    "Еда",
-    "IT"
+    "Design",
+    "Eat",
+    "IT",
+    "Other",
+    "Programming",
+    "Social",
   ] as const;
   export type LazyTags = string;
   export type Tags = (typeof TAGS)[number];
   
-  export type Tag = {
+  export type Tag<T extends boolean = false> = {
     id: string;
-    name: Tags | LazyTags;
+    name: T extends true ? Tags : LazyTags;
   };
   
   export type Link = {
