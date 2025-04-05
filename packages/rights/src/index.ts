@@ -1,14 +1,7 @@
 import { LAFka, Rights as LAFkaRights } from "@lafka/types";
+import { ArrayOrType } from "./types";
 
-/**
- * I need:
- * UserService
- * PostService
- * OrganizationService
- */
-
-type MustArray<T, K=T> = [T, ...K[]];
-type ArrayOrType<T> = MustArray<T> | T;
+export * from "./bit-field";
 
 export namespace Rights {
   export class UserService {
