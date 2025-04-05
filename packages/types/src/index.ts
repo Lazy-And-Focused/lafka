@@ -70,7 +70,7 @@ export namespace LAFka {
     followers: string[];
     following: string[];
 
-    rights: Rights.Raw.Rights["content"]["posts"];
+    rights: Rights.Raw.Rights["user"];
   }
 
 
