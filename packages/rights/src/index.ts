@@ -29,9 +29,9 @@ export namespace Rights {
      * @returns {boolean}
      */
     public has = <
-      T extends keyof LAFkaRights.Lazy.Rights["user"],
+      T extends (keyof LAFkaRights.Lazy.Rights["user"]),
       K extends T extends "me"
-        ? ArrayOrType<keyof LAFkaRights.Lazy.Rights["user"]["me"]>
+        ? ArrayOrType<keyof (LAFkaRights.Lazy.Rights["user"]["me"])>
         : { [key: string]: ArrayOrType<keyof (LAFkaRights.Lazy.Rights["user"]["users"][keyof LAFkaRights.Lazy.Rights["user"]["users"]])> }
     >({
       right,

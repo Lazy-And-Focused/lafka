@@ -7,10 +7,10 @@ import type { CreateData, PickCreateData } from "lafka/types/mongodb.types";
 import Comment from "./comment.class";
 import { Helpers } from "./helpers";
 
-class Post implements LAFka.Post {
+class Post implements LAFka.LazyPost {
   private readonly database = new Database();
 
-  private data: LAFka.BlogAndForumPost;
+  private data: LAFka.LazyPost;
   private initialized: boolean = false;
 
   public constructor(data: Constructors.posts) {
@@ -228,10 +228,10 @@ class Post implements LAFka.Post {
   }
 
   private readonly paste = (
-    data: CreateData<LAFka.BlogAndForumPost> & { id?: string },
-    post: LAFka.BlogAndForumPost
+    data: CreateData<LAFka.LazyPost> & { id?: string },
+    post: LAFka.LazyPost
   ) => {
-    this.data = Helpers.parse<LAFka.BlogAndForumPost>({
+    this.data = Helpers.parse<LAFka.LazyPost>({
       ...data,
       ...post,
 

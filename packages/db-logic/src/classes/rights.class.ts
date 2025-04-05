@@ -24,7 +24,7 @@ class RightsService {
         nickname: undefined,
         biography: undefined,
         rights: {
-          me: `${RightsTypes.Raw.DEFAULT_USER_ME_RIGHTS}`,
+          me: `${RightsTypes.Raw.Default.ME}`,
           users: []
         }
       }

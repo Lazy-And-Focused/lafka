@@ -5,9 +5,7 @@ import type { PickCreateData, ModelData } from "lafka/types/mongodb.types";
 import { LAFka } from "lafka/types";
 
 type AuthUser = LAFka.AuthUser;
-type BlogPost = LAFka.BlogPost;
 type Comment = LAFka.Comment;
-type ForumPost = LAFka.ForumPost;
 type User = LAFka.User;
 
 export namespace Constructors {
@@ -17,7 +15,7 @@ export namespace Constructors {
   };
 
   export type posts = PickCreateData<
-    ForumPost & BlogPost,
+    LAFka.LazyPost,
     "content" | "creator_id" | "name" | "type"
   > & { _id?: string };
 
@@ -33,8 +31,8 @@ class Database {
   private readonly _comments: Classes.DatabaseType<Comment>;
 
   private readonly _posts: Classes.DatabaseType<
-    BlogPost & ForumPost,
-    Pick<BlogPost & ForumPost, "content" | "creator_id" | "name" | "type">
+    LAFka.LazyPost,
+    Pick<LAFka.LazyPost, "content" | "creator_id" | "name" | "type">
   >;
 
   private readonly _users: Classes.DatabaseType<User, Pick<User, "username">>;
@@ -43,7 +41,7 @@ class Database {
   public constructor() {
     this._auth_users = new Classes.Database<AuthUser>(Schemas.databases.auth_users);
     this._comments = new Classes.Database<Comment>(Schemas.databases.comments);
-    this._posts = new Classes.Database<ForumPost & BlogPost>(Schemas.databases.posts);
+    this._posts = new Classes.Database<LAFka.LazyPost>(Schemas.databases.posts);
     this._users = new Classes.Database<User>(Schemas.databases.users);
   }
 

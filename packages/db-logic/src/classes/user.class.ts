@@ -45,7 +45,7 @@ class User<T extends boolean = false> implements LAFka.User {
       nickname: data.nickname || undefined,
       biography: data.biography || undefined,
       rights: data.rights || {
-        me: `${Rights.Raw.DEFAULT_USER_ME_RIGHTS}`,
+        me: `${Rights.Raw.Default.ME}`,
         users: []
       },
     };
@@ -119,7 +119,7 @@ class User<T extends boolean = false> implements LAFka.User {
   };
 
   public async createPost(
-    post: PickCreateData<LAFka.BlogAndForumPost, "content" | "name" | "type">
+    post: PickCreateData<LAFka.LazyPost, "content" | "name" | "type">
   ) {
     const created = await new Post({ ...post, creator_id: this.data.id }).init();
 
@@ -193,7 +193,7 @@ class User<T extends boolean = false> implements LAFka.User {
     return this.data.following;
   }
 
-  public get rights(): Rights.Raw.UserRights {
+  public get rights(): Rights.Raw.Rights["user"] {
     return this.data.rights;
   }
 

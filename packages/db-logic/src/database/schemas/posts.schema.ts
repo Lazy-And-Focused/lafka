@@ -3,7 +3,7 @@ import mongoose, { Schema, SchemaTypes } from "mongoose";
 import { LAFka } from "lafka/types";
 import { Tag } from "./tag.utility-schema";
 
-const schema = new Schema<LAFka.BlogAndForumPost>({
+const schema = new Schema<LAFka.LazyPost>({
   id: {
     type: mongoose.SchemaTypes.String,
     required: true,
