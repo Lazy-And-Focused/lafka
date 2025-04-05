@@ -1,4 +1,3 @@
-import { LAFka, Rights as LAFkaRights } from "@lafka/types";
 import { ArrayOrType, Bit } from "./types";
 
 const DEFAULT_BIT = 0n;

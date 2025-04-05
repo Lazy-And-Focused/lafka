@@ -1,6 +1,7 @@
 import { LAFka, Rights as LAFkaRights } from "@lafka/types";
 import { ArrayOrType } from "./types";
 
+import { BitField } from "./bit-field";
 export * from "./bit-field";
 
 export namespace Rights {
@@ -40,15 +41,15 @@ export namespace Rights {
           ? LAFkaRights.Parser.toBigIntFromArray("user", "me", rights)
           : LAFkaRights.Parser.toBigInt("user", "me", rights as any);
 
-        return ((BigInt(this.user.rights.me) & r) === r) as any;
+        return new BitField(this.user.rights.me).has(r) as T extends "me" ? boolean : { [P in keyof K]: boolean };
       } else if (right === "users") {
         return Object.fromEntries(Object.keys(rights).map(k => {
           const r = Array.isArray((rights as any)[k])
             ? LAFkaRights.Parser.toBigIntFromArray("user", "users", (rights as any)[k])
             : LAFkaRights.Parser.toBigInt("user", "users", rights as any);
 
-          return [k, (BigInt(Object.fromEntries(this.user.rights.users)[k] || LAFkaRights.Raw.Default.USERS) & r) === r];
-        })) as any;
+          return [k, new BitField(Object.fromEntries(this.user.rights.users)[k] || LAFkaRights.Raw.Default.USERS).has(r)];
+        })) as T extends "me" ? boolean : { [P in keyof K]: boolean };
       }
 
       return false as any;
@@ -97,9 +98,7 @@ export namespace Rights {
         ? LAFkaRights.Parser.toBigIntFromArray("content", "posts", rights as any)
         : LAFkaRights.Parser.toBigInt("content", "posts", rights);
 
-      return (BigInt(Object.fromEntries(
-        this.post.rights)[userId] || `${LAFkaRights.Raw.Default.POSTS}`
-      ) & r) === r;
+      return new BitField(Object.fromEntries(this.post.rights)[userId] || LAFkaRights.Raw.Default.POSTS).has(r);
     }
   }
 }
