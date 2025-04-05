@@ -1,12 +1,39 @@
+type MustArray<T, K=T> = [T, ...K[]];
+
 export namespace Rights {
   export class Parser {
-    public static toBigInt<T extends Lazy.RightsKeys>(
+    public static toBigInt = <
+      T extends keyof LazyRights,
+      K extends keyof LazyRights[T]
+    >(
       type: T,
-      key: GetKeys<T, Lazy.RightsDoubleKeys[T]>,
-      right: GetTypes<T, Lazy.RightsDoubleKeys[T]>
-    ): bigint {
+      key: K,
+      right: T extends "user"
+          ? K extends "me"
+            ? keyof (Rights.LazyRights[T][K])
+            : keyof (Rights.LazyRights[T][K][keyof (Rights.LazyRights[T][K])])
+          : keyof (Rights.LazyRights[T][K][keyof (Rights.LazyRights[T][K])])
+    ): bigint => {
       return ((Rights.Lazy.RIGHTS[type] as any)[key])[right];
     };
+
+    public static toBigIntFromArray = <
+      T extends keyof LazyRights,
+      K extends keyof LazyRights[T]
+    >(
+      type: T,
+      key: K,
+      rights: MustArray<
+        T extends "user"
+          ? K extends "me"
+            ? keyof (Rights.LazyRights[T][K])
+            : keyof (Rights.LazyRights[T][K][keyof (Rights.LazyRights[T][K])])
+          : keyof (Rights.LazyRights[T][K][keyof (Rights.LazyRights[T][K])])
+        >
+    ) =>
+      Parser.execute(
+        Object.fromEntries(rights.map(v =>
+          [v, Parser.toBigInt(type, key, v as any)])));
 
     public static exist<T extends Lazy.RightsKeys>(
       type: GetKeys<T> | "all",
@@ -27,7 +54,7 @@ export namespace Rights {
       return raw;
     }
   }
-  
+
   export namespace Lazy {
     export interface MeRights {
       readonly ADMINISTRATOR: bigint,
