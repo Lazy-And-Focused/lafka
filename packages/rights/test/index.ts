@@ -4,10 +4,20 @@ import { Rights } from "../src/index";
 const print = (str: string, end: boolean = false) =>
   console.log((end ? "\n" : "") + `-------------------------- ${str.toUpperCase()} --------------------------` + (end ? "" : "\n"));
 
-const test = (b: any, name?: string) =>
-  name
-    ? console.log(`--------- TESTING ${name.toUpperCase()} ---------`, "\n", b, "\n", `--------- TESTING ${name.toUpperCase()} ---------`)
-    : console.log(`--------- TESTING ---------`, "\n", b, "\n", `--------- TESTING ---------`);
+const miniTest = (name: string, data: any, spaces: number = 0) => {
+  const sp = new Array(spaces).fill(" ").join();
+
+  console.log(sp + `---- ${name} ----`);
+  console.log(sp + " ", data);
+  console.log();
+  
+  return data;
+}
+
+const test = (name: string, func: () => any[]) => {
+  print(name);
+  func().forEach((v, i) => miniTest(`${i+1}`, v));
+};
 
 print("START TESTING");
 
@@ -46,30 +56,52 @@ const post: LAFka.Post = {
   tags: [],
   view_status: 1,
   rights: [
-    ["1", LAFkaRights.Raw.Default.POSTS.toString()],
-    ["2", LAFkaRights.Raw.Lazy.POSTS.toString()],
-    ["3", 0n.toString()]
+    ["2", LAFkaRights.Raw.Default.POSTS.toString()],
+    ["3", LAFkaRights.Raw.Lazy.POSTS.toString()],
+    ["4", 0n.toString()]
   ]
 };
 
-print("USER TESTING");
-(() => {
-  const a = new Rights.UserService(fockusty).has({
-    right: "me",
-    rights: ["POSTS_CREATE", "MODERATOR"]
-  });
-  
-  const b = new Rights.UserService(fockusty).has({
-    right: "users",
-    rights: {
-      "2": ["MANAGE", "MODERATE", "READ"],
-      "3": ["READ"],
-      "4": ["READ"],
-    }
-  });
+test("USER TESTING", () => {
+  return [
+    new Rights.UserService(fockusty).has({
+      right: "me",
+      rights: ["POSTS_CREATE", "MODERATOR"]
+    }),
 
-  test(a);
-  test(b);
-})();
+    new Rights.UserService(fockusty).has({
+      right: "users",
+      rights: {
+        "2": ["MANAGE", "MODERATE", "READ"],
+        "3": ["READ"],
+        "4": ["READ"],
+      }
+    })
+  ];
+});
+
+test("POST TESTING", () => {
+  return [
+    new Rights.PostService(post).has({
+      rights: "VIEW",
+      userId: fockusty.id
+    }),
+  
+    new Rights.PostService(post).has({
+      rights: "DELETE",
+      userId: fockusty.id
+    }),
+  
+    new Rights.PostService(post).has({
+      rights: "OWNER",
+      userId: "2"
+    }),
+
+    new Rights.PostService(post).has({
+      rights: ["VIEW", "REACT", "COMMENTS_READ"],
+      userId: "4"
+    })
+  ];
+});
 
 print("END TESTING", true);
