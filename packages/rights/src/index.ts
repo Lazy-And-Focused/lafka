@@ -64,7 +64,7 @@ export namespace Rights {
 
   
   export class PostService {
-    public constructor(public readonly post: LAFka.Post) {};
+    public constructor(private readonly post: LAFka.Post) {};
 
     public readonly has = <
       T extends ArrayOrType<keyof LAFkaRights.Lazy.Posts>
@@ -81,7 +81,9 @@ export namespace Rights {
         ? LAFkaRights.Parser.toBigIntFromArray("content", "posts", rights as any)
         : LAFkaRights.Parser.toBigInt("content", "posts", rights);
 
-      // post.rights!!
+      return (BigInt(Object.fromEntries(
+        this.post.rights)[userId] || `${LAFkaRights.Raw.Default.POSTS}`
+      ) & r) === r;
     }
   }
 }
