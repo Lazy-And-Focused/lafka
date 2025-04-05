@@ -18,6 +18,7 @@ export namespace LAFka {
     "created_at",
     "type"
   ] as const;
+  export const S_AUTH_USER_KEYS: readonly string[] = AUTH_USER_KEYS;
   export interface AuthUser {
     id: string;
     profile_id: string;
@@ -49,6 +50,7 @@ export namespace LAFka {
     "following",
     "rights"
   ] as const;
+  export const S_USER_KEYS: readonly string[] = USER_KEYS;
   export interface User {
     id: string;
 
@@ -86,6 +88,7 @@ export namespace LAFka {
     "post_id",
     "reply"
   ] as const;
+  export const S_COMMENT_KEYS: readonly string[] = COMMENT_KEYS;
   export interface Comment {
     id: string;
   
@@ -106,7 +109,6 @@ export namespace LAFka {
 
   export const BLOG_POST_KEYS = ["likes", "dislikes", "reposts"] as const;
   export const FORUM_POST_KEYS = ["tags", "status"] as const;
-
   export const POST_KEYS = [
     "id",
     "name",
@@ -117,10 +119,13 @@ export namespace LAFka {
     "created_at",
     "changed_at",
     "creator_id",
+    "rights",
     "type",
     "view_status"
   ] as const;
-  export const POST_TYPES = ["forum", "blog"] as const
+  export const POST_TYPES = ["forum", "blog"] as const;
+  export const S_POST_KEYS: readonly string[] = POST_KEYS;
+  export const S_POST_TYPES: readonly string[] = POST_TYPES;
   export type PostTypes = (typeof POST_TYPES)[number];
 
   export type Post = {
@@ -140,18 +145,13 @@ export namespace LAFka {
     view_status: 0 | 1;
     rights: Rights.Raw.Rights["content"]["posts"]
   } & ({
-    /** forum */
     tags: Tag[];
-    /** forum */
     status: PostStatus;
 
     type: "forum"
   } | {
-    /** blog */
     likes: number;
-    /** blog */
     dislikes: number;
-    /** blog */
     reposts: number;
 
     type: "blog"
@@ -195,14 +195,35 @@ export namespace LAFka {
   // Organizations types & constants
 
 
+  export const ORGANIZATION_KEYS = [
+    "id",
+    "owner_id",
+    "creator_id",
+    "members",
+    "posts",
+    "rights"
+  ] as const;
+  export const S_ORGANIZATION_KEYS: readonly string[] = ORGANIZATION_KEYS;
+  export type OrganizationKeys = (typeof ORGANIZATION_KEYS)[number];
+
   export interface Organization {
     id: string;
+    
+    name: string;
+    description: string;
+    email: string;
+
+    logo: string;
+    banner: string;
     
     owner_id: string;
     creator_id: string;
     members: string[];
+    posts: string[];
 
-    rights: Rights.Raw.Rights["content"]["organizations"]
+    links: Link[];
+
+    rights: Rights.Raw.Rights["content"]["organizations"];
   }
 
 
@@ -223,6 +244,7 @@ export namespace LAFka {
     "Programming",
     "Social",
   ] as const;
+  export const S_TAGS: readonly string[] = TAGS;
   export type LazyTags = string;
   export type Tags = (typeof TAGS)[number];
   
