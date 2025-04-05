@@ -24,11 +24,9 @@ class RightsService {
         nickname: undefined,
         biography: undefined,
         rights: {
-          default: `${RightsTypes.Raw.DEFAULT_USER_ALL_RIGHTS}`,
-          organizations: [],
-          posts: [],
+          me: `${RightsTypes.Raw.Default.ME}`,
           users: []
-        },
+        }
       }
       : user;
   }
