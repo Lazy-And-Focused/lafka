@@ -1,3 +1,4 @@
+import DefaultUser from '@/utils/_test/DefaultUser';
 import { LAFka } from '@lafka/types';
 
 export default async function User({
@@ -15,6 +16,14 @@ export default async function User({
   if (!isValidParams) return 'Неверно сформулированный запрос';
 
   try {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      process.env.ENABLE_TEST_USER
+    ) {
+      const user: LAFka.User = DefaultUser;
+      return `${user.id} ${user.nickname} (${user.username})`;
+    }
+
     const res = fetch(
       process.env.NEXT_PUBLIC_BACKEND_API + '/users/' + username,
       {
