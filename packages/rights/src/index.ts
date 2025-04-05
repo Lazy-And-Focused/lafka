@@ -66,16 +66,39 @@ export namespace Rights {
   export class PostService {
     public constructor(private readonly post: LAFka.Post) {};
 
+    /**
+     * ```ts
+     * import { Rights } from "@lafka/rights";
+     * 
+     * // import { LAFka, Rights as LAFkaRights } from "@lafka/types";
+     * // const post: LAFka.Post;
+     * // const fockusty: LAFka.User;
+     * 
+     * new Rights.PostService(post).has({
+     *   rights: "VIEW",
+     *   userId: fockusty.id
+     * });
+     *
+     * new Rights.PostService(post).has({
+     *   rights: ["VIEW", "REACT", "COMMENTS_READ"],
+     *   userId: "4"
+     * });
+     * ```
+     * 
+     * @param rights Post rights (`LAFkaRights.Keys.Posts`)
+     * @param userId id of user
+     * @returns {boolean}
+     */
     public readonly has = <
-      T extends ArrayOrType<keyof LAFkaRights.Lazy.Posts>
+      T extends ArrayOrType<LAFkaRights.Keys.Posts>
     >({
       rights,
       userId
     }: {
       rights: ArrayOrType<T>,
       userId: string
-    }) => {
-      if (this.post.creator_id === userId) return true;;
+    }): boolean => {
+      if (this.post.creator_id === userId) return true;
 
       const r = Array.isArray(rights)
         ? LAFkaRights.Parser.toBigIntFromArray("content", "posts", rights as any)
