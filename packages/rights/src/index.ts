@@ -61,4 +61,27 @@ export namespace Rights {
       return false as any;
     }
   }
+
+  
+  export class PostService {
+    public constructor(public readonly post: LAFka.Post) {};
+
+    public readonly has = <
+      T extends ArrayOrType<keyof LAFkaRights.Lazy.Posts>
+    >({
+      rights,
+      userId
+    }: {
+      rights: ArrayOrType<T>,
+      userId: string
+    }) => {
+      if (this.post.creator_id === userId) return true;;
+
+      const r = Array.isArray(rights)
+        ? LAFkaRights.Parser.toBigIntFromArray("content", "posts", rights as any)
+        : LAFkaRights.Parser.toBigInt("content", "posts", rights);
+
+      // post.rights!!
+    }
+  }
 }

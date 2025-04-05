@@ -33,6 +33,25 @@ const fockusty: LAFka.User = {
   username: "FOCKUSTY"
 };
 
+const post: LAFka.Post = {
+  type: "forum",
+  id: "1",
+  created_at: new Date(),
+  comments: [],
+  content: "Hello!",
+  creator_id: fockusty.id,
+  followers: 0,
+  name: "First post",
+  status: "open",
+  tags: [],
+  view_status: 1,
+  rights: [
+    ["1", LAFkaRights.Raw.Default.POSTS.toString()],
+    ["2", LAFkaRights.Raw.Lazy.POSTS.toString()],
+    ["3", 0n.toString()]
+  ]
+};
+
 print("USER TESTING");
 (() => {
   const a = new Rights.UserService(fockusty).has({
