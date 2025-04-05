@@ -5,6 +5,7 @@ import './globals.css';
 
 import Image from 'next/image';
 import HeaderPanel from './components/Header__UserPanel';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Lafka',
@@ -27,13 +28,15 @@ export default function RootLayout({
       <body>
         <header>
           <h1>
-            <Image
-              className='h-10 w-auto'
-              src={'/logotype.png'}
-              alt={'Logotype'}
-              width='256'
-              height='70'
-            />
+            <Link href='/'>
+              <Image
+                className='h-10 w-auto'
+                src={'/logotype.png'}
+                alt={'Logotype'}
+                width='256'
+                height='70'
+              />
+            </Link>
           </h1>
 
           <HeaderPanel />
