@@ -22,8 +22,8 @@ class AuthApi {
     };
   }
 
-  private getMethod(): [boolean, { [key: string]: unknown; method: string; body: any }] {
-    if (!LAFka.AUTH_TYPES.includes(this._method as any)) {
+  private getMethod(): [boolean, { [key: string]: unknown; method: string; body: unknown }] {
+    if (!(LAFka.AUTH_TYPES as unknown as string[]).includes(this._method)) {
       if (abbreviations.get(this._method))
         return [true, { body: null, method: abbreviations.get(this._method) }];
 
@@ -55,7 +55,7 @@ class AuthApi {
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
-    callback: (...args: [any, AuthUser | null, any]) => any
+    callback: (...args: [unknown, AuthUser | null, unknown]) => unknown
   ): unknown {
     const [successed, { method, body }] = this.getMethod();
 

@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 
 import { Constructors } from "lafka/database/database/models.database";
 import DB, { Models } from "lafka/database";
-import { LAFka, Rights as RightsTypes } from "lafka/types";
 import { Rights } from "@lafka/rights";
+import { LAFka } from "lafka/types";
 
 import { ServiceResponse } from "lafka/types/service.types";
 
@@ -95,13 +95,15 @@ export class PostsService {
     };
   }
 
+  /* eslint-disable */
   public async putPost(user: LAFka.User): Promise<ServiceResponse<LAFka.Post>> {
     return { successed: false, resource: null, error: "the method has not been initialized" }
   }
-
+  
   public async deletePost(user: LAFka.User): Promise<ServiceResponse<LAFka.Post>> {
     return { successed: false, resource: null, error: "the method has not been initialized" }
   }
+  /* eslint-enable */
 
   private parseFilter(data: Record<keyof Filter, string>): Filter {
     return {

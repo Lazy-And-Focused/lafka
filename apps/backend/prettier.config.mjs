@@ -1,3 +1,3 @@
-import PrettierConfigLaf from 'prettier-config-laf';
+import PrettierConfigLaf from "prettier-config-laf";
 
 export default PrettierConfigLaf;

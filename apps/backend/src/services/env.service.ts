@@ -103,7 +103,7 @@ const NON_REQUIRED_ENV_DEFAULT: NonRequiredEnvType = {
 const ENV: EnvType = (() => {
   return Object.fromEntries(
     Object.keys(LAZY_ENV).map((key) => {
-      if (!LAZY_ENV[key] && REQUIRED_ENV_KEYS.includes(key as any))
+      if (!LAZY_ENV[key] && (REQUIRED_ENV_KEYS as string[]).includes(key))
         throw new Error(`key: ${key} in .env is undefined, but must be define`);
   
       return [key, LAZY_ENV[key] || NON_REQUIRED_ENV_DEFAULT[key]];
