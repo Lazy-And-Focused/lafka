@@ -28,7 +28,9 @@
     "dev:database": "pnpm --filter @lafka/db-logic dev",
     "dev:test-frontend": "pnpm --filter test-frontend dev",
     "dev:frontend": "pnpm --filter frontend start:dev",
-    "dev:backend": "pnpm --filter backend start:dev"
+    "dev:backend": "pnpm --filter backend start:dev",
+
+    "test:rights": "pnpm --filter @lafka/rights test"
   },
   "engines": {
     "node": ">=20.11.0",
