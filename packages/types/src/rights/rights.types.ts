@@ -335,12 +335,25 @@ export namespace Rights {
 
     export interface Rights {
       readonly user: {
+        /** @bigint */       
         readonly me: string /* it's a bigint */;
+        /**
+         * @first userId
+         * @second bigint (rights) 
+         */
         readonly users: [string, string /* it's a bigint */][],
       },
 
       readonly content: {
+        /**
+         * @first userId
+         * @second bigint (rights) 
+         */
         readonly posts: [string, string /* it's a bigint */][],
+        /**
+         * @first userId
+         * @second bigint (rights) 
+         */
         readonly organizations: [string, string /* it's a bigint */][],
       }
     };
