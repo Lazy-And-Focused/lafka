@@ -18,33 +18,32 @@ export default async function User({
   if (!isValidParams) return 'Неверно сформулированный запрос';
 
   try {
-    if (
-      process.env.NODE_ENV === 'development' &&
-      process.env.ENABLE_TEST_USER
-    ) {
-      const user: LAFka.User = DefaultUser;
-      return `${user.id} ${user.nickname} (${user.username})`;
+    let user: LAFka.User;
+
+    if (process.env.NODE_ENV === 'development' && process.env.ENABLE_TEST_USER)
+      user = DefaultUser;
+    else {
+      const res = fetch(
+        process.env.NEXT_PUBLIC_BACKEND_API + '/users/' + username,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
+          cache: 'no-cache',
+          next: { revalidate: 3_600 /* 1 hour */ },
+        },
+      ).then((data) => data.json());
+
+      user = (await res).resource;
     }
 
-    const res = fetch(
-      process.env.NEXT_PUBLIC_BACKEND_API + '/users/' + username,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        cache: 'no-cache',
-        next: { revalidate: 3_600 /* 1 hour */ },
-      },
-    ).then((data) => data.json());
-
-    const user: LAFka.User = (await res).resource;
-
     return (
-      <div className='section-block flex flex-col'>
+      <div className='section-block flex max-w-min flex-col'>
         <Image
           src={user.avatar ?? defaultUserAvatar}
           alt={`${user.username}'s avatar`}
+          className='min-w-64 rounded-md'
           width={256}
           height={256}
         />
