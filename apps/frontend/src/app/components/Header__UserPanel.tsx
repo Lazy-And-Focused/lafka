@@ -8,9 +8,13 @@ import { LAFka } from '@lafka/types';
 import Link from 'next/link';
 
 export default async function Root() {
+  const user: LAFka.User | null = await getUserFromSource().then((data) => {
+    return data.result;
+  });
+
   return (
     <Suspense fallback={<LoadingState />}>
-      <UserPanel />
+      <UserPanel user={user} />
     </Suspense>
   );
 }
@@ -32,11 +36,7 @@ function LoadingState() {
   );
 }
 
-async function UserPanel() {
-  const user: LAFka.User | null = await getUserFromSource().then((data) => {
-    return data.result;
-  });
-
+function UserPanel({ user }: { user: LAFka.User | null }) {
   if (!user)
     return (
       <Link
