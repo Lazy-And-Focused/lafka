@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { getUserFromSource } from '../../utils/getUser';
 import { LAFka } from '@lafka/types';
 import Link from 'next/link';
+import defaultUserAvatar from '@/utils/defaultUserAvatar';
 
 export default async function Root() {
   const user: LAFka.User | null = await getUserFromSource().then((data) => {
@@ -26,7 +27,7 @@ function LoadingState() {
     >
       <Image
         className='aspect-square h-8 w-8 rounded-full'
-        src='https://laf-info.netlify.app/images/avatars/default.png'
+        src={defaultUserAvatar}
         alt={'Loading avatar'}
         width='32'
         height='32'

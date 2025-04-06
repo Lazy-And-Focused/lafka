@@ -1,5 +1,7 @@
 import DefaultUser from '@/utils/_test/DefaultUser';
+import defaultUserAvatar from '@/utils/defaultUserAvatar';
 import { LAFka } from '@lafka/types';
+import Image from 'next/image';
 
 export default async function User({
   params,
@@ -31,12 +33,23 @@ export default async function User({
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
         },
+        cache: 'no-cache',
+        next: { revalidate: 3_600 /* 1 hour */ },
       },
     ).then((data) => data.json());
 
     const user: LAFka.User = (await res).resource;
 
-    return `${user.id} ${user.nickname} (${user.username})`;
+    return (
+      <div className='section-block flex flex-col'>
+        <Image
+          src={user.avatar ?? defaultUserAvatar}
+          alt={`${user.username}'s avatar`}
+          width={256}
+          height={256}
+        />
+      </div>
+    );
   } catch {
     return 'Произошла ошибка или пользователь не найден';
   }
