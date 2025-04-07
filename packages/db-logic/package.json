@@ -14,7 +14,17 @@
     "build": "tsc && tsc-alias"
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Lazy-And-Focused",
+    "url": "https://laf-info.netlify.app/"
+  },
+  "contributors": [
+    {
+      "name": "FOCKUSTY",
+      "email": "viserd.yt@gmail.com",
+      "url": "http://fockusty.netlify.app/"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "fock-logger": "catalog:",
