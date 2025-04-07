@@ -9,10 +9,6 @@
   "license": "MIT",
   "keywords": [],
   "main": "index.js",
-  "workspaces": [
-    "apps/**",
-    "packages/**"
-  ],
   "scripts": {
     "build:all": "pnpm --filter {./**} build",
     "build:apps": "pnpm --filter ./apps/** build",
