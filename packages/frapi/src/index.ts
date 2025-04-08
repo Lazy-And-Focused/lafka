@@ -86,7 +86,9 @@ export class frapi<ApiURL extends string> {
         resource: null,
         created_resource: null,
         changed_resource: null,
-        deleted_resource: null
+        deleted_resource: null,
+        type: data.root,
+        date: new Date().toISOString()
       })
     };
   };
