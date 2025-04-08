@@ -84,7 +84,7 @@ export class PostsContoller {
   public async createPost(
     @Req() req: Request,
   ): Promise<LAFka.Response.CreateData<LAFka.LazyPost>> {
-    const date = new Date();
+    const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
     
     if (!successed)

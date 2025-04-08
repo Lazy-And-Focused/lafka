@@ -15,7 +15,7 @@ const schema = new Schema<LAFka.AuthUser>({
   },
 
   created_at: {
-    type: mongoose.SchemaTypes.Date,
+    type: mongoose.SchemaTypes.String,
     required: true,
     unique: false
   },

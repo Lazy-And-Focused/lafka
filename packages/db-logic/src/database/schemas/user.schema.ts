@@ -16,7 +16,7 @@ const schema = new Schema<LAFka.User>({
   avatar: { type: SchemaTypes.String, required: false, unique: false },
   biography: { type: SchemaTypes.String, required: false, unique: false },
 
-  created_at: { type: SchemaTypes.Date, required: true, unique: false },
+  created_at: { type: SchemaTypes.String, required: true, unique: false },
 
   blocked_posts: [{ type: SchemaTypes.String, ref: "posts" }],
 

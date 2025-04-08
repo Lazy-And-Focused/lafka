@@ -16,7 +16,7 @@ class Post implements LAFka.LazyPost {
   public constructor(data: Constructors.posts) {
     this.data = {
       id: "",
-      created_at: data.created_at || new Date(),
+      created_at: data.created_at || new Date().toISOString(),
 
       content: data.content,
       creator_id: data.creator_id,
@@ -185,11 +185,11 @@ class Post implements LAFka.LazyPost {
     return this.data.followers;
   }
 
-  public get createdAt(): Date {
+  public get createdAt(): string {
     return this.data.created_at;
   }
 
-  public get changedAt(): Date | undefined {
+  public get changedAt(): string | undefined {
     return this.data.changed_at;
   }
 
@@ -242,7 +242,7 @@ class Post implements LAFka.LazyPost {
   };
 
   private readonly changed = () => {
-    this.data.changed_at = new Date();
+    this.data.changed_at = new Date().toISOString();
   };
 
   private readonly addComments = async (comments: string[]) => {

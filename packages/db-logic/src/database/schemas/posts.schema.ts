@@ -17,8 +17,8 @@ const schema = new Schema<LAFka.LazyPost>({
   comments: [{ type: SchemaTypes.String, ref: "comments" }],
   followers: { type: SchemaTypes.Number, required: true, unique: false },
 
-  created_at: { type: SchemaTypes.Date, required: true, unique: false },
-  changed_at: { type: SchemaTypes.Date, required: false, unique: false },
+  created_at: { type: SchemaTypes.String, required: true, unique: false },
+  changed_at: { type: SchemaTypes.String, required: false, unique: false },
 
   creator_id: { type: SchemaTypes.String, required: true, unique: false },
 

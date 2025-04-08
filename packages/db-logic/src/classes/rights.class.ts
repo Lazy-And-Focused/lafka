@@ -11,7 +11,7 @@ class RightsService {
       ? {
         id: user,
         username: "",
-        created_at: new Date(),
+        created_at: new Date().toISOString(),
         blocked_posts: [],
         blog_posts: [],
         followed_blog_posts: [],

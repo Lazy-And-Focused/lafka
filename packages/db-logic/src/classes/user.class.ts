@@ -32,7 +32,7 @@ class User<T extends boolean = false> implements LAFka.User {
     this.data = {
       id: "",
       username: data.username || "",
-      created_at: data.created_at || new Date(),
+      created_at: data.created_at || new Date().toISOString(),
       blocked_posts: data.blocked_posts || [],
       blog_posts: data.blog_posts || [],
       followed_blog_posts: data.followed_blog_posts || [],
@@ -161,7 +161,7 @@ class User<T extends boolean = false> implements LAFka.User {
     return this.data.avatar;
   }
 
-  public get created_at(): Date {
+  public get created_at(): string {
     return this.data.created_at;
   }
 

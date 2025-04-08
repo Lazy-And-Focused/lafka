@@ -25,7 +25,7 @@ export namespace LAFka {
     service_id: string;
     access_token: string;
     refresh_token?: string;
-    created_at: Date;
+    created_at: string;
     type: AuthTypes;
   };
   
@@ -61,7 +61,7 @@ export namespace LAFka {
     biography?: string;
     links: Link[];
 
-    created_at: Date;
+    created_at: string;
 
     forum_posts: string[];
     blog_posts: string[];
@@ -94,8 +94,8 @@ export namespace LAFka {
   
     content: string;
   
-    created_at: Date;
-    changed_at?: Date;
+    created_at: string;
+    changed_at?: string;
   
     author_id: string;
     post_id: string;
@@ -137,8 +137,8 @@ export namespace LAFka {
     comments: string[];
     followers: number;
 
-    created_at: Date;
-    changed_at?: Date;
+    created_at: string;
+    changed_at?: string;
 
     creator_id: string;
 
@@ -166,8 +166,8 @@ export namespace LAFka {
     comments: string[];
     followers: number;
 
-    created_at: Date;
-    changed_at?: Date;
+    created_at: string;
+    changed_at?: string;
 
     creator_id: string;
 
@@ -291,7 +291,7 @@ export namespace LAFka.Response {
   
   export type CreateData<T> = {
     type: DataType;
-    date: Date;
+    date: string;
   } & ({
     successed: true;
     created_resource: T;
@@ -304,7 +304,7 @@ export namespace LAFka.Response {
   
   export type ChangeDataSuccessed<T> = {
     type: DataType;
-    date: Date;
+    date: string;
     successed: true;
     error: null;
   } & ({
@@ -317,7 +317,7 @@ export namespace LAFka.Response {
   
   export type ChangeData<T> = {
     type: DataType;
-    date: Date;
+    date: string;
   } & ({
     successed: false;
     changed_resource: null;
@@ -328,7 +328,7 @@ export namespace LAFka.Response {
     type: DataType;
     successed: boolean;
     error: null;
-    date: Date;
+    date: string;
   } & ({
     deleted_resource_type: "delete";
     deleted_resource: DeleteResult;
@@ -339,7 +339,7 @@ export namespace LAFka.Response {
 
   export type DeleteData<T> = {
     type: DataType;
-    date: Date;
+    date: string;
   } & ({
     successed: false;
     deleted_resource: null;
