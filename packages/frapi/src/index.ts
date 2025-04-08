@@ -71,7 +71,7 @@ export class frapi<ApiURL extends string> {
     data: Api.ParseRoute<Root, URL>["return"] & { type: Root }
   }> => {
     const url = this.parseURL(data).url;
-    const query = data.init.query || "";
+    const query = this.parseQuery(data.init.query);
 
     const fetched = await fetch(url + query, this.parseInit(data.init));
     
@@ -92,6 +92,15 @@ export class frapi<ApiURL extends string> {
       })
     };
   };
+
+  private readonly parseQuery = (query?: unknown): string => {
+    if (typeof query !== "object") return "";
+    if (!query) return "";
+
+    return Object.keys(query).length === 0
+      ? ""
+      : "?" + Object.keys(query).map(k => [k, query[k]]).map(e => e.join("=")).join("&");
+  }
 
   private readonly writeFetched = <T>(fetched: Response, data: T) => {
     return {
