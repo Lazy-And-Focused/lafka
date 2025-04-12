@@ -20,7 +20,10 @@ export default async function User({
   try {
     let user: LAFka.User;
 
-    if (process.env.NODE_ENV === 'development' && process.env.ENABLE_TEST_USER)
+    if (
+      process.env.NODE_ENV === 'development' &&
+      !!process.env.ENABLE_TEST_USER
+    )
       user = DefaultUser;
     else {
       const res = fetch(
