@@ -1,7 +1,4 @@
-import MessageUser from '@/app/icons/MessageUser';
-import DefaultUser from '@/utils/_test/DefaultUser';
 import defaultUserAvatar from '@/utils/defaultUserAvatar';
-import { LAFka } from '@lafka/types';
 import Image from 'next/image';
 
 // Скрыл, пока верстал
