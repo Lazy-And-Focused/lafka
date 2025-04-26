@@ -14,7 +14,10 @@ const DefaultUser: LAFka.User = {
   followers: [],
   forum_posts: [],
   following: [],
-  links: [],
+  links: [
+    { name: '1test', link: 'http://localhost:3000/' },
+    { name: '2test', link: 'http://localhost:3001/' },
+  ],
   rights: {
     me: '',
     users: [],
