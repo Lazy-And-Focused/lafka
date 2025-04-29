@@ -28,7 +28,7 @@ Frontend-части проекта LAFka.
 ## Проект | Термины
 
 <!-- prettier-ignore -->
-> [!INFO]
+> [!NOTE]
 > Этот раздел также можно обозвать "Понятия", намекая
 > [на оригинальный](https://feature-sliced.github.io/documentation/ru/docs/get-started/overview#concepts).
 
