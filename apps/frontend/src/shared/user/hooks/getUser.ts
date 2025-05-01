@@ -11,7 +11,10 @@ type ComponentResponse = LAFka.User | null;
 
 async function getUser(cached: boolean = true): Promise<ComponentResponse> {
   const isDevMode =
-    process.env.NODE_ENV === 'development' && !!process.env.ENABLE_TEST_USER;
+    process.env.NODE_ENV === 'development' &&
+    process.env.ENABLE_TEST_USER === 'true';
+
+  console.log(isDevMode);
 
   if (isDevMode) {
     return DefaultUser;

@@ -10,21 +10,19 @@ export default function Auth() {
       <h2 className='mb-2'>Войти через</h2>
 
       <form className='flex flex-col gap-2'>
-        <button
-          className='mb-2 flex w-full items-center justify-center rounded-lg border border-[#EFDBB3] px-4 py-1'
-          type='button'
-          onClick={() => redirect(`${baseUrl}/yandex`)}
-        >
-          Яндекс
-        </button>
-        <button
-          className='flex w-full items-center justify-center rounded-lg border border-[#EFDBB3] px-4 py-1'
-          type='button'
-          onClick={() => redirect(`${baseUrl}/google`)}
-        >
-          Google
-        </button>
+        {services.map((s) => (
+          <button
+            key={s}
+            type='button'
+            className='mb-2 flex w-full items-center justify-center rounded-lg border border-[#EFDBB3] px-4 py-1'
+            onClick={() => redirect(`${baseUrl}/${s.toLowerCase()}`)}
+          >
+            {s}
+          </button>
+        ))}
       </form>
     </div>
   );
 }
+
+const services = ['Yandex', 'Google'];
