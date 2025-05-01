@@ -1,4 +1,4 @@
-import defaultUserAvatar from '@/utils/defaultUserAvatar';
+import defaultUserAvatar from '@/shared/value/defaultUserAvatar';
 import Image from 'next/image';
 
 // Скрыл, пока верстал

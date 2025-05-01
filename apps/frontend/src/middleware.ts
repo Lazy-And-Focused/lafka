@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { getUserFromSource } from './utils/getUser';
+import { getUser } from './shared/user';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  const user = (await getUserFromSource()).result;
+  const user = await getUser();
 
   const pathname = request.nextUrl.pathname;
 

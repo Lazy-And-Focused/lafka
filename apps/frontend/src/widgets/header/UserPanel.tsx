@@ -1,17 +1,15 @@
 'use server';
 
-import Image from 'next/image';
-import FilePencil from '../icons/FilePencil';
-import { Suspense } from 'react';
-import { getUserFromSource } from '../../utils/getUser';
+import { getUser } from '@/shared/user';
+import defaultUserAvatar from '@/shared/value/defaultUserAvatar';
 import { LAFka } from '@lafka/types';
+import Image from 'next/image';
 import Link from 'next/link';
-import defaultUserAvatar from '@/utils/defaultUserAvatar';
+import { Suspense } from 'react';
+import FilePencil from '@/app/_icons/FilePencil';
 
 export default async function Root() {
-  const user: LAFka.User | null = await getUserFromSource().then((data) => {
-    return data.result;
-  });
+  const user = await getUser();
 
   return (
     <Suspense fallback={<LoadingState />}>
