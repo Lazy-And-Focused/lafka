@@ -29,6 +29,15 @@ const config = {
   jsxSingleQuote: true,
 
   proseWrap: "always",
+
+  overrides: [
+    {
+      files: ["*.md", ".mdx"],
+      options: {
+        printWidth: 70,
+      },
+    },
+  ],
 };
 
 export const PrettierLafConfiguration = config;
