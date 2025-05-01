@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import Link from 'next/link';
 import Loading from './loading';
-import DisplayInfo from './display-info';
+import DisplayUser from './display-user';
 
 import { getUser } from '@/shared/user';
 
@@ -13,7 +13,7 @@ export default async function UserPanel() {
 
   return (
     <Suspense fallback={<Loading />}>
-      {user ? <DisplayInfo user={user} /> : <LogIn />}
+      {user ? <DisplayUser user={user} /> : <LogIn />}
     </Suspense>
   );
 }

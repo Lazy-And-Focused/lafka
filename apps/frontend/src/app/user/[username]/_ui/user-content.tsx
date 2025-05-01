@@ -1,18 +1,13 @@
 import Image from 'next/image';
 
-import MessageUser from './_icons/MessageUser';
-
-export default async function HomePage() {
+export default function UserContent() {
   return (
-    <div className='section-block grid grid-cols-2'>
-      <div className='post'>
-        <div className='cover'>
+    <div className='section-block col-span-2 grid grid-cols-2'>
+      <div className='post flex-col'>
+        <div className='cover aspect-[350_/_120] w-full'>
           <Image src='/post-cover.png' alt='Обложка поста' fill />
 
-          <p className='author'>
-            <MessageUser width={12} height={12} />
-            lanvalird
-          </p>
+          <p className='author -bottom-full top-[5px]'>Блог</p>
         </div>
 
         <div className='body'>

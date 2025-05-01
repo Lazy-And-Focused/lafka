@@ -4,7 +4,7 @@ import FilePencil from '@/app/_icons/FilePencil';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function DisplayInfo({ user }: { user: LAFka.User }) {
+export default function DisplayUser({ user }: { user: LAFka.User }) {
   return (
     <div className='flex flex-row items-center justify-center'>
       <button className='mr-5 inline-flex h-6 w-6 items-center justify-center rounded-lg border border-[#EFDBB3] text-[#EFDBB3]'>

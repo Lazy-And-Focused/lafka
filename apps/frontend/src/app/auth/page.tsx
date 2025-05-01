@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
-export default function Auth() {
+export default function AuthPage() {
   const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_API}/auth`;
 
   return (

@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import defaultUserAvatar from '@/shared/value/defaultUserAvatar';
 
 export default function Loading() {
   return (
@@ -8,7 +7,7 @@ export default function Loading() {
     >
       <Image
         className='aspect-square h-8 w-8 rounded-full'
-        src={defaultUserAvatar}
+        src={'/avatar.webp'}
         alt={'Loading avatar'}
         width='32'
         height='32'
