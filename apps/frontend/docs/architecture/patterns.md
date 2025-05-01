@@ -14,19 +14,7 @@
 
 ## Next.js | Layouts & Pages
 
-Как называются слои (layouts) вы и сами прекрасно знаете:
-
-```Markdown
-- page1
-    - layout.tsx
-    - page.tsx
-
-- page2
-    - layout.tsx
-    - page.tsx
-```
-
-Функциональные компоненты, экспортируемые по умолчанию должны иметь
+Функциональные компоненты, экспортируемые по умолчанию, должны иметь
 нейминг вида: `ИмяТип`:
 
 ```TypeScript
@@ -34,9 +22,13 @@
 export default function HomeLayout({ children }) {
     return children;
 }
-// home/layout.tsx
+// home/page.tsx
 export default function HomePage() { return null }
 
-// user/layout.tsx
+// user/page.tsx
 export default function UserPage() { return null }
 ```
+
+---
+
+Далее
