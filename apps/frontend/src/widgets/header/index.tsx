@@ -3,7 +3,7 @@ import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import UserPanel from './UserPanel';
+import UserPanel from './user-panel';
 
 export default function Header(
   props: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
@@ -26,3 +26,4 @@ export default function Header(
     </header>
   );
 }
+
