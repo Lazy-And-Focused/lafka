@@ -1,5 +1,7 @@
 'use client';
 
+import { LAFka } from '@lafka/types';
+
 import { redirect } from 'next/navigation';
 
 export default function AuthPage() {
@@ -17,7 +19,7 @@ export default function AuthPage() {
             className='mb-2 flex w-full items-center justify-center rounded-lg border border-[#EFDBB3] px-4 py-1'
             onClick={() => redirect(`${baseUrl}/${s.toLowerCase()}`)}
           >
-            {s}
+            {locale[s]}
           </button>
         ))}
       </form>
@@ -25,4 +27,9 @@ export default function AuthPage() {
   );
 }
 
-const services = ['Yandex', 'Google'];
+const services = LAFka.AUTH_TYPES;
+
+const locale: Record<LAFka.AuthTypes, string> = {
+  google: 'Google',
+  yandex: 'Яндекс',
+};

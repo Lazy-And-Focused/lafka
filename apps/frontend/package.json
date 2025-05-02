@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "displayName": "Frontend",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Frontend for LAFka.",
   "license": "MIT",
   "private": true,

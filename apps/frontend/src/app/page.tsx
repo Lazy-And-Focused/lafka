@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import MessageUser from './_icons/MessageUser';
+import MessageUser from '@/icons/message-user';
 
 export default async function HomePage() {
   return (

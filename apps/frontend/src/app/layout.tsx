@@ -4,7 +4,7 @@ import './_lib/fontsLoader';
 import './globals.css';
 
 import Image from 'next/image';
-import Header from '../widgets/header';
+import Header from '@/widgets/header';
 
 export const metadata: Metadata = {
   title: 'Lafka',

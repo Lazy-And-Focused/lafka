@@ -1,6 +1,6 @@
 import type { LAFka } from '@lafka/types';
 
-import FilePencil from '@/app/_icons/FilePencil';
+import FilePencil from '@/icons/file-pencil';
 import Image from 'next/image';
 import Link from 'next/link';
 

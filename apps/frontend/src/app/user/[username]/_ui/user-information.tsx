@@ -46,10 +46,7 @@ function Avatar({ name, src }: { name: string; src?: string }) {
 
 function Title({ name }: { name: string }) {
   return (
-    <h2
-      className='text-center font-[Prata] text-2xl font-normal'
-      children={name}
-    />
+    <h2 className='text-center font-[Prata] text-2xl font-normal'>{name}</h2>
   );
 }
 

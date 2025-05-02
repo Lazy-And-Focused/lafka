@@ -1,5 +1,5 @@
-import getUser from './hooks/getUser';
-import useUser from './hooks/useUser';
-import validateCookie from './validateCookies';
+import getUser from './hooks/get-user';
+import useUser from './hooks/use-user';
+import validateCookie from './validate-cookies';
 
 export { useUser, getUser, validateCookie };
