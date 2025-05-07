@@ -1,6 +1,7 @@
 import { getUser } from '@/shared/user';
 import { UserContent, UserInformation } from './_ui';
 
+
 export default async function UserPage({
   params,
 }: {
@@ -14,7 +15,7 @@ export default async function UserPage({
   }
 
   return (
-    <div className='grid w-full grid-cols-3 gap-6'>
+    <div className='grid w-full grid-cols-12 gap-6'>
       {/* Их надо будет обернуть в Context */}
       <UserInformation user={user} />
       <UserContent />

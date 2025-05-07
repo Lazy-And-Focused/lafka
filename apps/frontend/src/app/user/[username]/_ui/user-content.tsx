@@ -1,13 +1,15 @@
 import Image from 'next/image';
 
+import styles from './user-content.module.css';
+
 export default function UserContent() {
   return (
-    <div className='section-block col-span-2 grid grid-cols-2'>
+    <div className='section-block col-span-10 grid grid-cols-2 items-start'>
       <div className='post flex-col'>
-        <div className='cover aspect-[350_/_120] w-full'>
+        <div className={styles.cover + ' aspect-[350_/_120] w-full'}>
           <Image src='/post-cover.png' alt='Обложка поста' fill />
 
-          <p className='author -bottom-full top-[5px]'>Блог</p>
+          <p className={styles.author}>Блог</p>
         </div>
 
         <div className='body'>
