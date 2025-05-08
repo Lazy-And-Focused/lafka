@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import './_lib/fontsLoader';
+import './_lib/fonts-loader';
 import './globals.css';
 
 import Image from 'next/image';
