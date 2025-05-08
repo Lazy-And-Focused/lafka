@@ -32,10 +32,8 @@ const schema = new Schema<LAFka.User>({
   links: [Link],
 
   rights: { type: {
-    default: SchemaTypes.String,
+    me: SchemaTypes.String,
     users: SchemaTypes.Array,
-    posts: SchemaTypes.Array,
-    organizations: SchemaTypes.Array
   }, required: true, unique: false }
 });
 

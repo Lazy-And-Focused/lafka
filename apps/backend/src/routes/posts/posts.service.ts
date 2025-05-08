@@ -5,8 +5,6 @@ import DB, { Models } from "lafka/database";
 import { LAFka, Rights as RightsTypes } from "lafka/types";
 import { Rights } from "@lafka/rights";
 
-import { UpdateWriteOpResult } from "mongoose";
-import { DeleteResult } from "lafka/database/types/mongodb.types";
 import { ServiceResponse } from "lafka/types/service.types";
 
 const { posts, users } = new Models();
@@ -34,7 +32,7 @@ export type Filter = {
 
 @Injectable()
 export class PostsService {
-  public async getPosts(rawFilter: Record<string, string>): Promise<ServiceResponse<LAFka.Post[]>> {
+  public async getPosts(rawFilter: Record<string, string>): Promise<ServiceResponse<LAFka.LazyPost[]>> {
     const filter = this.parseFilter({
       count: "0",
       offset: "0",
@@ -59,7 +57,7 @@ export class PostsService {
     }
   }
 
-  public async getPost(id: string): Promise<ServiceResponse<LAFka.Post>> {
+  public async getPost(id: string): Promise<ServiceResponse<LAFka.LazyPost>> {
     const data = await posts.getData({filter: {id}});
     
     if (!data.successed || !data.data || data.data.length === 0)
@@ -72,12 +70,12 @@ export class PostsService {
     };
   }
 
-  public async createPost(userId: string, post: Constructors.posts): Promise<ServiceResponse<LAFka.Post>> {
+  public async createPost(userId: string, post: Constructors.posts): Promise<ServiceResponse<LAFka.LazyPost>> {
     const user = (await users.getData({filter: {id: userId}})).data;
 
     if (!user || !user[0]) return { successed: false, resource: null, error: "User not found"};
 
-    if (!new Rights.User(user[0]).defaultHas(RightsTypes.Default.ME_RIGHTS.POSTS_CREATE))
+    if (!new Rights.UserService(user[0]).has({right: "me", rights: "POSTS_CREATE"}))
       return { successed: false, resource: null, error: "403 Forbidenn" };
 
     for (const required of REQUIRED_DATA_TO_CREATE_POST) {

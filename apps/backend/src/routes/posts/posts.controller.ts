@@ -18,6 +18,7 @@ import { Cache } from "cache-manager";
 
 import { POSTS_CONTROLLER, POSTS_ROUTES } from "./posts.routes";
 import { PostsService } from "./posts.service";
+import { Public } from "decorators/public.decorator";
 
 import { AuthGuard } from "guards/auth/auth.guard";
 
@@ -32,6 +33,7 @@ export class PostsContoller {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
+  @Public()
   @Get(POSTS_ROUTES.GET)
   public async getPosts(
     @Req() req: Request,
@@ -39,7 +41,7 @@ export class PostsContoller {
     @Query("count") count?: string,
     @Query("sortBy") sortBy?: string,
     @Query("sortType") sortType?: string
-  ): Promise<LAFka.Response.GetData<LAFka.Post[]>> {
+  ): Promise<LAFka.Response.GetData<LAFka.LazyPost[]>> {
     const { successed } = Hash.parse(req);
 
     if (!successed)
@@ -57,11 +59,12 @@ export class PostsContoller {
     return {...posts, type: "posts" }
   }
 
+  @Public()
   @Get(POSTS_ROUTES.GET_ONE)
   public async getPost(
     @Req() req: Request,
     @Param("id") id: string
-  ): Promise<LAFka.Response.GetData<LAFka.Post>> {
+  ): Promise<LAFka.Response.GetData<LAFka.LazyPost>> {
     const { successed } = Hash.parse(req);
 
     if (!successed)
@@ -80,7 +83,7 @@ export class PostsContoller {
   @Post(POSTS_ROUTES.POST)
   public async createPost(
     @Req() req: Request,
-  ): Promise<LAFka.Response.CreateData<LAFka.Post>> {
+  ): Promise<LAFka.Response.CreateData<LAFka.LazyPost>> {
     const date = new Date();
     const { successed, profile_id } = Hash.parse(req);
     

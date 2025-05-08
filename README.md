@@ -2,6 +2,8 @@
 
 ![Cover](docs/cover.png)
 
+![workflow](https://github.com/Lazy-And-Focused/LAFka/actions/workflows/code-styling.yml/badge.svg)
+
 ## 👀 Что это такое?
 
 LAFka – проект-форум с открытым исходным кодом и возможностью вести

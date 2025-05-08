@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "nodemon src/rights.service.ts",
     "start": "pnpm run build && node dist/rights.service.js",
-    "build": "tsc && tsc-alias"
+    "build": "tsc && tsc-alias",
+    "test": "nodemon test/index.ts"
   },
   "keywords": [
     "rights",
