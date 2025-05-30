@@ -70,7 +70,8 @@ export namespace LAFka {
     followers: string[];
     following: string[];
 
-    rights: Rights.Raw.Rights["user"];
+    /* bigint */
+    rights: string;
   }
 
 
@@ -138,7 +139,8 @@ export namespace LAFka {
     creator_id: string;
 
     view_status: 0 | 1;
-    rights: Rights.Raw.Rights["content"]["posts"]
+    /* bigint */
+    rights: string
   } & ({
     /** forum */
     tags: Tag[];
@@ -202,7 +204,8 @@ export namespace LAFka {
     creator_id: string;
     members: string[];
 
-    rights: Rights.Raw.Rights["content"]["organizations"]
+    /* bigint */
+    rights: string
   }
 
 
