@@ -6,6 +6,7 @@
         "removeComments": true,
         "declaration": true,
         "allowJs": true,
+        "esModuleInterop": true,
         "strict": true,
         "strictNullChecks": true,
         "skipLibCheck": true, 
@@ -22,6 +23,6 @@
             ]
         }
     },
-    "include": [ "src" ],
+    "include": [ "src", "test" ],
     "exclude": [ "node_modules", "dist" ]
 }
