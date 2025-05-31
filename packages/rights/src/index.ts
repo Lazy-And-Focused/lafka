@@ -34,6 +34,8 @@ export namespace Rights {
       const postRights: {[userId: string]: string} = Object.fromEntries(this.post.rights);
 
       return (userId: string) => {
+        if (this.post.creator_id === userId) return true;
+
         return (BigInt(postRights[userId]) & r) === r;
       };
     };
@@ -44,8 +46,9 @@ export namespace Rights {
       const postRights: {[userId: string]: string} = Object.fromEntries(this.post.rights);
       
       return (rights: T) => {
-        const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
+        if (this.post.creator_id === userId) return true;
         
+        const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
         return (BigInt(postRights[userId]) & r) === r;
       };
     }
@@ -53,6 +56,7 @@ export namespace Rights {
     public readonly has = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
     >({ rights, userId }: { rights: T, userId: string }): boolean => {
+      if (this.post.creator_id === userId) return true;
       return this.hasRights(rights)(userId);
     };
   }
@@ -67,6 +71,7 @@ export namespace Rights {
       const organizationRights: {[userId: string]: string} = Object.fromEntries(this.organization.rights);
 
       return (userId: string) => {
+        if (this.organization.owner_id === userId) return true;
         return (BigInt(organizationRights[userId]) & r) === r;
       };
     };
@@ -77,8 +82,9 @@ export namespace Rights {
       const organizationRights: {[userId: string]: string} = Object.fromEntries(this.organization.rights);
       
       return (rights: T) => {
+        if (this.organization.owner_id === userId) return true;
+
         const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
-        
         return (BigInt(organizationRights[userId]) & r) === r;
       };
     }
@@ -86,6 +92,7 @@ export namespace Rights {
     public readonly has = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
     >({ rights, userId }: { rights: T, userId: string}): boolean => {
+      if (this.organization.owner_id === userId) return true;
       return this.hasRights(rights)(userId);
     };
   }
