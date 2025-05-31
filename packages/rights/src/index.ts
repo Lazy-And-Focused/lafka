@@ -1,12 +1,5 @@
 import { LAFka, Rights as LAFkaRights } from "@lafka/types";
 
-/**
- * I need:
- * UserService
- * PostService
- * OrganizationService
- */
-
 type MustArray<T, K=T> = [T, ...K[]];
 type ArrayOrType<T> = MustArray<T> | T;
 
@@ -14,12 +7,6 @@ export namespace Rights {
   export class UserService {
     public constructor(private readonly user: LAFka.User) {};
 
-    /**
-     * ```ts
-     * const fockusty = await LAFka.Api.getUser("@fockusty");
-     * new Rights.UserService(fockusty).has(["ADMINISTATOR"]);
-     * ```
-     */
     public has = <
       T extends ArrayOrType<keyof LAFkaRights.Types.My>,
     >(rights: T): boolean => {
@@ -27,19 +14,19 @@ export namespace Rights {
 
       return (BigInt(this.user.rights) & r) === r;
     }
+
+    public hasPostRights(post: LAFka.Post) {
+      return new PostService(post).userHas(this.user.id);
+    };
+
+    public hasOrganizationRights(organization: LAFka.Organization) {
+      return new OrganizationService(organization).userHas(this.user.id);
+    }
   }
 
   export class PostService {
     public constructor(public readonly post: LAFka.Post) {};
 
-    /**
-     * ```ts
-     * const fockusty = await LAFka.Api.getUser("@fockusty");
-     * const posts = await LAFka.Api.getPost("1");
-     * 
-     * new Rights.PostService(posts).hasRights(["OWNER"]})(fockusty.id);
-     * ```
-     */
     public readonly hasRights = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
     >(rights: T): ((userId: string) => boolean) => {
@@ -51,14 +38,6 @@ export namespace Rights {
       };
     };
 
-    /**
-     * ```ts
-     * const fockusty = await LAFka.Api.getUser("@fockusty");
-     * const posts = await LAFka.Api.getPost("1");
-     * 
-     * new Rights.PostService(posts).userHas(fockusty.id)(["OWNER"]});
-     * ```
-     */
     public readonly userHas = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
     >(userId: string): ((rights: T) => boolean) => {
@@ -71,20 +50,42 @@ export namespace Rights {
       };
     }
 
-    /**
-     * ```ts
-     * const fockusty = await LAFka.Api.getUser("@fockusty");
-     * const posts = await LAFka.Api.getPost("1");
-     * 
-     * new Rights.PostService(posts).has({
-     *   userId: fockusty.id,
-     *   rights: ["OWNER"]
-     * });
-     * ```
-     */
     public readonly has = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
     >({ rights, userId }: { rights: T, userId: string }): boolean => {
+      return this.hasRights(rights)(userId);
+    };
+  }
+
+  export class OrganizationService {
+    public constructor(public readonly organization: LAFka.Organization) {};
+
+    public readonly hasRights = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
+    >(rights: T): ((userId: string) => boolean) => {
+      const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
+      const organizationRights: {[userId: string]: string} = Object.fromEntries(this.organization.rights);
+
+      return (userId: string) => {
+        return (BigInt(organizationRights[userId]) & r) === r;
+      };
+    };
+
+    public readonly userHas = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
+    >(userId: string): ((rights: T) => boolean) => {
+      const organizationRights: {[userId: string]: string} = Object.fromEntries(this.organization.rights);
+      
+      return (rights: T) => {
+        const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
+        
+        return (BigInt(organizationRights[userId]) & r) === r;
+      };
+    }
+
+    public readonly has = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
+    >({ rights, userId }: { rights: T, userId: string}): boolean => {
       return this.hasRights(rights)(userId);
     };
   }
