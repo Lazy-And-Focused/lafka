@@ -36,7 +36,7 @@ export namespace Rights {
       return (userId: string) => {
         if (this.post.creator_id === userId) return true;
 
-        return (BigInt(postRights[userId]) & r) === r;
+        return (BigInt(postRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
       };
     };
 
@@ -49,7 +49,7 @@ export namespace Rights {
         if (this.post.creator_id === userId) return true;
         
         const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
-        return (BigInt(postRights[userId]) & r) === r;
+        return (BigInt(postRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
       };
     }
 
@@ -72,7 +72,9 @@ export namespace Rights {
 
       return (userId: string) => {
         if (this.organization.owner_id === userId) return true;
-        return (BigInt(organizationRights[userId]) & r) === r;
+        return ((this.organization.members.includes(userId)
+          ? BigInt(organizationRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
+          : LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations) & r) === r;
       };
     };
 
@@ -85,7 +87,9 @@ export namespace Rights {
         if (this.organization.owner_id === userId) return true;
 
         const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
-        return (BigInt(organizationRights[userId]) & r) === r;
+        return ((this.organization.members.includes(userId)
+          ? BigInt(organizationRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
+          : LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations) & r) === r;
       };
     }
 
@@ -93,6 +97,7 @@ export namespace Rights {
       T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
     >({ rights, userId }: { rights: T, userId: string}): boolean => {
       if (this.organization.owner_id === userId) return true;
+      
       return this.hasRights(rights)(userId);
     };
   }
