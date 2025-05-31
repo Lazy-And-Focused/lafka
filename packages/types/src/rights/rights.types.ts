@@ -117,54 +117,6 @@ export namespace Rights {
   }
 
   export namespace Constants {
-    export const AVAILABLE = {
-      My: My.AVAILABLE,
-      Posts: Posts.AVAILABLE,
-      Organizations: Organizations.AVAILABLE
-    } as const;
-
-    export const DEFAULT = {
-      My: My.DEFAULT,
-      Posts: Posts.DEFAULT,
-      Organizations: Organizations.DEFAULT
-    } as const;
-
-    export const ALL = {
-      My: My.ALL,
-      Posts: Posts.ALL,
-      Organizations: Organizations.ALL,
-    } as const;
-
-    export const RIGHTS = {
-      RAW: {
-        AVAILABLE: {
-          My: Parser.execute(My.AVAILABLE),
-          Posts: Parser.execute(Posts.AVAILABLE),
-          Organizations: Parser.execute(Organizations.AVAILABLE)
-        } as const,
-
-        DEFAULT: {
-          My: Parser.execute(My.DEFAULT),
-          Posts: Parser.execute(Posts.DEFAULT),
-          Organizations: Parser.execute(Organizations.DEFAULT)
-        } as const
-      } as const,
-
-      OBJECT: {
-        AVAILABLE: {
-          My: My.AVAILABLE,
-          Posts: Posts.AVAILABLE,
-          Organizations: Organizations.AVAILABLE
-        } as const,
-
-        DEFAULT: {
-          My: My.DEFAULT,
-          Posts: Posts.DEFAULT,
-          Organizations: Organizations.DEFAULT
-        } as const
-      } as const
-    } as const;
-
     export namespace My {
       export const ALL = [
         "ADMINISTRATOR",
@@ -269,5 +221,53 @@ export namespace Rights {
       export const AVAILABLE: Types.Organizations = new Builder(Organizations.ALL).execute(Posts.AVAILABLE);
       export const DEFAULT: Types.Organizations = new Builder(Organizations.ALL).execute(Posts.AVAILABLE, Organizations.EXCLUDE);
     }
+
+        export const AVAILABLE = {
+      My: My.AVAILABLE,
+      Posts: Posts.AVAILABLE,
+      Organizations: Organizations.AVAILABLE
+    } as const;
+
+    export const DEFAULT = {
+      My: My.DEFAULT,
+      Posts: Posts.DEFAULT,
+      Organizations: Organizations.DEFAULT
+    } as const;
+
+    export const ALL = {
+      My: My.ALL,
+      Posts: Posts.ALL,
+      Organizations: Organizations.ALL,
+    } as const;
+
+    export const RIGHTS = {
+      RAW: {
+        AVAILABLE: {
+          My: Parser.execute(My.AVAILABLE),
+          Posts: Parser.execute(Posts.AVAILABLE),
+          Organizations: Parser.execute(Organizations.AVAILABLE)
+        } as const,
+
+        DEFAULT: {
+          My: Parser.execute(My.DEFAULT),
+          Posts: Parser.execute(Posts.DEFAULT),
+          Organizations: Parser.execute(Organizations.DEFAULT)
+        } as const
+      } as const,
+
+      OBJECT: {
+        AVAILABLE: {
+          My: My.AVAILABLE,
+          Posts: Posts.AVAILABLE,
+          Organizations: Organizations.AVAILABLE
+        } as const,
+
+        DEFAULT: {
+          My: My.DEFAULT,
+          Posts: Posts.DEFAULT,
+          Organizations: Organizations.DEFAULT
+        } as const
+      } as const
+    } as const;
   }
 }

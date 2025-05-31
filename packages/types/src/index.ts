@@ -139,8 +139,8 @@ export namespace LAFka {
     creator_id: string;
 
     view_status: 0 | 1;
-    /* bigint */
-    rights: string
+    /* key: string, value: bigint */
+    rights: [string, string][]
   } & ({
     /** forum */
     tags: Tag[];
@@ -159,40 +159,6 @@ export namespace LAFka {
     type: "blog"
   });
 
-  export interface LazyPost {
-    id: string;
-
-    name: string;
-    content: string;
-    description?: string;
-    comments: string[];
-    followers: number;
-
-    created_at: Date;
-    changed_at?: Date;
-
-    creator_id: string;
-
-    type: PostTypes;
-    view_status: 0 | 1;
-
-    // ForumPost
-    
-    /** forum */
-    tags: Tag[];
-    /** forum */
-    status: PostStatus;
-
-    // BlogPost
-
-    /** blog */
-    likes: number;
-    /** blog */
-    dislikes: number;
-    /** blog */
-    reposts: number;
-  }
-
 
   // Organizations types & constants
 
@@ -204,8 +170,8 @@ export namespace LAFka {
     creator_id: string;
     members: string[];
 
-    /* bigint */
-    rights: string
+    /* key: string, value: bigint */
+    rights: [string, string][]
   }
 
 

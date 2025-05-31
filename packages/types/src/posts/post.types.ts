@@ -9,5 +9,4 @@ export const POST_STATUS = LAFka.POST_STATUS;
 
 export type PostTypes = LAFka.PostTypes;
 export type PostStatus = LAFka.PostStatus;
-export type LazyPost = LAFka.LazyPost;
 export type Post = LAFka.Post;
