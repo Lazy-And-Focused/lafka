@@ -5,7 +5,7 @@ type ArrayOrType<T> = MustArray<T> | T;
 
 export namespace Rights {
   export class UserService {
-    public constructor(private readonly user: LAFka.User) {};
+    public constructor(public readonly user: LAFka.User) {};
 
     public has = <
       T extends ArrayOrType<keyof LAFkaRights.Types.My>,
