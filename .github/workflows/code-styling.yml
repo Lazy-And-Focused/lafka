@@ -38,11 +38,13 @@ jobs:
         continue-on-error: false
 
       - name: Save Changes ⇒ Commit formatted code
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           git config --global user.name '${{ github.event.head_commit.author.name }}'
           git config --global user.email '${{ github.event.head_commit.author.username }}@${{ github.event.head_commit.author.email }}'
           git add .
-          git commit -m '${{ github.event.head_commit.message }} (formatted ~~ backend)'
+          git commit -m "$COMMIT_MESSAGE (formatted ~~ backend)"
           git push
         continue-on-error: true
 
@@ -72,10 +74,12 @@ jobs:
         continue-on-error: false
 
       - name: Save Changes ⇒ Commit formatted code
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           git config --global user.name '${{ github.event.head_commit.author.name }}'
           git config --global user.email '${{ github.event.head_commit.author.username }}@${{ github.event.head_commit.author.email }}'
           git add .
-          git commit -m '${{ github.event.head_commit.message }} (formatted ~~ frontend)'
+          git commit -m "$COMMIT_MESSAGE (formatted ~~ frontend)"
           git push
         continue-on-error: true
