@@ -18,7 +18,7 @@ type ComponentResponse = LAFka.User | null;
  * @returns Promise<ComponentResponse>
  */
 async function getUser(
-  usernameOrId?: string,
+  userSlug: string = '',
   cached: boolean = true,
 ): Promise<ComponentResponse> {
   const isDevMode =
@@ -31,17 +31,13 @@ async function getUser(
 
   const token = await validateCookie('id-token');
   if (!token) {
+    console.log('нет токена');
     return null;
   }
 
   try {
-    let userSlug: string = '';
-    if (usernameOrId) {
-      const isValidSlug: boolean = validateUserSlug(usernameOrId);
-
-      if (isValidSlug) {
-        userSlug = usernameOrId;
-      }
+    if (userSlug !== '' && !validateUserSlug(userSlug)) {
+      userSlug = '';
     }
 
     const cacheOptions: RequestInit = {
@@ -52,6 +48,7 @@ async function getUser(
     };
 
     const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_API}/users`;
+    console.log(`GET: ${baseUrl}/${userSlug}`);
 
     const res = await fetch(`${baseUrl}/${userSlug}`, {
       method: 'GET',
@@ -62,8 +59,11 @@ async function getUser(
     });
     const data = await res.json();
 
+    console.log(data);
+
     return data.resource;
-  } catch {
+  } catch (e) {
+    if (isDevMode) console.error(e);
     return null;
   }
 }
