@@ -10,7 +10,7 @@ class Comment implements LAFka.Comment {
   private data: LAFka.Comment;
 
   public constructor(data: Constructors.comments) {
-    const now = new Date();
+    const now = new Date().toISOString();
 
     this.data = {
       id: "",
@@ -53,7 +53,7 @@ class Comment implements LAFka.Comment {
     return this;
   };
 
-  private paste(data: Constructors.comments & { created_at: Date }, comment: LAFka.Comment) {
+  private paste(data: Constructors.comments & { created_at: string }, comment: LAFka.Comment) {
     this.data = Helpers.parse({
       ...data,
       ...comment,
@@ -65,7 +65,7 @@ class Comment implements LAFka.Comment {
   }
 
   private changed() {
-    this.data.changed_at = new Date();
+    this.data.changed_at = new Date().toISOString();
   }
 
   public set content(content: string) {
@@ -82,7 +82,7 @@ class Comment implements LAFka.Comment {
     return this.data.content;
   }
 
-  public get created_at(): Date {
+  public get created_at(): string {
     return this.data.created_at;
   }
 
@@ -98,7 +98,7 @@ class Comment implements LAFka.Comment {
     return this.data.reply;
   }
 
-  public get changed_at(): Date | undefined {
+  public get changed_at(): string | undefined {
     return this.data.changed_at;
   }
 }

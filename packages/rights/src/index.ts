@@ -25,7 +25,7 @@ export namespace Rights {
   }
 
   export class PostService {
-    public constructor(public readonly post: LAFka.Post) {};
+    public constructor(private readonly post: LAFka.Post) {};
 
     public readonly hasRights = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>

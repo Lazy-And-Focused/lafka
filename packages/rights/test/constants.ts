@@ -3,7 +3,7 @@ import { LAFka, Rights as LAFkaRights } from "@lafka/types";
 export const user: LAFka.User = {
   blocked_posts: [],
   blog_posts: [],
-  created_at: new Date(),
+  created_at: new Date().toISOString(),
   followed_blog_posts: [],
   followed_forum_posts: [],
   followers: [],
@@ -18,7 +18,7 @@ export const user: LAFka.User = {
 export const post: LAFka.Post = {
   type: "forum",
   id: "1",
-  created_at: new Date(),
+  created_at: new Date().toISOString(),
   comments: [],
   content: "Hello!",
   creator_id: user.id,
@@ -44,5 +44,12 @@ export const organization: LAFka.Organization = {
     ["1", LAFkaRights.Constants.Organizations.DEFAULT.toString()],
     ["2", LAFkaRights.Constants.Organizations.AVAILABLE.toString()],
     ["3", 0n.toString()],
-  ])
+  ]),
+  name: "",
+  description: "",
+  email: "",
+  logo: "",
+  banner: "",
+  posts: [],
+  links: []
 };

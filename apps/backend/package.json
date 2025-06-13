@@ -1,10 +1,20 @@
 {
   "name": "backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Backend for LAFka",
+  "author": {
+    "name": "Lazy-And-Focused",
+    "url": "https://laf-info.netlify.app/"
+  },
+  "contributors": [
+    {
+      "name": "FOCKUSTY",
+      "email": "viserd.yt@gmail.com",
+      "url": "http://fockusty.netlify.app/"
+    }
+  ],
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

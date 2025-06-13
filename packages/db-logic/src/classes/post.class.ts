@@ -17,7 +17,6 @@ class Post implements LAFka.LazyPost {
     this.data = {
       id: "",
       created_at: data.created_at || new Date().toISOString(),
-      changed_at: data.changed_at || undefined,
 
       content: data.content,
       creator_id: data.creator_id,

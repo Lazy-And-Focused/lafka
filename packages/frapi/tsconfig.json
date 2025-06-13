@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2024",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+  },
+  "include": ["."],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+}
