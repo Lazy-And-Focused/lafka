@@ -41,13 +41,10 @@ class User<T extends boolean = false> implements LAFka.User {
       following: data.following || [],
       forum_posts: data.forum_posts || [],
       links: data.links || [],
-      avatar: data.avatar || undefined,
+      avatar: data.avatar || "",
       nickname: data.nickname || undefined,
-      biography: data.biography || undefined,
-      rights: data.rights || {
-        me: `${Rights.Raw.Default.ME}`,
-        users: []
-      },
+      biography: data.biography || "",
+      rights: Rights.Constants.RIGHTS.RAW.DEFAULT.My.toString()
     };
   }
 
@@ -193,7 +190,7 @@ class User<T extends boolean = false> implements LAFka.User {
     return this.data.following;
   }
 
-  public get rights(): Rights.Raw.Rights["user"] {
+  public get rights(): string {
     return this.data.rights;
   }
 

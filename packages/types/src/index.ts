@@ -18,7 +18,6 @@ export namespace LAFka {
     "created_at",
     "type"
   ] as const;
-  export const S_AUTH_USER_KEYS: readonly string[] = AUTH_USER_KEYS;
   export interface AuthUser {
     id: string;
     profile_id: string;
@@ -50,7 +49,6 @@ export namespace LAFka {
     "following",
     "rights"
   ] as const;
-  export const S_USER_KEYS: readonly string[] = USER_KEYS;
   export interface User {
     id: string;
 
@@ -72,7 +70,8 @@ export namespace LAFka {
     followers: string[];
     following: string[];
 
-    rights: Rights.Raw.Rights["user"];
+    /* bigint */
+    rights: string;
   }
 
 
@@ -88,7 +87,6 @@ export namespace LAFka {
     "post_id",
     "reply"
   ] as const;
-  export const S_COMMENT_KEYS: readonly string[] = COMMENT_KEYS;
   export interface Comment {
     id: string;
   
@@ -109,6 +107,7 @@ export namespace LAFka {
 
   export const BLOG_POST_KEYS = ["likes", "dislikes", "reposts"] as const;
   export const FORUM_POST_KEYS = ["tags", "status"] as const;
+
   export const POST_KEYS = [
     "id",
     "name",
@@ -123,10 +122,42 @@ export namespace LAFka {
     "type",
     "view_status"
   ] as const;
+
   export const POST_TYPES = ["forum", "blog"] as const;
-  export const S_POST_KEYS: readonly string[] = POST_KEYS;
-  export const S_POST_TYPES: readonly string[] = POST_TYPES;
   export type PostTypes = (typeof POST_TYPES)[number];
+  export const VIEW_STAUTS = ["open", "limited", "link"] as const;
+  export type ViewStatus = (typeof VIEW_STAUTS)[number];
+  
+  export type LazyPost = {
+    id: string;
+
+    name: string;
+    content: string;
+    description?: string;
+    comments: string[];
+    followers: number;
+
+    /** ISO date-format */
+    created_at: string;
+    /** ISO date-format */
+    changed_at?: string;
+
+    creator_id: string;
+
+    status: ViewStatus;
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
+    
+    /** forum */
+    tags: Tag[];
+
+    /** blog */
+    likes: number;
+    dislikes: number;
+    reposts: number;
+
+    type: "blog"|"forum";
+  };
 
   export type Post = {
     id: string;
@@ -142,54 +173,24 @@ export namespace LAFka {
 
     creator_id: string;
 
-    view_status: 0 | 1;
-    rights: Rights.Raw.Rights["content"]["posts"]
+    status: ViewStatus;
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
   } & ({
+    /** forum */
     tags: Tag[];
-    status: PostStatus;
 
     type: "forum"
   } | {
+    /** blog */
     likes: number;
+    /** blog */
     dislikes: number;
+    /** blog */
     reposts: number;
 
     type: "blog"
   });
-
-  export interface LazyPost {
-    id: string;
-
-    name: string;
-    content: string;
-    description?: string;
-    comments: string[];
-    followers: number;
-
-    created_at: string;
-    changed_at?: string;
-
-    creator_id: string;
-
-    type: PostTypes;
-    view_status: 0 | 1;
-
-    // ForumPost
-    
-    /** forum */
-    tags: Tag[];
-    /** forum */
-    status: PostStatus;
-
-    // BlogPost
-
-    /** blog */
-    likes: number;
-    /** blog */
-    dislikes: number;
-    /** blog */
-    reposts: number;
-  }
 
 
   // Organizations types & constants
@@ -223,7 +224,8 @@ export namespace LAFka {
 
     links: Link[];
 
-    rights: Rights.Raw.Rights["content"]["organizations"];
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
   }
 
 

@@ -1,4 +1,4 @@
-import { LAFka } from "@lafka/types";
+import type { LAFka } from "@lafka/types";
 
 // type CreateCommentType = Pick<LAFka.Comment, "author_id" | "post_id" | "content">;
 type CreatePostType = Pick<LAFka.Post, "content" | "name" | "type">

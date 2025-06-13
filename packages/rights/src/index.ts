@@ -1,104 +1,97 @@
 import { LAFka, Rights as LAFkaRights } from "@lafka/types";
-import { ArrayOrType } from "./types";
 
-import { BitField } from "./bit-field";
-export * from "./bit-field";
+type MustArray<T, K=T> = [T, ...K[]];
+type ArrayOrType<T> = MustArray<T> | T;
 
 export namespace Rights {
   export class UserService {
-    public constructor(private readonly user: LAFka.User) {};
+    public constructor(public readonly user: LAFka.User) {};
 
-    /**
-     * ```ts
-     * const fockusty = await LAFka.API.getUser("@fockusty");
-     * new Rights.UserService(fockusty).has({
-     *  right: "me",
-     *  rights: ["ADMINISTATOR"]
-     * });
-     * ```
-     * 
-     * @param right "me" or "users"
-     * @param rights rights of user if `rights` === "me", if `rights` === "users" 
-     * { [userId: string]: (keyof LAFkaRights.Default.UserRights["USERS"])[] }
-     * @returns {boolean}
-     */
     public has = <
-      T extends (keyof LAFkaRights.Lazy.Rights["user"]),
-      K extends T extends "me"
-        ? ArrayOrType<keyof (LAFkaRights.Lazy.Rights["user"]["me"])>
-        : { [key: string]: ArrayOrType<keyof (LAFkaRights.Lazy.Rights["user"]["users"][keyof LAFkaRights.Lazy.Rights["user"]["users"]])> }
-    >({
-      right,
-      rights
-    }: {
-      right: T,
-      rights: K
-    }): T extends "me" ? boolean : { [P in keyof K]: boolean } => {
-      if (typeof rights === "object" && !Array.isArray(rights) && Object.keys(rights).length === 0) return {} as any;
+      T extends ArrayOrType<keyof LAFkaRights.Types.My>,
+    >(rights: T): boolean => {
+      const r = LAFkaRights.Parser.toBigIntFromArray("My", Array.isArray(rights) ? rights : [rights]);
 
-      if (right === "me") {
-        const r = Array.isArray(rights)
-          ? LAFkaRights.Parser.toBigIntFromArray("user", "me", rights)
-          : LAFkaRights.Parser.toBigInt("user", "me", rights as any);
+      return (BigInt(this.user.rights) & r) === r;
+    }
 
-        return new BitField(this.user.rights.me).has(r) as T extends "me" ? boolean : { [P in keyof K]: boolean };
-      } else if (right === "users") {
-        return Object.fromEntries(Object.keys(rights).map(k => {
-          const r = Array.isArray((rights as any)[k])
-            ? LAFkaRights.Parser.toBigIntFromArray("user", "users", (rights as any)[k])
-            : LAFkaRights.Parser.toBigInt("user", "users", rights as any);
+    public hasPostRights(post: LAFka.Post) {
+      return new PostService(post).userHas(this.user.id);
+    };
 
-          return [k, new BitField(Object.fromEntries(this.user.rights.users)[k] || LAFkaRights.Raw.Default.USERS).has(r)];
-        })) as T extends "me" ? boolean : { [P in keyof K]: boolean };
-      }
-
-      return false as any;
+    public hasOrganizationRights(organization: LAFka.Organization) {
+      return new OrganizationService(organization).userHas(this.user.id);
     }
   }
 
-  
   export class PostService {
     public constructor(private readonly post: LAFka.Post) {};
 
-    /**
-     * ```ts
-     * import { Rights } from "@lafka/rights";
-     * 
-     * // import { LAFka, Rights as LAFkaRights } from "@lafka/types";
-     * // const post: LAFka.Post;
-     * // const fockusty: LAFka.User;
-     * 
-     * new Rights.PostService(post).has({
-     *   rights: "VIEW",
-     *   userId: fockusty.id
-     * });
-     *
-     * new Rights.PostService(post).has({
-     *   rights: ["VIEW", "REACT", "COMMENTS_READ"],
-     *   userId: "4"
-     * });
-     * ```
-     * 
-     * @param rights Post rights (`LAFkaRights.Keys.Posts`)
-     * @param userId id of user
-     * @returns {boolean}
-     */
-    public readonly has = <
-      T extends ArrayOrType<LAFkaRights.Keys.Posts>
-    >({
-      rights,
-      userId
-    }: {
-      rights: ArrayOrType<T>,
-      userId: string
-    }): boolean => {
-      if (this.post.creator_id === userId) return true;
+    public readonly hasRights = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
+    >(rights: T): ((userId: string) => boolean) => {
+      const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
+      return (userId: string) => {
+        if (this.post.creator_id === userId) return true;
 
-      const r = Array.isArray(rights)
-        ? LAFkaRights.Parser.toBigIntFromArray("content", "posts", rights as any)
-        : LAFkaRights.Parser.toBigInt("content", "posts", rights);
+        return (BigInt(this.post.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
+      };
+    };
 
-      return new BitField(Object.fromEntries(this.post.rights)[userId] || LAFkaRights.Raw.Default.POSTS).has(r);
+    public readonly userHas = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
+    >(userId: string): ((rights: T) => boolean) => {
+      return (rights: T) => {
+        if (this.post.creator_id === userId) return true;
+        
+        const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
+        return (BigInt(this.post.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
+      };
     }
+
+    public readonly has = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
+    >({ rights, userId }: { rights: T, userId: string }): boolean => {
+      if (this.post.creator_id === userId) return true;
+      return this.hasRights(rights)(userId);
+    };
+  }
+
+  export class OrganizationService {
+    public constructor(public readonly organization: LAFka.Organization) {};
+
+    public readonly hasRights = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
+    >(rights: T): ((userId: string) => boolean) => {
+      const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
+
+      return (userId: string) => {
+        if (this.organization.owner_id === userId) return true;
+        return ((this.organization.members.includes(userId)
+          ? BigInt(this.organization.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
+          : LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations) & r) === r;
+      };
+    };
+
+    public readonly userHas = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
+    >(userId: string): ((rights: T) => boolean) => {
+      return (rights: T) => {
+        if (this.organization.owner_id === userId) return true;
+
+        const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
+        return ((this.organization.members.includes(userId)
+          ? BigInt(this.organization.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
+          : LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations) & r) === r;
+      };
+    }
+
+    public readonly has = <
+      T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
+    >({ rights, userId }: { rights: T, userId: string}): boolean => {
+      if (this.organization.owner_id === userId) return true;
+      
+      return this.hasRights(rights)(userId);
+    };
   }
 }
