@@ -26,13 +26,12 @@ export const post: LAFka.Post = {
   name: "First post",
   status: "open",
   tags: [],
-  view_status: 1,
-  rights: [
+  rights: new Map<string, string>([
     ["1", LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts.toString()],
     ["4", LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts.toString()],
     ["2", LAFkaRights.Constants.RIGHTS.RAW.AVAILABLE.Posts.toString()],
     ["3", 0n.toString()]
-  ]
+  ])
 };
 
 export const organization: LAFka.Organization = {
@@ -40,10 +39,10 @@ export const organization: LAFka.Organization = {
   id: "1",
   members: ["1", "2", "3"],
   owner_id: user.id,
-  rights: [
+  rights: new Map<string, string>([
     ["4", LAFkaRights.Constants.Organizations.DEFAULT.toString()],
     ["1", LAFkaRights.Constants.Organizations.DEFAULT.toString()],
     ["2", LAFkaRights.Constants.Organizations.AVAILABLE.toString()],
     ["3", 0n.toString()],
-  ]
+  ])
 };

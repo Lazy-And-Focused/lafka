@@ -222,7 +222,7 @@ export namespace Rights {
       export const DEFAULT: Types.Organizations = new Builder(Organizations.ALL).execute(Posts.AVAILABLE, Organizations.EXCLUDE);
     }
 
-        export const AVAILABLE = {
+    export const AVAILABLE = {
       My: My.AVAILABLE,
       Posts: Posts.AVAILABLE,
       Organizations: Organizations.AVAILABLE

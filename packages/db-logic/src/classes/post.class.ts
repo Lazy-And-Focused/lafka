@@ -16,7 +16,8 @@ class Post implements LAFka.LazyPost {
   public constructor(data: Constructors.posts) {
     this.data = {
       id: "",
-      created_at: data.created_at || new Date(),
+      created_at: data.created_at || new Date().toISOString(),
+      changed_at: data.changed_at || undefined,
 
       content: data.content,
       creator_id: data.creator_id,
@@ -29,11 +30,12 @@ class Post implements LAFka.LazyPost {
 
       followers: data.followers || 0,
       comments: data.comments || [],
+      description: data.description || "",
 
-      view_status: data.view_status || 1,
-
+      status: data.status || "open",
       tags: data.tags || [],
-      status: data.status || "open"
+
+      rights: data.rights || new Map<string, string>()
     };
   }
 
@@ -90,7 +92,7 @@ class Post implements LAFka.LazyPost {
     });
   };
 
-  public addLikes = async (likes: number) => {
+  public readonly addLikes = async (likes: number) => {
     if (this.data.type != "blog") return "this is a forum posts";
 
     this.data.likes += likes;
@@ -101,7 +103,7 @@ class Post implements LAFka.LazyPost {
     });
   };
 
-  public addDislikes = async (dislikes: number) => {
+  public readonly addDislikes = async (dislikes: number) => {
     if (this.data.type != "blog") return "this is a forum posts";
 
     this.data.dislikes += dislikes;
@@ -112,7 +114,7 @@ class Post implements LAFka.LazyPost {
     });
   };
 
-  public addReposts = async (reposts: number) => {
+  public readonly addReposts = async (reposts: number) => {
     if (this.data.type != "blog") return "this is a forum posts";
 
     this.data.reposts += reposts;
@@ -122,6 +124,10 @@ class Post implements LAFka.LazyPost {
       update: { reposts: this.data.reposts }
     });
   };
+
+  public addRights(userId: string, rights: string) {
+    return this.data.rights.set(userId, rights);
+  }
 
   public set name(data: string) {
     this.changed();
@@ -145,6 +151,10 @@ class Post implements LAFka.LazyPost {
     this.data.followers = followers;
   }
 
+  public set rights(rights: Map<string, string>) {
+    rights.forEach((value, key) => this.data.rights.set(key, value));
+  };
+
   public get id(): string {
     return this.data.id;
   }
@@ -161,8 +171,8 @@ class Post implements LAFka.LazyPost {
     return this.data.creator_id;
   }
 
-  public get view_status() {
-    return this.data.view_status;
+  public get status() {
+    return this.data.status;
   }
 
   public get name(): string {
@@ -185,11 +195,11 @@ class Post implements LAFka.LazyPost {
     return this.data.followers;
   }
 
-  public get createdAt(): Date {
+  public get createdAt(): string {
     return this.data.created_at;
   }
 
-  public get changedAt(): Date | undefined {
+  public get changedAt(): string | undefined {
     return this.data.changed_at;
   }
 
@@ -221,11 +231,9 @@ class Post implements LAFka.LazyPost {
     return this.data.tags;
   }
 
-  public get status(): LAFka.PostStatus {
-    if (this.data.type !== "forum") return "blocked";
-
-    return this.data.status;
-  }
+  public get rights(): Map<string, string> {
+    return this.data.rights;
+  };
 
   private readonly paste = (
     data: CreateData<LAFka.LazyPost> & { id?: string },
@@ -242,7 +250,7 @@ class Post implements LAFka.LazyPost {
   };
 
   private readonly changed = () => {
-    this.data.changed_at = new Date();
+    this.data.changed_at = new Date().toISOString();
   };
 
   private readonly addComments = async (comments: string[]) => {

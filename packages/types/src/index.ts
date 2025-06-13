@@ -107,7 +107,7 @@ export namespace LAFka {
 
   export const BLOG_POST_KEYS = ["likes", "dislikes", "reposts"] as const;
   export const FORUM_POST_KEYS = ["tags", "status"] as const;
-
+  
   export const POST_KEYS = [
     "id",
     "name",
@@ -121,8 +121,43 @@ export namespace LAFka {
     "type",
     "view_status"
   ] as const;
-  export const POST_TYPES = ["forum", "blog"] as const
+  export const POST_TYPES = ["forum", "blog"] as const;
   export type PostTypes = (typeof POST_TYPES)[number];
+  export const VIEW_STAUTS = ["open", "limited", "link"] as const;
+  export type ViewStatus = (typeof VIEW_STAUTS)[number];
+  
+  export type LazyPost = {
+    id: string;
+
+    name: string;
+    content: string;
+    description?: string;
+    comments: string[];
+    followers: number;
+
+    /** ISO date-format */
+    created_at: string;
+    /** ISO date-format */
+    changed_at?: string;
+
+    creator_id: string;
+
+    status: ViewStatus;
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
+    
+    /** forum */
+    tags: Tag[];
+
+    /** blog */
+    likes: number;
+    /** blog */
+    dislikes: number;
+    /** blog */
+    reposts: number;
+
+    type: "blog"|"forum";
+  };
 
   export type Post = {
     id: string;
@@ -138,14 +173,12 @@ export namespace LAFka {
 
     creator_id: string;
 
-    view_status: 0 | 1;
+    status: ViewStatus;
     /* key: string, value: bigint */
-    rights: [string, string][]
+    rights: Map<string, string>;
   } & ({
     /** forum */
     tags: Tag[];
-    /** forum */
-    status: PostStatus;
 
     type: "forum"
   } | {
@@ -171,7 +204,7 @@ export namespace LAFka {
     members: string[];
 
     /* key: string, value: bigint */
-    rights: [string, string][]
+    rights: Map<string, string>;
   }
 
 
