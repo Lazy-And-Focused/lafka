@@ -31,25 +31,21 @@ export namespace Rights {
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
     >(rights: T): ((userId: string) => boolean) => {
       const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
-      const postRights: {[userId: string]: string} = Object.fromEntries(this.post.rights);
-
       return (userId: string) => {
         if (this.post.creator_id === userId) return true;
 
-        return (BigInt(postRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
+        return (BigInt(this.post.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
       };
     };
 
     public readonly userHas = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Posts>
     >(userId: string): ((rights: T) => boolean) => {
-      const postRights: {[userId: string]: string} = Object.fromEntries(this.post.rights);
-      
       return (rights: T) => {
         if (this.post.creator_id === userId) return true;
         
         const r = LAFkaRights.Parser.toBigIntFromArray("Posts", Array.isArray(rights) ? rights : [rights]);
-        return (BigInt(postRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
+        return (BigInt(this.post.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts) & r) === r;
       };
     }
 
@@ -68,12 +64,11 @@ export namespace Rights {
       T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
     >(rights: T): ((userId: string) => boolean) => {
       const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
-      const organizationRights: {[userId: string]: string} = Object.fromEntries(this.organization.rights);
 
       return (userId: string) => {
         if (this.organization.owner_id === userId) return true;
         return ((this.organization.members.includes(userId)
-          ? BigInt(organizationRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
+          ? BigInt(this.organization.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
           : LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations) & r) === r;
       };
     };
@@ -81,14 +76,12 @@ export namespace Rights {
     public readonly userHas = <
       T extends ArrayOrType<keyof LAFkaRights.Types.Organizations>
     >(userId: string): ((rights: T) => boolean) => {
-      const organizationRights: {[userId: string]: string} = Object.fromEntries(this.organization.rights);
-      
       return (rights: T) => {
         if (this.organization.owner_id === userId) return true;
 
         const r = LAFkaRights.Parser.toBigIntFromArray("Organizations", Array.isArray(rights) ? rights : [rights]);
         return ((this.organization.members.includes(userId)
-          ? BigInt(organizationRights[userId] || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
+          ? BigInt(this.organization.rights.get(userId) || LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations)
           : LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Organizations) & r) === r;
       };
     }
