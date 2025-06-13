@@ -44,7 +44,7 @@ class User<T extends boolean = false> implements LAFka.User {
       avatar: data.avatar || "",
       nickname: data.nickname || undefined,
       biography: data.biography || "",
-      rights: Rights.Constants.RIGHTS.RAW.AVAILABLE.My.toString()
+      rights: Rights.Constants.RIGHTS.RAW.DEFAULT.My.toString()
     };
   }
 
