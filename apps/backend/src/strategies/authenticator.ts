@@ -39,7 +39,7 @@ class Authenticator {
     }
   };
 
-  protected verify<Done extends (...data: any) => void = VerifyCallback>(type: AuthTypes) {
+  protected verify<Done extends (...data: unknown[]) => void = VerifyCallback>(type: AuthTypes) {
     return async (access_token: string, refresh_token: string, profile: Profile, done: Done) => {
       try {
         const { id } = profile;

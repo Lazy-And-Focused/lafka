@@ -92,7 +92,7 @@ export class UsersController {
     @Query("returnUser") returnUser?: string,
     @Query("cache") cache?: string
   ): Promise<LAFka.Response.ChangeData<LAFka.User>> {
-    const date = new Date();
+    const date = new Date().toISOString();
 
     const id = UsersService.formatGetData<true>(identifier, true);
     if (id instanceof Error)
@@ -141,7 +141,7 @@ export class UsersController {
     @Param("identifier") identifier: string,
     @Query("returnUser") returnUser?: string
   ): Promise<LAFka.Response.DeleteData<LAFka.User>> {
-    const date = new Date();
+    const date = new Date().toISOString();
 
     const id = UsersService.formatGetData<true>(identifier, true);
     if (id instanceof Error)

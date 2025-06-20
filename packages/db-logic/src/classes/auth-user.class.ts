@@ -28,7 +28,7 @@ class AuthUser implements LAFka.AuthUser {
   public constructor(data: Constructors.auth_users) {
     this.data = {
       id: "",
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
       ...data
     };
 
@@ -129,7 +129,7 @@ class AuthUser implements LAFka.AuthUser {
     return this.data.service_id;
   }
 
-  public get created_at(): Date {
+  public get created_at(): string {
     return this.data.created_at;
   }
 

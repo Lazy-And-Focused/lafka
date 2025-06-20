@@ -31,7 +31,7 @@ class Hash {
   }
 
   public static parse(token: string | Request): ParseReturnType {
-    if (typeof token !== "string" && !!token.headers.token)
+    if (typeof token !== "string" && !token.headers.token)
       return PARSE_ERROR;
  
     const [id, profile_id, hash] =

@@ -24,7 +24,7 @@ export namespace LAFka {
     service_id: string;
     access_token: string;
     refresh_token?: string;
-    created_at: Date;
+    created_at: string;
     type: AuthTypes;
   };
   
@@ -59,7 +59,7 @@ export namespace LAFka {
     biography?: string;
     links: Link[];
 
-    created_at: Date;
+    created_at: string;
 
     forum_posts: string[];
     blog_posts: string[];
@@ -70,7 +70,8 @@ export namespace LAFka {
     followers: string[];
     following: string[];
 
-    rights: Rights.Raw.Rights["user"];
+    /* bigint */
+    rights: string;
   }
 
 
@@ -91,8 +92,8 @@ export namespace LAFka {
   
     content: string;
   
-    created_at: Date;
-    changed_at?: Date;
+    created_at: string;
+    changed_at?: string;
   
     author_id: string;
     post_id: string;
@@ -117,11 +118,46 @@ export namespace LAFka {
     "created_at",
     "changed_at",
     "creator_id",
+    "rights",
     "type",
     "view_status"
   ] as const;
-  export const POST_TYPES = ["forum", "blog"] as const
+
+  export const POST_TYPES = ["forum", "blog"] as const;
   export type PostTypes = (typeof POST_TYPES)[number];
+  export const VIEW_STAUTS = ["open", "limited", "link"] as const;
+  export type ViewStatus = (typeof VIEW_STAUTS)[number];
+  
+  export type LazyPost = {
+    id: string;
+
+    name: string;
+    content: string;
+    description?: string;
+    comments: string[];
+    followers: number;
+
+    /** ISO date-format */
+    created_at: string;
+    /** ISO date-format */
+    changed_at?: string;
+
+    creator_id: string;
+
+    status: ViewStatus;
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
+    
+    /** forum */
+    tags: Tag[];
+
+    /** blog */
+    likes: number;
+    dislikes: number;
+    reposts: number;
+
+    type: "blog"|"forum";
+  };
 
   export type Post = {
     id: string;
@@ -132,18 +168,17 @@ export namespace LAFka {
     comments: string[];
     followers: number;
 
-    created_at: Date;
-    changed_at?: Date;
+    created_at: string;
+    changed_at?: string;
 
     creator_id: string;
 
-    view_status: 0 | 1;
-    rights: Rights.Raw.Rights["content"]["posts"]
+    status: ViewStatus;
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
   } & ({
     /** forum */
     tags: Tag[];
-    /** forum */
-    status: PostStatus;
 
     type: "forum"
   } | {
@@ -157,52 +192,40 @@ export namespace LAFka {
     type: "blog"
   });
 
-  export interface LazyPost {
-    id: string;
-
-    name: string;
-    content: string;
-    description?: string;
-    comments: string[];
-    followers: number;
-
-    created_at: Date;
-    changed_at?: Date;
-
-    creator_id: string;
-
-    type: PostTypes;
-    view_status: 0 | 1;
-
-    // ForumPost
-    
-    /** forum */
-    tags: Tag[];
-    /** forum */
-    status: PostStatus;
-
-    // BlogPost
-
-    /** blog */
-    likes: number;
-    /** blog */
-    dislikes: number;
-    /** blog */
-    reposts: number;
-  }
-
 
   // Organizations types & constants
 
 
+  export const ORGANIZATION_KEYS = [
+    "id",
+    "owner_id",
+    "creator_id",
+    "members",
+    "posts",
+    "rights"
+  ] as const;
+  export const S_ORGANIZATION_KEYS: readonly string[] = ORGANIZATION_KEYS;
+  export type OrganizationKeys = (typeof ORGANIZATION_KEYS)[number];
+
   export interface Organization {
     id: string;
+    
+    name: string;
+    description: string;
+    email: string;
+
+    logo: string;
+    banner: string;
     
     owner_id: string;
     creator_id: string;
     members: string[];
+    posts: string[];
 
-    rights: Rights.Raw.Rights["content"]["organizations"]
+    links: Link[];
+
+    /* key: string, value: bigint */
+    rights: Map<string, string>;
   }
 
 
@@ -223,6 +246,7 @@ export namespace LAFka {
     "Programming",
     "Social",
   ] as const;
+  export const S_TAGS: readonly string[] = TAGS;
   export type LazyTags = string;
   export type Tags = (typeof TAGS)[number];
   
@@ -269,7 +293,7 @@ export namespace LAFka.Response {
   
   export type CreateData<T> = {
     type: DataType;
-    date: Date;
+    date: string;
   } & ({
     successed: true;
     created_resource: T;
@@ -282,7 +306,7 @@ export namespace LAFka.Response {
   
   export type ChangeDataSuccessed<T> = {
     type: DataType;
-    date: Date;
+    date: string;
     successed: true;
     error: null;
   } & ({
@@ -295,7 +319,7 @@ export namespace LAFka.Response {
   
   export type ChangeData<T> = {
     type: DataType;
-    date: Date;
+    date: string;
   } & ({
     successed: false;
     changed_resource: null;
@@ -306,7 +330,7 @@ export namespace LAFka.Response {
     type: DataType;
     successed: boolean;
     error: null;
-    date: Date;
+    date: string;
   } & ({
     deleted_resource_type: "delete";
     deleted_resource: DeleteResult;
@@ -317,7 +341,7 @@ export namespace LAFka.Response {
 
   export type DeleteData<T> = {
     type: DataType;
-    date: Date;
+    date: string;
   } & ({
     successed: false;
     deleted_resource: null;

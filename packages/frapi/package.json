@@ -1,7 +1,7 @@
 {
-  "name": "@lafka/types",
+  "name": "@lafka/frapi",
   "version": "0.0.1",
-  "description": "types for lafka",
+  "description": "rest api utils for lafka",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "files": [
@@ -11,7 +11,10 @@
     "build": "tsc & tsc-alias"
   },
   "keywords": [
-    "types"
+    "rest api",
+    "api",
+    "lafka",
+    "utils"
   ],
   "author": {
     "name": "Lazy-And-Focused",
@@ -26,9 +29,9 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@lafka/types": "workspace:^",
     "tsc-alias": "catalog:",
     "typescript": "catalog:",
-    "@types/node": "catalog:",
-    "mongoose": "catalog:"
+    "@types/node": "catalog:"
   }
 }

@@ -10,8 +10,8 @@ const schema = new Schema<LAFka.Comment>({
 
   content: { type: SchemaTypes.String, required: true },
 
-  created_at: { type: SchemaTypes.Date, required: true },
-  changed_at: { type: SchemaTypes.Date, required: false },
+  created_at: { type: SchemaTypes.String, required: true },
+  changed_at: { type: SchemaTypes.String, required: false },
 
   author_id: { type: SchemaTypes.String, required: true },
   post_id: { type: SchemaTypes.String, required: true },

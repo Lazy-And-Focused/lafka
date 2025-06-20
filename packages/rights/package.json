@@ -11,7 +11,7 @@
     "dev": "nodemon src/rights.service.ts",
     "start": "pnpm run build && node dist/rights.service.js",
     "build": "tsc && tsc-alias",
-    "test": "nodemon test/index.ts"
+    "test": "ts-mocha --paths ./test/**/*.spec.ts"
   },
   "keywords": [
     "rights",
@@ -32,8 +32,12 @@
   "license": "MIT",
   "devDependencies": {
     "@lafka/types": "workspace:^",
-    
+    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
+    
+    "expect": "catalog:",
+    "mocha": "catalog:",
+    "ts-mocha": "catalog:",
     "nodemon": "catalog:",
     "ts-node": "catalog:",
     "tsc-alias": "catalog:",

@@ -1,6 +1,7 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
 import type { LAFka } from "lafka/types";
+import { Rights } from "lafka/types";
 import { Link } from "./link.utility-schema";
 
 const schema = new Schema<LAFka.User>({
@@ -11,30 +12,35 @@ const schema = new Schema<LAFka.User>({
   },
 
   username: { type: SchemaTypes.String, required: true, unique: true },
-  nickname: { type: SchemaTypes.String, required: false, unique: false },
+  nickname: { type: SchemaTypes.String, required: false, unique: false, default: undefined },
 
-  avatar: { type: SchemaTypes.String, required: false, unique: false },
-  biography: { type: SchemaTypes.String, required: false, unique: false },
+  avatar: { type: SchemaTypes.String, required: false, unique: false, default: "" },
+  biography: { type: SchemaTypes.String, required: false, unique: false, default: "" },
 
-  created_at: { type: SchemaTypes.Date, required: true, unique: false },
+  created_at: { type: SchemaTypes.String, required: true, unique: false },
 
-  blocked_posts: [{ type: SchemaTypes.String, ref: "posts" }],
+  blocked_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
 
-  blog_posts: [{ type: SchemaTypes.String, ref: "posts" }],
-  forum_posts: [{ type: SchemaTypes.String, ref: "posts" }],
+  blog_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
+  forum_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
 
-  followed_blog_posts: [{ type: SchemaTypes.String, ref: "posts" }],
-  followed_forum_posts: [{ type: SchemaTypes.String, ref: "posts" }],
+  followed_blog_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
+  followed_forum_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
 
-  followers: [{ type: SchemaTypes.String, ref: "users" }],
-  following: [{ type: SchemaTypes.String, ref: "users" }],
+  followers: { type: [SchemaTypes.String], ref: "users", default: [] },
+  following: { type: [SchemaTypes.String], ref: "users", default: [] },
 
-  links: [Link],
+  links: {
+    type: [Link],
+    unique: false,
+    default: []
+  },
 
-  rights: { type: {
-    me: SchemaTypes.String,
-    users: SchemaTypes.Array,
-  }, required: true, unique: false }
+  rights: {
+    type: SchemaTypes.String,
+    unique: false,
+    default: Rights.Constants.RIGHTS.RAW.AVAILABLE.My.toString()
+  }
 });
 
 const database = mongoose.model("users", schema);

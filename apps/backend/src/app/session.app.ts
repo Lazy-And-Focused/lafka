@@ -9,7 +9,7 @@ const api = new Api();
 
 class Session {
   private readonly _secret: string;
-  private readonly _app: INestApplication<any> | Express;
+  private readonly _app: INestApplication<unknown> | Express;
 
   private readonly _resave: boolean = false;
   private readonly _save_uninitialized: boolean = false;
@@ -21,7 +21,7 @@ class Session {
 
   constructor(
     secret: string,
-    app: INestApplication<any> | Express,
+    app: INestApplication<unknown> | Express,
     data?: {
       resave?: boolean;
       saveUninitialized?: boolean;

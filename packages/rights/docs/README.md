@@ -33,51 +33,58 @@ function hasPermission(bit) {
 - [Битовые поля Википедия](https://en.wikipedia.org/wiki/Bit_field)
 - [Битовые поля JavaScript](https://emergent.systems/posts/bit-fields/)
 
-## Для тех, кто будет работать косвенно (через API или другие системы)
-- Используйте `has`, чтобы проверить, имеются ли определенные права у пользователя
-- LazyRightsService
+## Для тех, кто будет работать косвенно (через API, библиотеку или другие системы)
+- Используйте `has`, чтобы проверить, имеются ли определенные права у пользователя с чем-либо
+- UserService
 ```js
-import { Rights } from "@lafka/types"
+import { Rights } from "@lafka/rights";
 
 (async() => {
-  const { rights } = await (await fetch(api_url, {headers})).json();
+  const { data: fockusty } = await (await fetch(api_url + "/users/", {headers})).json();
 
-  new LazyRightsService<"default">(rights.default).has({
-      key: "ME",
-      rights: ["ADMINISTRATOR"]
-  });
+  new Rights.UserService(fockusty).has({
+    right: "me",
+    rights: ["POSTS_CREATE"] // equalt rights: "POSTS_CREATE"
+  }); // boolean
 
-  new LazyRightsService<"posts">(rights.posts).has({
-      key: "some-user-id",
-      rights: ["DELETE"]
-  });
+  new Rights.UserService(fockusty).has({
+    right: "users",
+    rights: {
+      "123": ["MANAGE", "MODERATE", "READ"],
+      "321": ["READ"],
+      "666": "MODERATE",
+    }
+  }) // { "123": boolean, "321": boolean "666": boolean };
 })();
 ```
 
-- RightsService
+- PostService
 ```js
-import { Rights } from "@lafka/types";
+import { Rights } from "@lafka/rights";
 
 (async() => {
-  const { rights } = (await (await fetch(api_url, {headers})).json());
+  // const fockusty: LAFka.User;
 
-  new RightsService<"posts">(rights.posts).has({
-      key: "12345",
-          rights: [
-              Rights.Default.POSTS_RIGHTS.MANAGE,
-              Rights.Default.POSTS_RIGHTS.COMMENTS_READ,
-          ]
-  });
+  const { data: post } = (await (await fetch(api_url + "posts/" + myCoolPostId, {headers})).json());
 
-  new RightsService<"posts">(rights.posts).has({
-      key: "67890",
-      rights: Rights.Default.POSTS_RIGHTS.OWNER,
-  });
-  // is equals ⩚  |  is equals
-  // is equals |  ⩛  is equals
-  new RightsService<"posts">(rights.posts).hasOne({
-      key: "67890",
-      right: Rights.Default.POSTS_RIGHTS.OWNER,
-  });
+  new Rights.PostService(post).has({
+    rights: "VIEW",
+    userId: fockusty.id
+  }); // boolean
+
+  new Rights.PostService(post).has({
+    rights: "DELETE",
+    userId: fockusty.id
+  }); // boolean
+
+  new Rights.PostService(post).has({
+    rights: "OWNER",
+    userId: "2"
+  }); // boolean
+
+  new Rights.PostService(post).has({
+    rights: ["VIEW", "REACT", "COMMENTS_READ"],
+    userId: "4"
+  }); // boolean
 })()
 ```
