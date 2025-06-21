@@ -1,7 +1,7 @@
 import { LAFka } from "lafka/types";
 import { UpdateWriteOpResult } from "mongoose";
 import { DeleteResult } from "lafka/database/types/mongodb.types";
-import DB from "lafka/database";
+import Database from "lafka/database/index";
 
 import { Request } from "express";
 import {
@@ -108,7 +108,7 @@ export class UsersController {
 
     if (!successed)
       return { successed: false, error: "Hash parse error", date, changed_resource: null, type: "users" };
-    const user: Partial<LAFka.User> = DB.Database.parse(req.body, "users");
+    const user: Partial<LAFka.User> = Database.parse(req.body, "users");
 
     (async () => {
       const value = await api.getCache<LAFka.User>(`user-${id}`, this.cacheManager, cache);

@@ -49,11 +49,11 @@
     "passport-vkontakte": "^0.5.0",
     "passport-yandex": "^0.0.5",
     "reflect-metadata": "^0.2.0",
+    "@lafka/rights": "workspace:^",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
-    "@lafka/rights": "workspace:^",
     "@lafka/types": "workspace:^",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",

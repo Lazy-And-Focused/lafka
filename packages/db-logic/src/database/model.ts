@@ -7,7 +7,8 @@ import {
   UpdateOptions,
   Status as DatabaseStatus,
   Models,
-  PickTypeInObject
+  PickTypeInObject,
+  GetData
 } from "lafka/types/mongodb.types";
 
 import { Schemas } from "./schemas/index";
@@ -69,7 +70,7 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return await this._model.deleteOne({ ...filter });
   };
 
-  public getData = async (options: FindOptions<T>): Promise<DatabaseStatus<T[]>> => {
+  public getData = async (options: FindOptions<T>): Promise<DatabaseStatus<GetData<T>>> => {
     return await Helpers.getData<T>(this._model, options);
   };
 
