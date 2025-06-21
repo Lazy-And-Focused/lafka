@@ -3,6 +3,7 @@
         "target": "ES2024",
         "module": "CommonJS",
         "outDir": "./dist",
+        "rootDir": "./src",
         "removeComments": true,
         "declaration": true,
         "allowJs": true,
@@ -23,6 +24,6 @@
             ]
         }
     },
-    "include": [ "src", "test" ],
+    "include": [ "src", "src/test" ],
     "exclude": [ "node_modules", "dist" ]
 }
