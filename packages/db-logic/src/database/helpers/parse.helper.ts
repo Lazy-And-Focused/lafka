@@ -1,9 +1,8 @@
 import { Schemas } from "database/schemas";
-import { LAFka } from "lafka/types";
 
 const parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => {
   const output: { [key: string]: unknown } = {};
-  const keys = LAFka.Database.KEYS[type];
+  const keys = Schemas.keys[type];
   keys.forEach((k: string) => {
     output[k] = (data as { [key: string]: unknown })[k];
   });

@@ -1,5 +1,5 @@
-import { Classes } from "../classes";
 import { Schemas } from "./schemas";
+import Model from "./model";
 
 import type { PickCreateData, ModelData } from "lafka/types/mongodb.types";
 import { LAFka } from "lafka/types";
@@ -27,26 +27,31 @@ export namespace Constructors {
 }
 
 class Database {
-  private readonly _auth_users: Classes.DatabaseType<AuthUser, Partial<AuthUser>>;
-  private readonly _comments: Classes.DatabaseType<Comment>;
+  private readonly _auth_users: Model<AuthUser, Partial<AuthUser>>;
+  private readonly _comments: Model<Comment>;
 
-  private readonly _posts: Classes.DatabaseType<
+  private readonly _posts: Model<
     LAFka.LazyPost,
     Pick<LAFka.LazyPost, "content" | "creator_id" | "name" | "type">
   >;
 
-  private readonly _users: Classes.DatabaseType<User, Pick<User, "username">>;
-  private readonly _classes = Classes;
+  private readonly _users: Model<User, Pick<User, "username">>;
+  private readonly _keys = Schemas.keys;
+  private readonly _model = Model;
 
   public constructor() {
-    this._auth_users = new Classes.Database<AuthUser>(Schemas.databases.auth_users);
-    this._comments = new Classes.Database<Comment>(Schemas.databases.comments);
-    this._posts = new Classes.Database<LAFka.LazyPost>(Schemas.databases.posts);
-    this._users = new Classes.Database<User>(Schemas.databases.users);
+    this._auth_users = new Model<AuthUser>(Schemas.databases.auth_users);
+    this._comments = new Model<Comment>(Schemas.databases.comments);
+    this._posts = new Model<LAFka.LazyPost>(Schemas.databases.posts);
+    this._users = new Model<User>(Schemas.databases.users);
   }
 
-  public get classes() {
-    return this._classes;
+  public get model() {
+    return this._model;
+  }
+
+  public get keys() {
+    return this._keys;
   }
 
   public get auth_users() {
