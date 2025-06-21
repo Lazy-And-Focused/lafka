@@ -8,7 +8,7 @@ const DefaultUser: LAFka.User = {
   biography: "Hi! I'm tweek",
   blocked_posts: [],
   blog_posts: [],
-  created_at: new Date(),
+  created_at: new Date().toISOString(),
   followed_blog_posts: [],
   followed_forum_posts: [],
   followers: [],
@@ -18,10 +18,7 @@ const DefaultUser: LAFka.User = {
     { name: '1test', link: 'http://localhost:3000/' },
     { name: '2test', link: 'http://localhost:3001/' },
   ],
-  rights: {
-    me: '',
-    users: [],
-  },
+  rights: '',
 };
 
 export default DefaultUser;
