@@ -120,6 +120,9 @@ export namespace Rights {
       } as const
     } as const
   } as const;
+
+  export type Keys = keyof typeof CONSTANTS.object.available;
+  export type Rights<T extends Keys> = keyof typeof CONSTANTS.object.available[T]
 };
 
 const rights = Object.fromEntries(

@@ -1,6 +1,5 @@
 import { UpdateWriteOpResult, DeleteResult } from "mongoose";
 
-import { Rights } from "./rights/rights.types";
 export { Rights } from "./rights/rights.types";
 
 export namespace LAFka {
