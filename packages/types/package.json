@@ -8,7 +8,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc & tsc-alias"
+    "build": "pnpm run compile && tsc & tsc-alias",
+    "compile": "set NODE_ENV=rights_compile&& ts-node ./src/rights/rights.types.ts"
   },
   "keywords": [
     "types"
@@ -26,9 +27,12 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "tsc-alias": "catalog:",
-    "typescript": "catalog:",
     "@types/node": "catalog:",
-    "mongoose": "catalog:"
+    "mongoose": "catalog:",
+    "tsc-alias": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "fbit-field": "1.3.0-alpha.1a"
   }
 }
