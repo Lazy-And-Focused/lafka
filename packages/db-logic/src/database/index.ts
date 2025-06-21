@@ -3,6 +3,7 @@ import Model from "./model";
 
 import type { PickCreateData, ModelData } from "lafka/types/mongodb.types";
 import { LAFka } from "lafka/types";
+import { Helpers } from "./helpers";
 
 type AuthUser = LAFka.AuthUser;
 type Comment = LAFka.Comment;
@@ -39,6 +40,10 @@ class Database {
   private readonly _keys = Schemas.keys;
   private readonly _model = Model;
 
+  public readonly helpers = Helpers;
+
+  public static readonly parse = Helpers.parse;
+
   public constructor() {
     this._auth_users = new Model<AuthUser>(Schemas.databases.auth_users);
     this._comments = new Model<Comment>(Schemas.databases.comments);
@@ -70,5 +75,7 @@ class Database {
     return this._users;
   }
 }
+
+export { Database };
 
 export default Database;
