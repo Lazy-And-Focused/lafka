@@ -30,6 +30,7 @@
     "@types/node": "catalog:",
     "mongoose": "catalog:",
     "tsc-alias": "catalog:",
+    "ts-node": "catalog:",
     "typescript": "catalog:"
   },
   "dependencies": {
