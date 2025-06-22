@@ -45,26 +45,19 @@ export class UsersController {
     @Param("identifier") identifier: string,
     @Query("cache") cache?: string
   ): Promise<LAFka.Response.GetData<LAFka.User>> {
-    const formatted = UsersService.formatGetData<false>(identifier, false);
+    const slug = UsersService.lazyGetSlug(identifier);
 
-    if (formatted instanceof Error)
-      return { successed: false, error: formatted.message, resource: null, type: "users" };
-    const formattedIdentifier = UsersService.formatGettedData(formatted);
+    if (typeof slug !== "string")
+      return { ...slug, successed: false, resource: null };
+    
+    const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
+    const user = await cacheManager<[Partial<LAFka.User> | string]>({
+      key: `user-${slug}`,
+      getFunction: this.usersService.getUser,
+      data: [slug]
+    });
 
-    const value = await api.getCache<LAFka.User>(
-      `user-${formattedIdentifier}`,
-      this.cacheManager,
-      cache
-    );
-    if (value) return { successed: true, resource: value, error: null, type: "users" };
-
-    const user = await this.usersService.getUser(formatted);
-    this.cacheManager.set<LAFka.User>(`user-${formattedIdentifier}`, user.resource);
-
-    return {
-      ...user,
-      type: "users"
-    };
+    return user;
   }
 
   @Get(USERS_ROUTES.GET_ME)
@@ -73,16 +66,17 @@ export class UsersController {
     @Query("cache") cache?: string
   ): Promise<LAFka.Response.GetData<LAFka.User>> {
     const { successed, profile_id } = Hash.parse(req);
+    const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
 
     if (!successed) return { successed: false, error: "Hash parse error", resource: null, type: "users" };
 
-    const value = await api.getCache<LAFka.User>(`user-${profile_id}`, this.cacheManager, cache);
-    if (value) return { successed: true, error: null, resource: value, type: "users" };
+    const user = cacheManager<[Partial<LAFka.User> | string]>({
+      getFunction: this.usersService.getUser,
+      key: `user-${profile_id}`,
+      data: [profile_id]
+    });
 
-    const user = await this.usersService.getUser(profile_id);
-    this.cacheManager.set<LAFka.User>(`user-${profile_id}`, user.resource);
-
-    return { ...user, type: "users" };
+    return user;
   }
 
   @Put(USERS_ROUTES.PUT)
@@ -94,33 +88,33 @@ export class UsersController {
   ): Promise<LAFka.Response.ChangeData<LAFka.User>> {
     const date = new Date().toISOString();
 
-    const id = UsersService.formatGetData<true>(identifier, true);
-    if (id instanceof Error)
-      return {
-        successed: false,
-        error: id.message,
-        date,
-        changed_resource: null,
-        type: "users"
-      };
+    const slug = UsersService.lazyGetSlug(identifier);
+    if (typeof slug !== "string")
+      return { ...slug, successed: false, date, changed_resource: null };
 
     const { successed } = Hash.parse(req);
 
     if (!successed)
       return { successed: false, error: "Hash parse error", date, changed_resource: null, type: "users" };
     const user: Partial<LAFka.User> = Database.parse(req.body, "users");
+    const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
+
+    const data = await this.usersService.updateUser(slug, user, returnUser === "true");
 
     (async () => {
-      const value = await api.getCache<LAFka.User>(`user-${id}`, this.cacheManager, cache);
-      if (value) return value;
-
-      const { successed, resource } = await this.usersService.getUser(id);
-      if (successed) return resource;
-
-      return null;
-    })().then((u) => this.cacheManager.set(`user-${id}`, u));
-
-    const data = await this.usersService.updateUser(id, user, returnUser === "true");
+      if (returnUser === "true") {
+        this.cacheManager.set(`user-${slug}`, data.resource)
+      } else {
+        this.cacheManager.set(`user-${slug}`, {
+          ...cacheManager<[Partial<LAFka.User> | string]>({
+            key: `user-${slug}`,
+            getFunction: this.usersService.getUser,
+            data: [slug],
+          }),
+          ...user
+        });
+      };
+    })();
 
     if (!data.successed)
       return { successed: false, type: "users", error: data.error, date, changed_resource: null };
@@ -142,29 +136,24 @@ export class UsersController {
     @Query("returnUser") returnUser?: string
   ): Promise<LAFka.Response.DeleteData<LAFka.User>> {
     const date = new Date().toISOString();
+    const deleted_resource_type = returnUser === "true" ? "resource" : "delete"
 
-    const id = UsersService.formatGetData<true>(identifier, true);
-    if (id instanceof Error)
-      return {
-        successed: false,
-        error: id.message,
-        date,
-        deleted_resource: null,
-        type: "users"
-      };
+    const slug = UsersService.lazyGetSlug(identifier);
+    if (typeof slug !== "string")
+      return { ...slug, successed: false, date, deleted_resource: null };
 
     const { successed } = Hash.parse(req);
     if (!successed)
       return { successed: false, deleted_resource: null, date, error: "Hash parse error", type: "users" };
 
-    this.cacheManager.del(`user-${id}`);
+    this.cacheManager.del(`user-${slug}`);
 
-    const data = await this.usersService.deleteUser(id, returnUser === "true");
+    const data = await this.usersService.deleteUser(slug, returnUser === "true");
 
     return {
       successed: data.successed,
-      date,
-      deleted_resource_type: returnUser === "true" ? "resource" : "delete",
+      date, 
+      deleted_resource_type,
       type: "users",
       error: null,
       deleted_resource: data.resource as LAFka.User & DeleteResult

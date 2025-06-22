@@ -7,6 +7,8 @@ import type { LAFka } from "lafka/types";
 import type { ServiceResponse } from "lafka/types/service.types";
 import { DeleteResult } from "lafka/database/types/mongodb.types";
 
+import type { GetData } from "lafka/types/backend/data.types";
+
 const { users } = new Models();
 const keyGetSymbols = ["@"];
 const keyGetSymbolsMap = new Map<string, string>([
@@ -14,33 +16,63 @@ const keyGetSymbolsMap = new Map<string, string>([
   ["", "id"]
 ]);
 
-type Utility<T extends boolean = false> = T extends true
-  ? string | Error
-  : { "id": string } | { "username": string } | Error
+const ERROR_BAD_SLUG = `argument must be username (@username) or id (id)` as const;
 
 @Injectable()
 export class UsersService {
-  public static formatGetData<Lazy extends boolean = false>(
-    data: string,
-    format: Lazy
-  ): Lazy extends true
-      ? string | Error
-      : { "id": string } | { "username": string } | Error {
-    if (!keyGetSymbols.includes(data[0])) {
-      if (isNaN(+data[0]))
-        return new Error(`argument must be username (@username) or id (id)`);
+  public static getSlugType(slug: string): "id"|"username"|Error {
+    if (!keyGetSymbols.includes(slug[0])) {
+      if (isNaN(+slug[0])) {
+        return new Error(ERROR_BAD_SLUG);
+      };
 
-      return format
-        ? (data as Utility<Lazy>)
-        : ({ "id": data } as Utility<Lazy>);
+      return "id";
+    };
+
+    return keyGetSymbolsMap.get(slug[0]) as "username" | "id";
+  }
+
+  public static lazyGetSlug(slug: string): string | GetData<LAFka.User> {
+    if (!keyGetSymbols.includes(slug[0])) {
+      if (isNaN(+slug[0]))
+        return {
+          error: new Error(ERROR_BAD_SLUG),
+          successed: false,
+          type: "users",
+          resource: null
+        };
+
+      return slug;
     }
 
-    const type = keyGetSymbolsMap.get(data[0]) as "username" | "id";
-    if (!type) return new Error(`argument must be username (@username) or id (id)`);
+    const type = keyGetSymbolsMap.get(slug[0]) as "username" | "id";
+    if (!type) {
+      return {
+        successed: false,
+        resource: null,
+        error: new Error(ERROR_BAD_SLUG),
+        type: "users"
+      };
+    };
 
-    return format
-      ? (data.slice(1) as Utility<Lazy>)
-      : ({ [type]: data.slice(1) } as Utility<Lazy>);
+    return slug.slice(1);
+  }
+
+  public static getSlug(
+    slug: string
+  ): ({ "id": string } | { "username": string }) | GetData<LAFka.User> {
+    const slugType = UsersService.getSlugType(slug);
+
+    if (slugType instanceof Error) {
+      return {
+        successed: false,
+        resource: null,
+        error: slugType,
+        type: "users"
+      }
+    };
+
+    return { [slugType]: this.lazyGetSlug(slug) } as ({ "id": string } | { "username": string }) | GetData<LAFka.User>;
   }
 
   public static formatGettedData<Lazy extends boolean = false>(
