@@ -1,17 +1,11 @@
-import Image from 'next/image';
+import Avatar from './avatar';
 
 export default function Loading() {
   return (
     <div
       className={'flex animate-pulse flex-row items-center justify-end gap-5'}
     >
-      <Image
-        className='aspect-square h-8 w-8 rounded-full'
-        src={'/avatar.webp'}
-        alt={'Loading avatar'}
-        width='32'
-        height='32'
-      />
+      <Avatar user={{ avatar: '', username: 'inkognito' }} />
       Inkognito (Logging...)
     </div>
   );

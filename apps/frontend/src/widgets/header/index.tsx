@@ -5,9 +5,9 @@ import Link from 'next/link';
 
 import UserPanel from './user-panel';
 
-export default function Header(
-  props: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
-) {
+type Props = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+
+export default function Header(props: Props) {
   return (
     <header {...props}>
       <h1>
