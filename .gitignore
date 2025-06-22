@@ -3,6 +3,9 @@
 .vscode/
 .vs/
 
+# Locks
+pnpm-lock.yaml
+
 # Logs
 logs/
 npm-debug.log*
