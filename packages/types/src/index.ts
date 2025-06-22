@@ -1,6 +1,5 @@
 import { UpdateWriteOpResult, DeleteResult } from "mongoose";
 
-import { Rights } from "./rights/rights.types";
 export { Rights } from "./rights/rights.types";
 
 export namespace LAFka {
@@ -9,15 +8,6 @@ export namespace LAFka {
 
   export const AUTH_TYPES = ["google", "yandex"] as const;
   export type AuthTypes = (typeof AUTH_TYPES)[number];
-  export const AUTH_USER_KEYS = [
-    "id",
-    "profile_id",
-    "service_id",
-    "access_token",
-    "refresh_token",
-    "created_at",
-    "type"
-  ] as const;
   export interface AuthUser {
     id: string;
     profile_id: string;
@@ -32,23 +22,6 @@ export namespace LAFka {
   // Users types & constants
 
 
-  export const USER_KEYS = [
-    "id",
-    "username",
-    "nickname",
-    "avatar",
-    "biography",
-    "links",
-    "created_at",
-    "forum_posts",
-    "blog_posts",
-    "followed_forum_posts",
-    "followed_blog_posts",
-    "blocked_posts",
-    "followers",
-    "following",
-    "rights"
-  ] as const;
   export interface User {
     id: string;
 
@@ -77,16 +50,6 @@ export namespace LAFka {
 
   // Comments types & constants
 
-
-  export const COMMENT_KEYS = [
-    "id",
-    "content",
-    "created_at",
-    "changed_at",
-    "author_id",
-    "post_id",
-    "reply"
-  ] as const;
   export interface Comment {
     id: string;
   
@@ -104,24 +67,6 @@ export namespace LAFka {
 
   // Posts types & constants
 
-
-  export const BLOG_POST_KEYS = ["likes", "dislikes", "reposts"] as const;
-  export const FORUM_POST_KEYS = ["tags", "status"] as const;
-
-  export const POST_KEYS = [
-    "id",
-    "name",
-    "content",
-    "description",
-    "comments",
-    "followers",
-    "created_at",
-    "changed_at",
-    "creator_id",
-    "rights",
-    "type",
-    "view_status"
-  ] as const;
 
   export const POST_TYPES = ["forum", "blog"] as const;
   export type PostTypes = (typeof POST_TYPES)[number];
@@ -264,16 +209,6 @@ export namespace LAFka {
 export namespace LAFka.Database {
   export const MODELS = ["auth_users", "posts", "comments", "users"] as const;
   export type Models = (typeof MODELS)[number];
-
-  export const KEYS = {
-    auth_users: LAFka.AUTH_USER_KEYS,
-    posts: [...LAFka.POST_KEYS, ...LAFka.FORUM_POST_KEYS, ...LAFka.BLOG_POST_KEYS],
-    comments: LAFka.COMMENT_KEYS,
-    users: LAFka.USER_KEYS,
-  
-    blog_posts: LAFka.BLOG_POST_KEYS,
-    forum_posts: LAFka.FORUM_POST_KEYS
-  } as const;
 };
 
 export namespace LAFka.Response {

@@ -1,4 +1,4 @@
-import { Model, UpdateWriteOpResult } from "mongoose";
+import { Model } from "mongoose";
 
 import {
   CreateData,
@@ -6,37 +6,16 @@ import {
   FindOptions,
   UpdateOptions,
   Status as DatabaseStatus,
-  CreateModelData,
   Models,
-  DeleteResult,
-  PickTypeInObject
+  PickTypeInObject,
+  GetData
 } from "lafka/types/mongodb.types";
 
-import { Schemas } from "../database/schemas/index";
+import { Schemas } from "./schemas/index";
 
 import { Helpers } from "./helpers";
 
-export interface DatabaseType<T extends { id: string }, K = Partial<T>> {
-  name: Models;
-  model: Model<T>;
-  id: Promise<string>;
-
-  findLast: () => Promise<T>;
-  generateId: () => Promise<string>;
-
-  create: (doc: CreateData<T> & K) => CreateModelData<T>;
-  update: (options: UpdateOptions<T>) => Promise<UpdateWriteOpResult>;
-  push: (options: {
-    filter: Filter<T>;
-    update: Partial<PickTypeInObject<T, any[]>>;
-  }) => Promise<UpdateWriteOpResult>;
-  delete: (filter: Filter<T>) => Promise<DeleteResult>;
-
-  getData: (options: FindOptions<T>) => Promise<DatabaseStatus<T[]>>;
-  deleteModel: () => Promise<DatabaseStatus>;
-}
-
-class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType<T, K> {
+class Database<T extends { id: string }, K = Partial<T>> {
   private readonly _model: Model<T>;
 
   public constructor(model: Model<T>) {
@@ -91,7 +70,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
     return await this._model.deleteOne({ ...filter });
   };
 
-  public getData = async (options: FindOptions<T>): Promise<DatabaseStatus<T[]>> => {
+  public getData = async (options: FindOptions<T>): Promise<DatabaseStatus<GetData<T>>> => {
     return await Helpers.getData<T>(this._model, options);
   };
 
@@ -111,5 +90,7 @@ class Database<T extends { id: string }, K = Partial<T>> implements DatabaseType
     return this.generateId();
   }
 }
+
+export { Database }
 
 export default Database;
