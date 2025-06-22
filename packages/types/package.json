@@ -33,6 +33,6 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "fbit-field": "1.3.0-alpha.1a"
+    "fbit-field": "1.4.0-alpha.1a"
   }
 }
