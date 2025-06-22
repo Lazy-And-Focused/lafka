@@ -11,7 +11,7 @@ export const user: LAFka.User = {
   forum_posts: [],
   id: "1",
   links: [],
-  rights: LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.My.toString(),
+  rights: LAFkaRights.CONSTANTS.raw.default.my.toString(),
   username: "FOCKUSTY"
 };
 
@@ -27,9 +27,9 @@ export const post: LAFka.Post = {
   status: "open",
   tags: [],
   rights: new Map<string, string>([
-    ["1", LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts.toString()],
-    ["4", LAFkaRights.Constants.RIGHTS.RAW.DEFAULT.Posts.toString()],
-    ["2", LAFkaRights.Constants.RIGHTS.RAW.AVAILABLE.Posts.toString()],
+    ["1", LAFkaRights.CONSTANTS.raw.default.posts.toString()],
+    ["4", LAFkaRights.CONSTANTS.raw.default.posts.toString()],
+    ["2", LAFkaRights.CONSTANTS.raw.available.posts.toString()],
     ["3", 0n.toString()]
   ])
 };
@@ -40,9 +40,9 @@ export const organization: LAFka.Organization = {
   members: ["1", "2", "3"],
   owner_id: user.id,
   rights: new Map<string, string>([
-    ["4", LAFkaRights.Constants.Organizations.DEFAULT.toString()],
-    ["1", LAFkaRights.Constants.Organizations.DEFAULT.toString()],
-    ["2", LAFkaRights.Constants.Organizations.AVAILABLE.toString()],
+    ["4", LAFkaRights.CONSTANTS.raw.default.organizations.toString()],
+    ["1", LAFkaRights.CONSTANTS.raw.default.organizations.toString()],
+    ["2", LAFkaRights.CONSTANTS.raw.available.organizations.toString()],
     ["3", 0n.toString()],
   ]),
   name: "",

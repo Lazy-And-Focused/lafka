@@ -5,13 +5,13 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "files": [
-    "./dist"
+    "./dist/**"
   ],
   "scripts": {
     "dev": "nodemon src/rights.service.ts",
     "start": "pnpm run build && node dist/rights.service.js",
     "build": "tsc && tsc-alias",
-    "test": "ts-mocha --paths ./test/**/*.spec.ts"
+    "test": "ts-mocha --paths ./src/test/**/*.spec.ts"
   },
   "keywords": [
     "rights",
@@ -34,14 +34,16 @@
     "@lafka/types": "workspace:^",
     "@types/mocha": "catalog:",
     "@types/node": "catalog:",
-    
     "expect": "catalog:",
     "mocha": "catalog:",
-    "ts-mocha": "catalog:",
     "nodemon": "catalog:",
+    "ts-mocha": "catalog:",
     "ts-node": "catalog:",
     "tsc-alias": "catalog:",
     "tsconfig-paths": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "fbit-field": "1.3.0-alpha.1a"
   }
 }

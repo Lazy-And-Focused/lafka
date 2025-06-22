@@ -1,273 +1,295 @@
-type MustArray<T, K=T> = [T, ...K[]];
+import { BitBuilder } from "fbit-field";
+import { Compiler } from "fbit-field/compiler";
+import { writeFileSync } from "fs";
+import { parse } from "path";
 
+type IRights<T extends any[] | readonly any[]> = Record<T[number], bigint>;
 export namespace Rights {
-  export class Builder<T extends string> {
-    public constructor(public readonly rights: (T[]|Readonly<T[]>)) {};
+  export type My = IRights<typeof My.ALL>;
+  export namespace My {
+    export const EXCLUDE = [
+      "ADMINISTRATOR",
+      "MODERATOR",
+      "MUTE",
+      "BAN",
+      "POSTS_MANAGE",
+      "COMMENTS_MANAGE",
+      "ORGANIZATIONS_MANAGE",
+      "POSTS_DELETE",
+      "COMMENTS_DELETE",
+      "ORGANIZATIONS_DELETE",
+    ] as const;
+    export const ALL = [
+      ...EXCLUDE,
+      "USER",
+      "POSTS_CREATE",
+      "COMMENTS_CREATE",
+      "ORGANIZATIONS_CREATE",
+    ] as const;
+    const builder = new BitBuilder(ALL);
 
-    /**
-     * starts with offset bigint
-     * @example
-     * input: offset = 10n
-     * 
-     * output: rights = {
-     *   someRight1: 1n << 10n,
-     *   someRight2: 1n << 11n
-     *   ...
-     * }
-     * 
-     * @param [exclude=[]] prioritet in filters
-     * @example
-     * input:
-     * exclude = ["someRight1", "someRight2"]
-     * include = ["someRight1", "someRight3"]
-     * 
-     * output = {
-     *   someRight1: 0n << 0n,
-     *   someRight2: 0n << 1n,
-     *   someRight3: 1n << 2n
-     * }
-     */
-    public execute(
-      offset: bigint|({[key: string]: bigint}|{readonly [key: string]: bigint}) = 0n,
-      exclude: (T[]|readonly T[]) = [],
-      include?: (T[]|readonly T[]),
-    ): Record<T, bigint> {
-      return Object.fromEntries(this.rights.map((right, index) => {
-        const modifier = (this.resolveOffset(offset) + BigInt(index));
-        
-        if (include && !include.includes(right)) return [right, 0n << modifier];
-        if (exclude.includes(right)) return [right, 0n << modifier];
-        return [right, 1n << modifier];
-      })) as Record<T, bigint>;
-    };
-    private logarithm2(bigint: bigint): bigint {
-      return BigInt(bigint.toString(2).length-1);
-    };
-    private max(...values: bigint[]): bigint {
-      return values.toSorted((a, b) => {
-        if (a > b) {
-          return 1;
-        } else if (a < b){
-          return -1;
-        } else {
-          return 0;
-        }
-      }).toReversed()[0];
-    };
-    private resolveOffset(offset: bigint|({[key: string]: bigint}|{ readonly [key: string]: bigint})): bigint {
-      if (typeof offset === "bigint") return offset;
-      const keys = Object.keys(offset);
-      if (keys.length === 0) return 0n;
-      return this.logarithm2(this.max(...keys.map((key) => offset[key]))) + 1n;
-    }
-  };
-
-  export class Parser {
-    public static toBigInt = <
-      T extends keyof Rights.Types.All,
-    >(
-      type: T,
-      right: keyof typeof Rights.Constants.AVAILABLE[T]
-    ): bigint => {
-      return ((Rights.Constants.AVAILABLE[type] as any))[right];
-    };
-
-    public static toBigIntFromArray = <
-      T extends keyof Rights.Types.All,
-    >(
-      type: T,
-      rights: MustArray<keyof typeof Rights.Constants.AVAILABLE[T]>
-    ) =>
-      Parser.execute(Object.fromEntries(rights.map(v =>
-        [v, Parser.toBigInt(type, v)])));
-
-    public static exist = <
-      T extends keyof Rights.Types.All,
-      K extends keyof Rights.Types.All[T]
-    >(
-      type: [T, K],
-      right: bigint
-    ): boolean => {
-      return ((Rights.Constants.DEFAULT[type[0]] as any)[type[1]] & right) === right;
-    }
-
-    public static execute<T extends object>(rights: T[keyof T] | T) {
-      let raw: bigint = 0n;
-      
-      Object.keys(rights).forEach(k => {
-        if (typeof rights[k] === "bigint")
-          raw += rights[k];
-        else Object.keys(rights[k]).forEach(k2 => raw += rights[k][k2])
-      });
-
-      return raw;
-    }
-  };
-
-  export namespace Types {
-    export type My = Record<(typeof Rights.Constants.My.ALL)[number], bigint>;
-    export type Posts = Record<(typeof Rights.Constants.Posts.ALL)[number], bigint>;
-    export type Organizations = Record<(typeof Rights.Constants.Organizations.ALL)[number], bigint>;
-
-    export type All = {
-      My: My,
-      Posts: Posts,
-      Organizations: Organizations
-    }
+    export const AVAILABLE: My = builder.execute(0n);
+    export const DEFAULT: My = builder.execute(0n, My.EXCLUDE);
+    export const RAW_AVAILABLE = builder.resolve(AVAILABLE);
+    export const RAW_DEFAULT = builder.resolve(DEFAULT);
   }
 
-  export namespace Constants {
-    export namespace My {
-      export const ALL = [
-        "ADMINISTRATOR",
-        "MODERATOR",
-        "USER",
-        "MUTE",
-        "BAN",
-        "POSTS_CREATE",
-        "COMMENTS_CREATE",
-        "ORGANIZATIONS_CREATE",
-        "POSTS_MANAGE",
-        "COMMENTS_MANAGE",
-        "ORGANIZATIONS_MANAGE",
-        "POSTS_DELETE",
-        "COMMENTS_DELETE",
-        "ORGANIZATIONS_DELETE"
-      ] as const;
-  
-      export const EXCLUDE = [
-        "ADMINISTRATOR",
-        "MODERATOR",
-        "MUTE",
-        "BAN",
-        "POSTS_MANAGE",
-        "COMMENTS_MANAGE",
-        "ORGANIZATIONS_MANAGE",
-        "POSTS_DELETE",
-        "COMMENTS_DELETE",
-        "ORGANIZATIONS_DELETE",
-      ] as const;
+  export type Posts = IRights<typeof Posts.ALL>;
+  export namespace Posts {
+    export const EXCLUDE = [
+      "OWNER",
+      "MANAGER",
+      "MANAGE",
+      "DELETE",
+      "COMMENTS_DELETE",
+      "COMMENTS_MANAGE",
+      "VIEWERS_MUTE",
+      "VIEWERS_BLOCK",
+    ] as const;
+    export const ALL = [
+      ...EXCLUDE,
+      "VIEW",
+      "REACT",
+      "ATTACH_FILES",
+      "COMMENTS_READ",
+      "COMMENTS_CREATE",
+      "COMMENTS_REACT",
+    ] as const;
+    const builder = new BitBuilder(ALL);
+    export const AVAILABLE: Posts = builder.execute(My.AVAILABLE);
+    export const DEFAULT: Posts = builder.execute(My.AVAILABLE, Posts.EXCLUDE);
+    export const RAW_AVAILABLE = builder.resolve(AVAILABLE);
+    export const RAW_DEFAULT = builder.resolve(DEFAULT);
+  }
 
-      export const AVAILABLE: Types.My = new Builder(My.ALL).execute(0n);
-      export const DEFAULT: Types.My = new Builder(My.ALL).execute(0n, My.EXCLUDE);
-    }
+  export type Organizations = IRights<typeof Organizations.ALL>;
+  export namespace Organizations {
+    export const EXCLUDE = [
+      "OWNER",
+      "ADMINISTRATOR",
+      "INVITE_CREATE",
+      "RIGHTS_MANAGE",
+      "MANAGE",
+      "DELETE",
+      "POSTS_CREATE",
+      "POSTS_MANAGE",
+      "POSTS_DELETE",
+      "ROLES_MANAGE",
+      "MEMBERS_KICK",
+      "VIEWERS_BLOCK",
+    ] as const;
+    export const ALL = [...EXCLUDE, "READ", "POSTS_READ"] as const;
+    const builder = new BitBuilder(ALL);
 
-    export namespace Posts {
-      export const ALL = [
-        "OWNER",
-        "MANAGER",
-        "VIEW",
-        "MANAGE",
-        "DELETE",
-        "REACT",
-        "ATTACH_FILES",
-        "COMMENTS_READ",
-        "COMMENTS_CREATE",
-        "COMMENTS_DELETE",
-        "COMMENTS_MANAGE",
-        "COMMENTS_REACT",
-        "VIEWERS_MUTE",
-        "VIEWERS_BLOCK",
-      ] as const;
+    export const AVAILABLE: Organizations = builder.execute(Posts.AVAILABLE);
+    export const DEFAULT: Organizations = builder.execute(
+      Posts.AVAILABLE,
+      Organizations.EXCLUDE,
+    );
+    export const RAW_AVAILABLE = builder.resolve(AVAILABLE);
+    export const RAW_DEFAULT = builder.resolve(DEFAULT);
+  }
 
-      export const EXCLUDE = [
-        "OWNER",
-        "MANAGER",
-        "MANAGE",
-        "DELETE",
-        "COMMENTS_DELETE",
-        "COMMENTS_MANAGE",
-        "VIEWERS_MUTE",
-        "VIEWERS_BLOCK"
-      ] as const;
+  // ## { COMPILED__WRITE_COMPILED_HERE } ## \\
 
-      export const AVAILABLE: Types.Posts = new Builder(Posts.ALL).execute(My.AVAILABLE);
-      export const DEFAULT: Types.Posts = new Builder(Posts.ALL).execute(My.AVAILABLE, Posts.EXCLUDE);
-    }
+/**
+ * - this file was auto genereted by compiler 
+ * - if you see inconsistencies: https://github.com/FOCKUSTY/bit-field/issues 
+ */
+export const raw = {
+  my: {
+    /** @value 1 */
+administrator: 1n << 0n,
 
-    export namespace Organizations {
-      export const ALL = [
-        "OWNER",
-        "ADMINISTRATOR",
-        "INVITE_CREATE",
-        "RIGHTS_MANAGE",
-        "READ",
-        "MANAGE",
-        "DELETE",
-        "POSTS_READ",
-        "POSTS_CREATE",
-        "POSTS_MANAGE",
-        "POSTS_DELETE",
-        "ROLES_MANAGE",
-        "MEMBERS_KICK",
-        "VIEWERS_BLOCK",
-      ] as const;
+    /** @value 2 */
+moderator: 1n << 1n,
 
-      export const EXCLUDE = [
-        "OWNER",
-        "ADMINISTRATOR",
-        "INVITE_CREATE",
-        "RIGHTS_MANAGE",
-        "MANAGE",
-        "DELETE",
-        "POSTS_CREATE",
-        "POSTS_MANAGE",
-        "POSTS_DELETE",
-        "ROLES_MANAGE",
-        "MEMBERS_KICK",
-        "VIEWERS_BLOCK",
-      ] as const;
+    /** @value 4 */
+mute: 1n << 2n,
 
-      export const AVAILABLE: Types.Organizations = new Builder(Organizations.ALL).execute(Posts.AVAILABLE);
-      export const DEFAULT: Types.Organizations = new Builder(Organizations.ALL).execute(Posts.AVAILABLE, Organizations.EXCLUDE);
-    }
+    /** @value 8 */
+ban: 1n << 3n,
 
-    export const AVAILABLE = {
-      My: My.AVAILABLE,
-      Posts: Posts.AVAILABLE,
-      Organizations: Organizations.AVAILABLE
-    } as const;
+    /** @value 16 */
+postsManage: 1n << 4n,
 
-    export const DEFAULT = {
-      My: My.DEFAULT,
-      Posts: Posts.DEFAULT,
-      Organizations: Organizations.DEFAULT
-    } as const;
+    /** @value 32 */
+commentsManage: 1n << 5n,
 
-    export const ALL = {
-      My: My.ALL,
-      Posts: Posts.ALL,
-      Organizations: Organizations.ALL,
-    } as const;
+    /** @value 64 */
+organizationsManage: 1n << 6n,
 
-    export const RIGHTS = {
-      RAW: {
-        AVAILABLE: {
-          My: Parser.execute(My.AVAILABLE),
-          Posts: Parser.execute(Posts.AVAILABLE),
-          Organizations: Parser.execute(Organizations.AVAILABLE)
-        } as const,
+    /** @value 128 */
+postsDelete: 1n << 7n,
 
-        DEFAULT: {
-          My: Parser.execute(My.DEFAULT),
-          Posts: Parser.execute(Posts.DEFAULT),
-          Organizations: Parser.execute(Organizations.DEFAULT)
-        } as const
+    /** @value 256 */
+commentsDelete: 1n << 8n,
+
+    /** @value 512 */
+organizationsDelete: 1n << 9n,
+
+    /** @value 1024 */
+user: 1n << 10n,
+
+    /** @value 2048 */
+postsCreate: 1n << 11n,
+
+    /** @value 4096 */
+commentsCreate: 1n << 12n,
+
+    /** @value 8192 */
+organizationsCreate: 1n << 13n
+  } as const,
+
+  posts: {
+    /** @value 16384 */
+owner: 1n << 14n,
+
+    /** @value 32768 */
+manager: 1n << 15n,
+
+    /** @value 65536 */
+manage: 1n << 16n,
+
+    /** @value 131072 */
+delete: 1n << 17n,
+
+    /** @value 262144 */
+commentsDelete: 1n << 18n,
+
+    /** @value 524288 */
+commentsManage: 1n << 19n,
+
+    /** @value 1048576 */
+viewersMute: 1n << 20n,
+
+    /** @value 2097152 */
+viewersBlock: 1n << 21n,
+
+    /** @value 4194304 */
+view: 1n << 22n,
+
+    /** @value 8388608 */
+react: 1n << 23n,
+
+    /** @value 16777216 */
+attachFiles: 1n << 24n,
+
+    /** @value 33554432 */
+commentsRead: 1n << 25n,
+
+    /** @value 67108864 */
+commentsCreate: 1n << 26n,
+
+    /** @value 134217728 */
+commentsReact: 1n << 27n
+  } as const,
+
+  organizations: {
+    /** @value 268435456 */
+owner: 1n << 28n,
+
+    /** @value 536870912 */
+administrator: 1n << 29n,
+
+    /** @value 1073741824 */
+inviteCreate: 1n << 30n,
+
+    /** @value 2147483648 */
+rightsManage: 1n << 31n,
+
+    /** @value 4294967296 */
+manage: 1n << 32n,
+
+    /** @value 8589934592 */
+delete: 1n << 33n,
+
+    /** @value 17179869184 */
+postsCreate: 1n << 34n,
+
+    /** @value 34359738368 */
+postsManage: 1n << 35n,
+
+    /** @value 68719476736 */
+postsDelete: 1n << 36n,
+
+    /** @value 137438953472 */
+rolesManage: 1n << 37n,
+
+    /** @value 274877906944 */
+membersKick: 1n << 38n,
+
+    /** @value 549755813888 */
+viewersBlock: 1n << 39n,
+
+    /** @value 1099511627776 */
+read: 1n << 40n,
+
+    /** @value 2199023255552 */
+postsRead: 1n << 41n
+  } as const
+} as const;
+// ## { COMPILED__WRITE_COMPILED_HERE } ## \\
+
+  export const CONSTANTS = {
+    raw: {
+      default: {
+        my: My.RAW_DEFAULT,
+        posts: Posts.RAW_DEFAULT,
+        organizations: Organizations.RAW_DEFAULT,
       } as const,
 
-      OBJECT: {
-        AVAILABLE: {
-          My: My.AVAILABLE,
-          Posts: Posts.AVAILABLE,
-          Organizations: Organizations.AVAILABLE
-        } as const,
+      available: {
+        my: My.RAW_AVAILABLE,
+        posts: Posts.RAW_AVAILABLE,
+        organizations: Organizations.RAW_AVAILABLE,
+      } as const,
+    } as const,
 
-        DEFAULT: {
-          My: My.DEFAULT,
-          Posts: Posts.DEFAULT,
-          Organizations: Organizations.DEFAULT
-        } as const
-      } as const
-    } as const;
+    object: {
+      default: {
+        my: My.DEFAULT,
+        posts: Posts.DEFAULT,
+        organizations: Organizations.DEFAULT,
+      } as const,
+
+      available: {
+        my: My.AVAILABLE,
+        posts: Posts.AVAILABLE,
+        organizations: Organizations.AVAILABLE,
+      } as const,
+    } as const,
+  } as const;
+
+  export type Keys = keyof typeof CONSTANTS.object.available;
+  export type Rights<T extends Keys> =
+    keyof (typeof CONSTANTS.object.available)[T];
+
+  export namespace Raw {
+    // ## { COMPILED__WRITE_EXPORT_HERE } ## \\
+
+export type Keys = keyof typeof raw;
+export type Raw<T extends Keys> = (typeof raw)[T];
+export type RawKeys<T extends Keys> = keyof Raw<T>;
+// ## { COMPILED__WRITE_EXPORT_HERE } ## \\
   }
 }
+
+const rights = Object.fromEntries(
+  Object.keys(Rights.CONSTANTS.object.available).map((key) => [
+    key,
+    Object.keys(Rights.CONSTANTS.object.available[key]),
+  ]),
+);
+
+if (process.env.NODE_ENV === "rights_compile")
+  new Compiler(
+    rights,
+    __dirname + "\\rights.types.ts",
+    {},
+    {
+      writeInCompiler: true,
+      defaultExportOn: false,
+      name: "raw",
+    },
+  ).execute();

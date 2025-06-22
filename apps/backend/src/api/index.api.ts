@@ -2,15 +2,45 @@ import { Env } from "services/env.service";
 import { LAFka } from "lafka/types";
 import { Cache } from "cache-manager";
 
+import { ServiceResponse } from "lafka/types/service.types";
+import { GetData } from "lafka/types/backend/data.types";
+
 class Api {
   public readonly env = new Env().env;
 
-  public async getCache<T>(key: string, cacheManager: Cache, cache?: string) {
-    if ((!!cache && Boolean(cache) && cache !== "false") || typeof cache === "undefined") {
-      return (await cacheManager.get<T>(key)) || false;
-    }
+  public useCache<T>(cacheManager: Cache, cache: string, type: GetData<T>["type"]) {
+    const cacheEnabled = (!!cache && Boolean(cache) && cache !== "false") || typeof cache === "undefined";
+    
+    return async <K extends any[] = any[]>({
+      getFunction,
+      key,
+      data
+    }: {
+      key: string,
+      getFunction: (...data: K) => Promise<ServiceResponse<T>>,
+      data: K
+    }): Promise<GetData<T>> => {
+      if (cacheEnabled) {
+        const valueFromCache = (await cacheManager.get<T>(key)) || false;
+        
+        const value = valueFromCache
+          ? <GetData<T>>{ resource: valueFromCache, error: null, successed: true, type }
+          : <GetData<T>>{ ...await getFunction(...data), type };
+  
+        if (!value.successed) return { ...value, type };
+        if (!valueFromCache) cacheManager.set(key, value.resource);
+  
+        return value;
+      };
+  
+      const value = await getFunction(...data);
+      
+      if (!value.successed) return { ...value, type };
 
-    return false;
+      cacheManager.set(key, value.resource);
+  
+      return { ...value, type };
+    };
   }
 
   public getApi(type: Uppercase<LAFka.AuthTypes>) {

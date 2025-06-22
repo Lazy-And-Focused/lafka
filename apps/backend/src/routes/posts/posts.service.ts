@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { Constructors } from "lafka/database/database/models.database";
-import DB, { Models } from "lafka/database";
+import { Models } from "lafka/database";
 import { Rights } from "@lafka/rights";
 import { LAFka } from "lafka/types";
 
@@ -41,18 +41,18 @@ export class PostsService {
       ...rawFilter
     });
 
-    const data = await posts.getData({filter: {}, options: {
+    const data = (await posts.getData({filter: {}, options: {
       limit: filter.count,
       skip: filter.offset,
       sort: { [filter.sortBy]: filter.sortType }
-    }});
+    }}));
 
     if (!data.successed || !data.data) return { successed: false, resource: null, error: data.text };
     if (data.data.length === 0) return { successed: false, resource: null, error: "Posts not found" };
 
     return {
       successed: true,
-      resource: data.data.map(p => DB.Database.parse(p, "posts")),
+      resource: data.data.map(p => p.toObject()),
       error: null
     }
   }
@@ -75,7 +75,7 @@ export class PostsService {
 
     if (!user || !user[0]) return { successed: false, resource: null, error: "User not found"};
 
-    if (!new Rights.UserService(user[0]).has({right: "me", rights: "POSTS_CREATE"}))
+    if (!new Rights.UserService(user[0]).has("POSTS_CREATE"))
       return { successed: false, resource: null, error: "403 Forbidenn" };
 
     for (const required of REQUIRED_DATA_TO_CREATE_POST) {
@@ -90,7 +90,7 @@ export class PostsService {
 
     return {
       successed: true,
-      resource: DB.Database.parse(await new DB.Post({...post, creator_id: userId}).init(), "posts"),
+      resource: (await posts.create({...post, creator_id: userId})).toObject(),
       error: null,
     };
   }

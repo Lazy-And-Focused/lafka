@@ -11,6 +11,7 @@ import type {
 } from "mongoose";
 
 import { Schemas } from "../database/schemas";
+import mongoose from "mongoose";
 export { DeleteResult } from ".pnpm/mongodb@6.13.1/node_modules/mongodb";
 
 export type Models = Schemas.Models;
@@ -49,6 +50,9 @@ export type ModelData<T> = Omit<T, "id" | "_id">;
 export type CreateData<T> = Partial<ModelData<T>>;
 export type PickCreateData<T, K extends keyof ModelData<T>> = Partial<ModelData<T>> &
   Pick<ModelData<T>, K>;
+export type SchemaParameters<T> = ConstructorParameters<
+  typeof mongoose.Schema<T>
+>["0"];
 
 export interface Status<
   Data extends any = any,

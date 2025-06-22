@@ -1,5 +1,5 @@
 import { LAFka } from "lafka/types";
-import DB from "lafka/database";
+import Database from "lafka/database";
 
 import { Request } from "express";
 import {
@@ -96,7 +96,7 @@ export class PostsContoller {
         type: "posts"
       };
 
-    const body = DB.Database.parse({...req.body, created_at: date}, "posts");
+    const body = Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
 
     if (!post.successed)
