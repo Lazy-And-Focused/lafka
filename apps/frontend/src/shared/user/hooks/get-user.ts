@@ -39,9 +39,11 @@ async function getUser(
     if (usernameOrId) {
       const isValidSlug: boolean = validateUserSlug(usernameOrId);
 
-      if (isValidSlug) {
-        userSlug = usernameOrId;
+      if (!isValidSlug) {
+        throw new Error('User slug is not valid');
       }
+
+      userSlug = usernameOrId;
     }
 
     const cacheOptions: RequestInit = {
