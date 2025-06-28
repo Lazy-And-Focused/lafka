@@ -76,7 +76,7 @@ export class PostsContoller {
   ): Promise<LAFka.Response.GetData<LAFka.LazyPost>> {
     const { successed } = Hash.parse(req);
 
-    if (!successed) return { successed: false, error: "Hash parse error", resource: null, type: "posts" };
+    if (!successed) return { ...api.createError("Hash parse error"), type: "posts" };
 
     const cacheManager = api.useCache<LAFka.LazyPost>(this.cacheManager, cache, "posts");
     const post = await cacheManager<[Partial<LAFka.LazyPost> | string]>({
@@ -85,7 +85,7 @@ export class PostsContoller {
       data: [id]
     });
 
-    return {...post, type: "posts"};
+    return { ...post, type: "posts"};
   }
 
   @Post(POSTS_ROUTES.POST)
@@ -95,13 +95,13 @@ export class PostsContoller {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
     
-    if (!successed) return { date, created_resource: null, error: "Hash parse error", successed: false, type: "posts" };
+    if (!successed) return { ...api.createError("Hash parse error"), type: "posts", date };
 
     const body = Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
 
     if (!post.successed)
-      return { successed: false, created_resource: null, error: post.error, date, type: "posts" };
+      return { ...api.createError(post.error), date, type: "posts" };
 
     return {
       successed: post.successed,
@@ -125,7 +125,7 @@ export class PostsContoller {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
 
-    if (!successed) return { date, changed_resource: null, error: "Hash parse error", successed: false, type: "posts" };
+    if (!successed) return { ...api.createError("Hash parse error"), date, type: "posts" };
 
     const post = Database.parse<LAFka.Post>({...req.body, id: postId}, "posts");
     const keys = Object.keys(post);
@@ -140,7 +140,7 @@ export class PostsContoller {
       };
     };
 
-    if (!post.id) return { date, changed_resource: null, error: "Post id is not defined", successed: false, type: "posts" };
+    if (!post.id) return { ...api.createError("Post id is not defined"), date, type: "posts" };
     
     const response = await this.postsService.putPost(profile_id, post);
     
@@ -161,7 +161,7 @@ export class PostsContoller {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
  
-    if (!successed) return { date, deleted_resource: null, error: "Hash parse error", successed: false, type: "posts" };
+    if (!successed) return { ...api.createError("Hash parse error"), date, type: "posts" };
 
     const response = await this.postsService.deletePost(profile_id, postId);
 

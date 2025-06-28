@@ -66,7 +66,7 @@ export class UsersController {
     const { successed, profile_id } = Hash.parse(req);
     const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
 
-    if (!successed) return { successed: false, error: "Hash parse error", resource: null, type: "users" };
+    if (!successed) return { ...api.createError("Hash parse error"), type: "users" };
 
     const user = cacheManager<[Partial<LAFka.User> | string]>({
       getFunction: this.usersService.getUser,
@@ -92,7 +92,7 @@ export class UsersController {
     const { successed } = Hash.parse(req);
 
     if (!successed)
-      return { successed: false, error: "Hash parse error", date, changed_resource: null, type: "users" };
+      return { ...api.createError("Hash parse error"), date, type: "users" };
     const user: Partial<LAFka.User> = Database.parse(req.body, "users");
     const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
 
@@ -132,7 +132,7 @@ export class UsersController {
 
     const { successed } = Hash.parse(req);
     if (!successed)
-      return { successed: false, deleted_resource: null, date, error: "Hash parse error", type: "users" };
+      return { ...api.createError("Hash parse error"), date, type: "users" };
 
     this.cacheManager.del(`user-${slug}`);
 
