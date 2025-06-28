@@ -106,17 +106,12 @@ export class UsersService {
     }
   }
 
-  public async updateUser<T extends UpdateWriteOpResult | LAFka.User>(
+  public async updateUser(
     id: string,
     data: Partial<LAFka.User>,
-    returnUser: T extends LAFka.User ? true : false
-  ): Promise<ServiceResponse<T>> {
+  ): Promise<ServiceResponse<UpdateWriteOpResult>> {
     try {
       const updated = await users.update({ filter: { id }, update: data });
-
-      const resource: T = returnUser
-        ? (await users.model.findOne({ id })).toObject() as any
-        : (updated as T);
 
       if (!updated.acknowledged)
         return { successed: false, error: "unknown error: 1", resource: null };
@@ -124,7 +119,7 @@ export class UsersService {
       return {
         successed: true,
         error: null,
-        resource: resource
+        resource: updated
       };
     } catch (error) {
       console.error(error);
@@ -137,12 +132,10 @@ export class UsersService {
     }
   }
 
-  public async deleteUser<T extends DeleteResult | LAFka.User>(
+  public async deleteUser(
     id: string,
-    returnUser: T extends LAFka.User ? true : false
-  ): Promise<ServiceResponse<T>> {
+  ): Promise<ServiceResponse<DeleteResult>> {
     try {
-      const resource = returnUser ? users.getData({filter: {id}}) : null;
       const deleted = await users.delete({id});
 
       if (!deleted.acknowledged)
@@ -151,7 +144,7 @@ export class UsersService {
       return {
         successed: true,
         error: null,
-        resource: returnUser ? (deleted as T) : (resource as unknown as T)
+        resource: deleted
       };
     } catch (error) {
       console.error(error);

@@ -103,7 +103,7 @@ export class PostsContoller {
   public async putPost(
     @Req() req: Request,
     @Param("id") postId: string
-  ): Promise<LAFka.Response.ChangeData<LAFka.LazyPost>> {
+  ): Promise<LAFka.Response.ChangeData> {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
 
@@ -130,17 +130,16 @@ export class PostsContoller {
       successed: response.successed,
       error: response.error,
       changed_resource: response.resource,
-      changed_resource_type: "update",
       type: "posts",
       date,
-    } as LAFka.Response.ChangeData<LAFka.LazyPost>;
+    } as LAFka.Response.ChangeData;
   };
 
   @Delete(POSTS_ROUTES.DELETE)
   public async deletePost(
     @Req() req: Request,
     @Param("id") postId: string
-  ): Promise<LAFka.Response.DeleteData<LAFka.LazyPost>> {
+  ): Promise<LAFka.Response.DeleteData> {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
  
@@ -154,7 +153,6 @@ export class PostsContoller {
       successed: response.successed,
       deleted_resource: response.resource,
       error: response.error,
-      deleted_resource_type: "delete"
-    } as LAFka.Response.DeleteData<LAFka.LazyPost>;
+    } as LAFka.Response.DeleteData;
   };
 }

@@ -28,23 +28,23 @@ export namespace Api {
       },
 
       "PUT /:identifier": {
-        return: LAFka.Response.ChangeData<LAFka.User>,
+        return: LAFka.Response.ChangeData,
         path: "/:identifier",
 
         body: Partial<LAFka.User>,
         headers: { token: string },
 
-        query?: { cache?: boolean, returnUser?: boolean }
+        query?: { cache?: boolean }
       },
 
       "DELETE /:identifier": {
-        return: LAFka.Response.DeleteData<LAFka.User>,
+        return: LAFka.Response.DeleteData,
         path: "/:identifier",
 
         headers: { token: string }
 
         body?: null,
-        query?: { returnUser?: boolean },
+        query?: { },
       }
     },
 
@@ -84,7 +84,7 @@ export namespace Api {
       },
 
       "PUT /:id": {
-        return: LAFka.Response.ChangeData<LAFka.Post>,
+        return: LAFka.Response.ChangeData,
         path: "/:id",
 
         body: Partial<LAFka.Post>,
@@ -94,7 +94,7 @@ export namespace Api {
       },
 
       "DELETE /:id": {
-        return: LAFka.Response.DeleteData<LAFka.Post>,
+        return: LAFka.Response.DeleteData,
         path: "/:id",
 
         headers: { token: string },

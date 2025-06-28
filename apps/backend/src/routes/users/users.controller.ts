@@ -1,6 +1,4 @@
 import { LAFka } from "lafka/types";
-import { UpdateWriteOpResult } from "mongoose";
-import { DeleteResult } from "lafka/database/types/mongodb.types";
 import Database from "lafka/database/index";
 
 import { Request } from "express";
@@ -83,9 +81,8 @@ export class UsersController {
   public async put(
     @Req() req: Request,
     @Param("identifier") identifier: string,
-    @Query("returnUser") returnUser?: string,
     @Query("cache") cache?: string
-  ): Promise<LAFka.Response.ChangeData<LAFka.User>> {
+  ): Promise<LAFka.Response.ChangeData> {
     const date = new Date().toISOString();
 
     const slug = UsersService.lazyGetSlug(identifier);
@@ -99,43 +96,37 @@ export class UsersController {
     const user: Partial<LAFka.User> = Database.parse(req.body, "users");
     const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
 
-    const data = await this.usersService.updateUser(slug, user, returnUser === "true");
+    const data = await this.usersService.updateUser(slug, user);
 
     (async () => {
-      if (returnUser === "true") {
-        this.cacheManager.set(`user-${slug}`, data.resource)
-      } else {
-        this.cacheManager.set(`user-${slug}`, {
-          ...cacheManager<[Partial<LAFka.User> | string]>({
-            key: `user-${slug}`,
-            getFunction: this.usersService.getUser,
-            data: [slug],
-          }),
-          ...user
-        });
-      };
+      this.cacheManager.set(`user-${slug}`, {
+        ...cacheManager<[Partial<LAFka.User> | string]>({
+          key: `user-${slug}`,
+          getFunction: this.usersService.getUser,
+          data: [slug],
+        }),
+        ...user
+      });
     })();
 
     return {
       successed: data.successed,
-      date,
+      changed_resource: data.resource,
       error: data.error,
-      changed_resource_type: returnUser === "true" ? "resource" : "update",
-      changed_resource: data.resource as LAFka.User & UpdateWriteOpResult,
+      date,
       type: "users"
-    } as LAFka.Response.ChangeData<LAFka.User>;
+    } as LAFka.Response.ChangeData;
   }
 
   @Delete(USERS_ROUTES.DELETE)
   public async delete(
     @Req() req: Request,
     @Param("identifier") identifier: string,
-    @Query("returnUser") returnUser?: string
-  ): Promise<LAFka.Response.DeleteData<LAFka.User>> {
+  ): Promise<LAFka.Response.DeleteData> {
     const date = new Date().toISOString();
-    const deleted_resource_type = returnUser === "true" ? "resource" : "delete"
 
     const slug = UsersService.lazyGetSlug(identifier);
+    
     if (typeof slug !== "string")
       return { ...slug, successed: false, date, deleted_resource: null };
 
@@ -145,15 +136,14 @@ export class UsersController {
 
     this.cacheManager.del(`user-${slug}`);
 
-    const data = await this.usersService.deleteUser(slug, returnUser === "true");
+    const data = await this.usersService.deleteUser(slug);
 
     return {
       successed: data.successed,
       date, 
-      deleted_resource_type,
       type: "users",
       error: data.error,
-      deleted_resource: data.resource as (LAFka.User & DeleteResult)
-    } as LAFka.Response.DeleteData<LAFka.User>;
+      deleted_resource: data.resource
+    } as LAFka.Response.DeleteData;
   }
 }
