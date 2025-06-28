@@ -6,6 +6,8 @@ import { Rights } from "@lafka/rights";
 import { LAFka } from "lafka/types";
 
 import { ServiceResponse } from "lafka/types/service.types";
+import { UpdateWriteOpResult } from "mongoose";
+import { DeleteResult } from "mongodb";
 
 const { posts, users } = new Models();
 
@@ -95,15 +97,37 @@ export class PostsService {
     };
   }
 
-  /* eslint-disable */
-  public async putPost(user: LAFka.User): Promise<ServiceResponse<LAFka.Post>> {
-    return { successed: false, resource: null, error: "the method has not been initialized" }
+  public async putPost(userId: string, post: Partial<LAFka.LazyPost> & { id: string }): Promise<ServiceResponse<UpdateWriteOpResult>> {
+    const isCreator = post.creator_id === userId;
+    const isManager = new Rights.PostService((await posts.model.findById(post.id)).toObject()).userHas(userId)("MANAGER");
+
+    if (!(isCreator || isManager)) {
+      return { successed: false, resource: null, error: "User is not creator or manager." };
+    };
+
+    const data = await posts.update({
+      filter: { id: post.id },
+      update: {
+        ...post
+      }
+    });
+
+    return { successed: true, error: null, resource: data };
   }
   
-  public async deletePost(user: LAFka.User): Promise<ServiceResponse<LAFka.Post>> {
-    return { successed: false, resource: null, error: "the method has not been initialized" }
+  public async deletePost(userId: string, postId: string): Promise<ServiceResponse<DeleteResult>> {
+    const post = (await posts.model.findById(postId)).toObject();
+  
+    const isCreator = post.creator_id === userId;
+
+    if (!isCreator) {
+      return { successed: false, resource: null, error: "User is not a creator." }
+    };
+
+    const data = await posts.delete({ id: postId });
+
+    return { successed: true, error: null, resource: data };
   }
-  /* eslint-enable */
 
   private parseFilter(data: Record<keyof Filter, string>): Filter {
     return {

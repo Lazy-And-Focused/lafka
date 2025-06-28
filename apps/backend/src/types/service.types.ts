@@ -5,5 +5,5 @@ export type ServiceResponse<T> = {
 } | {
   successed: false,
   resource: null,
-  error: unknown
+  error: string
 };
