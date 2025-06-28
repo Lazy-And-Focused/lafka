@@ -1,5 +1,5 @@
 import { LAFka } from "lafka/types";
-import Database from "lafka/database";
+import Database, { Models } from "lafka/database";
 
 import { Request } from "express";
 import {
@@ -28,6 +28,8 @@ import Hash from "api/hash.api";
 import Api from "api/index.api";
 
 const api = new Api();
+
+const { posts } = new Models();
 
 @Injectable()
 @Controller(POSTS_CONTROLLER)
@@ -64,7 +66,7 @@ export class PostsContoller {
       data: [{ offset, count, sortBy, sortType }]
     });
 
-    return {...posts, type: "posts" }
+    return { ...posts, type: "posts" }
   }
 
   @Public()
@@ -99,6 +101,8 @@ export class PostsContoller {
 
     const body = Database.parse({...req.body, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
+
+    this.cacheManager.set(`post-${post.resource.id}`, post.resource);
 
     if (!post.successed)
       return { ...api.createError(post.error), date, type: "posts" };
@@ -144,6 +148,8 @@ export class PostsContoller {
     
     const response = await this.postsService.putPost(profile_id, post);
     
+    posts.model.findById(post.id).then(p => this.cacheManager.set(`post-${post.id}`, p.toObject()));
+
     return {
       successed: response.successed,
       error: response.error,
@@ -164,6 +170,8 @@ export class PostsContoller {
     if (!successed) return { ...api.createError("Hash parse error"), date, type: "posts" };
 
     const response = await this.postsService.deletePost(profile_id, postId);
+
+    this.cacheManager.del(`post-${postId}`)
 
     return {
       date,
