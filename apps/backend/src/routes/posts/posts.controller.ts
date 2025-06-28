@@ -25,6 +25,9 @@ import { Public } from "decorators/public.decorator";
 import { AuthGuard } from "guards/auth/auth.guard";
 
 import Hash from "api/hash.api";
+import Api from "api/index.api";
+
+const api = new Api();
 
 @Injectable()
 @Controller(POSTS_CONTROLLER)
@@ -42,14 +45,23 @@ export class PostsContoller {
     @Query("offset") offset?: string,
     @Query("count") count?: string,
     @Query("sortBy") sortBy?: string,
-    @Query("sortType") sortType?: string
+    @Query("sortType") sortType?: string,
+    @Query("cache") cache?: string
   ): Promise<LAFka.Response.GetData<LAFka.LazyPost[]>> {
     const { successed } = Hash.parse(req);
 
-    if (!successed) return { successed: false, type: "posts", error: "", resource: null };
+    if (!successed) return { successed: false, type: "posts", error: "Hash parse error", resource: null };
 
-    const posts = await this.postsService.getPosts({
-      offset, count, sortBy, sortType
+    const cacheManager = api.useCache<LAFka.LazyPost[]>(this.cacheManager, cache, "posts");
+    const posts = await cacheManager<[Partial<{
+      offset: string,
+      count: string,
+      sortBy: string,
+      sortType: string
+    }>]>({
+      key: `posts-${offset}|${count}|${sortBy}|${sortType}}`,
+      getFunction: this.postsService.getPosts,
+      data: [{ offset, count, sortBy, sortType }]
     });
 
     return {...posts, type: "posts" }
@@ -59,13 +71,19 @@ export class PostsContoller {
   @Get(POSTS_ROUTES.GET_ONE)
   public async getPost(
     @Req() req: Request,
-    @Param("id") id: string
+    @Param("id") id: string,
+    @Query("cache") cache?: string
   ): Promise<LAFka.Response.GetData<LAFka.LazyPost>> {
     const { successed } = Hash.parse(req);
 
     if (!successed) return { successed: false, error: "Hash parse error", resource: null, type: "posts" };
 
-    const post = await this.postsService.getPost(id);
+    const cacheManager = api.useCache<LAFka.LazyPost>(this.cacheManager, cache, "posts");
+    const post = await cacheManager<[Partial<LAFka.LazyPost> | string]>({
+      key: `post-${id}`,
+      getFunction: this.postsService.getPost,
+      data: [id]
+    });
 
     return {...post, type: "posts"};
   }
