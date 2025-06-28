@@ -239,47 +239,29 @@ export namespace LAFka.Response {
     error: unknown;
   });
   
-  export type ChangeDataSuccessed<T> = {
-    type: DataType;
-    date: string;
-    successed: true;
-    error: null;
-  } & ({
-    changed_resource: UpdateWriteOpResult;
-    changed_resource_type: "update";
-  } | {
-    changed_resource: T;
-    changed_resource_type: "resource";
-  });
-  
-  export type ChangeData<T> = {
+  export type ChangeData = {
     type: DataType;
     date: string;
   } & ({
     successed: false;
     changed_resource: null;
     error: unknown;
-  } | ChangeDataSuccessed<T>);
-  
-  export type DeleteDataSuccessed<T> = {
-    type: DataType;
-    successed: boolean;
-    error: null;
-    date: string;
-  } & ({
-    deleted_resource_type: "delete";
-    deleted_resource: DeleteResult;
   } | {
-    deleted_resource_type: "resource";
-    deleted_resource: T;
+    successed: true;
+    changed_resource: UpdateWriteOpResult;
+    error: null;
   });
-
-  export type DeleteData<T> = {
+  
+  export type DeleteData = {
     type: DataType;
     date: string;
   } & ({
     successed: false;
     deleted_resource: null;
     error: unknown;
-  } | DeleteDataSuccessed<T>);
+  } | {
+    successed: true;
+    deleted_resource: DeleteResult;
+    error: null;
+  });
 };
