@@ -116,17 +116,14 @@ export class UsersController {
       };
     })();
 
-    if (!data.successed)
-      return { successed: false, type: "users", error: data.error, date, changed_resource: null };
-
     return {
-      successed: true,
+      successed: data.successed,
       date,
-      error: null,
+      error: data.error,
       changed_resource_type: returnUser === "true" ? "resource" : "update",
       changed_resource: data.resource as LAFka.User & UpdateWriteOpResult,
       type: "users"
-    };
+    } as LAFka.Response.ChangeData<LAFka.User>;
   }
 
   @Delete(USERS_ROUTES.DELETE)
@@ -155,8 +152,8 @@ export class UsersController {
       date, 
       deleted_resource_type,
       type: "users",
-      error: null,
-      deleted_resource: data.resource as LAFka.User & DeleteResult
-    };
+      error: data.error,
+      deleted_resource: data.resource as (LAFka.User & DeleteResult)
+    } as LAFka.Response.DeleteData<LAFka.User>;
   }
 }
