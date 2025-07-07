@@ -7,6 +7,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Inject,
   Injectable,
   Param,
@@ -27,6 +28,8 @@ import { AuthGuard } from "guards/auth/auth.guard";
 
 import Hash from "api/hash.api";
 import Api from "api/index.api";
+import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { CreatePostDto, UpdatePostDto } from "./post.data";
 
 const api = new Api();
 
@@ -41,6 +44,11 @@ export class PostsContoller {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
+  @ApiOperation({ summary: "get a posts by query"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Getted"
+  })
   @Public()
   @Get(POSTS_ROUTES.GET)
   public async getPosts(
@@ -70,6 +78,11 @@ export class PostsContoller {
     return { ...posts, type: "posts" }
   }
 
+  @ApiOperation({ summary: "Get a post by id" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Getted"
+  })
   @Public()
   @Get(POSTS_ROUTES.GET_ONE)
   public async getPost(
@@ -91,16 +104,23 @@ export class PostsContoller {
     return { ...post, type: "posts"};
   }
 
+  @ApiOperation({summary: "Creating a post"})
+  @ApiUnauthorizedResponse({ description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Created"
+  })
   @Post(POSTS_ROUTES.POST)
   public async createPost(
     @Req() req: Request,
+    @Body() postData: CreatePostDto
   ): Promise<LAFka.Response.CreateData<LAFka.LazyPost>> {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
     
     if (!successed) return { ...api.createError("Hash parse error"), type: "posts", date };
 
-    const body = Database.parse({...req.body, created_at: date}, "posts");
+    const body = Database.parse({...postData, created_at: date}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
 
     this.cacheManager.set(`post-${post.resource.id}`, post.resource);
@@ -122,11 +142,17 @@ export class PostsContoller {
     "reposts"
   ];
 
+  @ApiOperation({summary: "Updates post data"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Updated"
+  })
   @Put(POSTS_ROUTES.PUT)
   public async putPost(
     @Req() req: Request,
     @Param("id") postId: string,
-    @Body() putData: Partial<LAFka.Post>
+    @Body() putData: UpdatePostDto
   ): Promise<LAFka.Response.ChangeData> {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
@@ -161,6 +187,12 @@ export class PostsContoller {
     } as LAFka.Response.ChangeData;
   };
 
+  @ApiOperation({ summary: "Deletes a post by id"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Deleted"
+  })
   @Delete(POSTS_ROUTES.DELETE)
   public async deletePost(
     @Req() req: Request,

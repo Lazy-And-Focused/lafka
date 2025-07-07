@@ -7,6 +7,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Inject,
   Injectable,
   Param,
@@ -26,6 +27,8 @@ import { Public } from "decorators/public.decorator";
 
 import Hash from "api/hash.api";
 import Api from "api/index.api";
+import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { UserUpdateDto } from "./user.data";
 
 const api = new Api();
 
@@ -38,6 +41,7 @@ export class UsersController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
+  @ApiOperation({ summary: "Getting a user by slug" })
   @Get(USERS_ROUTES.GET)
   @Public()
   public async get(
@@ -59,6 +63,12 @@ export class UsersController {
     return user;
   }
 
+  @ApiOperation({ summary: "Getting a self-user (you)" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Getted",
+  })
   @Get(USERS_ROUTES.GET_ME)
   public async getMe(
     @Req() req: Request,
@@ -78,12 +88,18 @@ export class UsersController {
     return user;
   }
 
+  @ApiOperation({ summary: "Update user's data" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Updated"
+  })
   @Put(USERS_ROUTES.PUT)
   public async put(
     @Req() req: Request,
     @Param("identifier") identifier: string,
     @Query("cache") cache?: string,
-    @Body() putData?: Partial<LAFka.User>
+    @Body() putData?: UserUpdateDto
   ): Promise<LAFka.Response.ChangeData> {
     const date = new Date().toISOString();
 
@@ -120,6 +136,12 @@ export class UsersController {
     } as LAFka.Response.ChangeData;
   }
 
+  @ApiOperation({ summary: "Deletes a user by slug"})
+  @ApiUnauthorizedResponse({ description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Deleted"
+  })
   @Delete(USERS_ROUTES.DELETE)
   public async delete(
     @Req() req: Request,
