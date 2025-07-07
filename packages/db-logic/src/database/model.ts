@@ -30,7 +30,7 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return this._model;
   }
 
-  public static parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => Helpers.parse<T>(data, type);
+  public static parse = <K>(data: K, type: Schemas.Models): K => Helpers.parse<K>(data, type);
 
   public findLast = async (): Promise<Readonly<T>> => {
     return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;

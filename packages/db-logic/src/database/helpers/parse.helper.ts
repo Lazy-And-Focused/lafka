@@ -1,6 +1,6 @@
 import { Schemas } from "database/schemas";
 
-const parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => {
+const parse = <T>(data: T, type: Schemas.Models): T => {
   const output: { [key: string]: unknown } = {};
   const keys = Schemas.keys[type];
   keys.forEach((k: string) => {
