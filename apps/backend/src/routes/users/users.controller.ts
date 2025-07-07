@@ -3,6 +3,7 @@ import Database from "lafka/database/index";
 
 import { Request } from "express";
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -81,7 +82,8 @@ export class UsersController {
   public async put(
     @Req() req: Request,
     @Param("identifier") identifier: string,
-    @Query("cache") cache?: string
+    @Query("cache") cache?: string,
+    @Body() putData?: Partial<LAFka.User>
   ): Promise<LAFka.Response.ChangeData> {
     const date = new Date().toISOString();
 
@@ -93,7 +95,7 @@ export class UsersController {
 
     if (!successed)
       return { ...api.createError("Hash parse error"), date, type: "users" };
-    const user: Partial<LAFka.User> = Database.parse(req.body, "users");
+    const user: Partial<LAFka.User> = Database.parse(putData, "users");
     const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
 
     const data = await this.usersService.updateUser(slug, user);

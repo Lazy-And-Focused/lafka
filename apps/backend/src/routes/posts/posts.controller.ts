@@ -3,6 +3,7 @@ import Database, { Models } from "lafka/database";
 
 import { Request } from "express";
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -124,14 +125,15 @@ export class PostsContoller {
   @Put(POSTS_ROUTES.PUT)
   public async putPost(
     @Req() req: Request,
-    @Param("id") postId: string
+    @Param("id") postId: string,
+    @Body() putData: Partial<LAFka.Post>
   ): Promise<LAFka.Response.ChangeData> {
     const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
 
     if (!successed) return { ...api.createError("Hash parse error"), date, type: "posts" };
 
-    const post = Database.parse<LAFka.Post>({...req.body, id: postId}, "posts");
+    const post = Database.parse<LAFka.Post>({...(putData as LAFka.Post), id: postId}, "posts");
     const keys = Object.keys(post);
 
     if (this._locked_keys_to_change.filter(locked => keys.includes(locked)).length !== 0) {
