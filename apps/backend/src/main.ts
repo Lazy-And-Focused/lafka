@@ -21,7 +21,7 @@ async function bootstrap() {
     cors: { origin: [api.env.CLIENT_URL], credentials: true }
   });
 
-  new Session("AVlzkjbsazvhxczvoiz", app).create();
+  new Session(api.env.SESSION_SECRET, app).create();
 
   app.use(cookieParser());
   app.use(json());

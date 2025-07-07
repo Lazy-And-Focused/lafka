@@ -1,4 +1,4 @@
-import { Env } from "services/env.service";
+import { env } from "services/env.service";
 import { LAFka } from "lafka/types";
 import { Cache } from "cache-manager";
 
@@ -6,7 +6,7 @@ import { ServiceResponse } from "lafka/types/service.types";
 import { GetData } from "lafka/types/backend/data.types";
 
 class Api {
-  public readonly env = new Env().env;
+  public readonly env = env;
 
   public createError(error: string): { successed: false, error: string, resource: null, created_resource: null, changed_resource: null, deleted_resource: null } {
     return {
