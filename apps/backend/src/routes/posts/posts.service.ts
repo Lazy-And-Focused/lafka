@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import { Constructors } from "lafka/database/database/models.database";
+import { Constructors } from "lafka/database/database";
 import { Models } from "lafka/database";
 import { Rights } from "@lafka/rights";
 import { LAFka } from "lafka/types";

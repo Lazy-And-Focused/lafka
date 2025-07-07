@@ -40,6 +40,6 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "fbit-field": "1.4.0-alpha.1b"
+    "fbit-field": "1.4.0-alpha.1c"
   }
 }
