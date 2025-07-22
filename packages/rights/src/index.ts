@@ -1,4 +1,4 @@
-import { LAFka, Rights as LAFkaRights } from "@lafka/types";
+import { Rights as LAFkaRights, Organization, Post, User } from "@lafka/types";
 import { BitField } from "fbit-field";
 
 type MustArray<T, K=T> = [T, ...K[]];
@@ -8,7 +8,7 @@ const resolveArrayToBigInt = <T extends LAFkaRights.Keys>(rightKey: T, ...rights
 
 export namespace Rights {
   export class UserService {
-    public constructor(public readonly user: LAFka.User) {};
+    public constructor(public readonly user: User) {};
 
     public has = <
       T extends keyof LAFkaRights.My,
@@ -18,17 +18,17 @@ export namespace Rights {
       return (BigInt(this.user.rights) & r) === r;
     }
 
-    public hasPostRights(post: LAFka.Post) {
+    public hasPostRights(post: Post) {
       return new PostService(post).userHas(this.user.id);
     };
 
-    public hasOrganizationRights(organization: LAFka.Organization) {
+    public hasOrganizationRights(organization: Organization) {
       return new OrganizationService(organization).userHas(this.user.id);
     }
   }
 
   export class PostService {
-    public constructor(private readonly post: LAFka.Post) {};
+    public constructor(private readonly post: Post) {};
 
     public readonly hasRights = <
       T extends keyof LAFkaRights.Posts
@@ -62,7 +62,7 @@ export namespace Rights {
   }
 
   export class OrganizationService {
-    public constructor(public readonly organization: LAFka.Organization) {};
+    public constructor(public readonly organization: Organization) {};
 
     public readonly hasRights = <
       T extends keyof LAFkaRights.Organizations
