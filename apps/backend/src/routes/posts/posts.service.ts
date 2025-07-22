@@ -3,11 +3,10 @@ import { Injectable } from "@nestjs/common";
 import { Constructors } from "lafka/database/database";
 import { Models } from "lafka/database";
 import { Rights } from "@lafka/rights";
-import { LAFka } from "lafka/types";
 
-import { ServiceResponse } from "lafka/types/service.types";
 import { UpdateWriteOpResult } from "mongoose";
 import { DeleteResult } from "mongodb";
+import { LazyPost, Response } from "lafka/types";
 
 const { posts, users } = new Models();
 
@@ -34,7 +33,7 @@ export type Filter = {
 
 @Injectable()
 export class PostsService {
-  public async getPosts(rawFilter: Record<string, string>): Promise<ServiceResponse<LAFka.LazyPost[]>> {
+  public async getPosts(rawFilter: Record<string, string>): Promise<Response<LazyPost[]>> {
     const filter = this.parseFilter({
       count: "0",
       offset: "0",
@@ -49,60 +48,60 @@ export class PostsService {
       sort: { [filter.sortBy]: filter.sortType }
     }}));
 
-    if (!data.successed || !data.data) return { successed: false, resource: null, error: data.text };
-    if (data.data.length === 0) return { successed: false, resource: null, error: "Posts not found" };
+    if (!data.successed || !data.data) return { successed: false, data: null, error: data.text };
+    if (data.data.length === 0) return { successed: false, data: null, error: "Posts not found" };
 
     return {
       successed: true,
-      resource: data.data.map(p => p.toObject()),
+      data: data.data.map(p => p.toObject()),
       error: null
     }
   }
 
-  public async getPost(id: string): Promise<ServiceResponse<LAFka.LazyPost>> {
+  public async getPost(id: string): Promise<Response<LazyPost>> {
     const data = await posts.getData({filter: {id}});
     
     if (!data.successed || !data.data || data.data.length === 0)
-      return { successed: false, resource: null, error: "Post not found" };
+      return { successed: false, data: null, error: "Post not found" };
   
     return {
       successed: true,
-      resource: data.data[0],
+      data: data.data[0],
       error: null
     };
   }
 
-  public async createPost(userId: string, post: Constructors.posts): Promise<ServiceResponse<LAFka.LazyPost>> {
+  public async createPost(userId: string, post: Constructors.posts): Promise<Response<LazyPost>> {
     const user = (await users.getData({filter: {id: userId}})).data;
 
-    if (!user || !user[0]) return { successed: false, resource: null, error: "User not found"};
+    if (!user || !user[0]) return { successed: false, data: null, error: "User not found"};
 
     if (!new Rights.UserService(user[0]).has("POSTS_CREATE"))
-      return { successed: false, resource: null, error: "403 Forbidenn" };
+      return { successed: false, data: null, error: "403 Forbidenn" };
 
     for (const required of REQUIRED_DATA_TO_CREATE_POST) {
       if (!Object.keys({...post, creator_id: userId}).includes(required)) {
         return {
           successed: false,
           error: "there is no required data",
-          resource: null
+          data: null
         };
       }
     }
 
     return {
       successed: true,
-      resource: (await posts.create({...post, creator_id: userId})).toObject(),
+      data: (await posts.create({...post, creator_id: userId})).toObject(),
       error: null,
     };
   }
 
-  public async putPost(userId: string, post: Partial<LAFka.LazyPost> & { id: string }): Promise<ServiceResponse<UpdateWriteOpResult>> {
+  public async putPost(userId: string, post: Partial<LazyPost> & { id: string }): Promise<Response<UpdateWriteOpResult>> {
     const isCreator = post.creator_id === userId;
     const isManager = new Rights.PostService((await posts.model.findById(post.id)).toObject()).userHas(userId)("MANAGER");
 
     if (!(isCreator || isManager)) {
-      return { successed: false, resource: null, error: "User is not creator or manager." };
+      return { successed: false, data: null, error: "User is not creator or manager." };
     };
 
     const data = await posts.update({
@@ -112,21 +111,21 @@ export class PostsService {
       }
     });
 
-    return { successed: true, error: null, resource: data };
+    return { successed: true, error: null, data: data };
   }
   
-  public async deletePost(userId: string, postId: string): Promise<ServiceResponse<DeleteResult>> {
+  public async deletePost(userId: string, postId: string): Promise<Response<DeleteResult>> {
     const post = (await posts.model.findById(postId)).toObject();
   
     const isCreator = post.creator_id === userId;
 
     if (!isCreator) {
-      return { successed: false, resource: null, error: "User is not a creator." }
+      return { successed: false, data: null, error: "User is not a creator." }
     };
 
     const data = await posts.delete({ id: postId });
 
-    return { successed: true, error: null, resource: data };
+    return { successed: true, error: null, data: data };
   }
 
   private parseFilter(data: Record<keyof Filter, string>): Filter {

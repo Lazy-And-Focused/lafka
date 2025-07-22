@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { LAFka } from "lafka/types";
+import { User } from "lafka/types";
 
-export class UserUpdateDto implements Partial<LAFka.User> {
+export class UserUpdateDto implements Partial<User> {
   @ApiProperty()
   nickname?: string;
   

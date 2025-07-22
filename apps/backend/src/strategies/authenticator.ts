@@ -4,9 +4,9 @@ import passport = require("passport");
 import { Profile } from "passport";
 
 import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
-import { AuthTypes } from "lafka/types/auth/auth-user.types";
 
 import Api from "api/index.api";
+import { AuthTypes } from "lafka/types";
 
 const api = new Api();
 
@@ -48,7 +48,7 @@ class Authenticator {
           username: profile.displayName || profile.name.givenName
         })).toObject();
 
-        const authUser = (await new Models().auth_users.create({
+        const authUser = (await new Models().auth.create({
           access_token,
           refresh_token,
           service_id: id,

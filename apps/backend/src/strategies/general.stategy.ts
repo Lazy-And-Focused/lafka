@@ -1,11 +1,11 @@
 import { Models } from "lafka/database";
 
-const { auth_users: AuthUsers } = new Models();
+const { auth: Auth } = new Models();
 
 import passport = require("passport");
 
 import Authenticator from "./authenticator";
-import { AuthUser } from "lafka/types/auth/auth-user.types";
+import { Auth } from "lafka/types";
 
 class GeneralStrategy {
   protected readonly _passport: passport.PassportStatic = passport;
@@ -34,7 +34,7 @@ class GeneralStrategy {
   }
 
   private serializer() {
-    this._passport.serializeUser((user: AuthUser, done) => {
+    this._passport.serializeUser((user: Auth, done) => {
       return done(null, {
         id: user.id,
         profile_id: user.profile_id,
@@ -50,7 +50,7 @@ class GeneralStrategy {
 
     this._passport.deserializeUser(async (u: string, done) => {
       try {
-        const user = await AuthUsers.model.findOne({
+        const user = await Auth.model.findOne({
           id: u
         });
 
@@ -65,7 +65,7 @@ class GeneralStrategy {
 
               created_at: user.created_at,
               type: user.type
-            } as AuthUser)
+            } as Auth)
           : done(null, null);
       } catch (err) {
         console.error(err);

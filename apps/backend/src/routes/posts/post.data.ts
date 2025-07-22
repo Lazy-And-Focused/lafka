@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { LAFka } from "lafka/types";
+import { LazyPost, PostTag } from "lafka/types";
 
-export class CreatePostDto implements Partial<LAFka.LazyPost> {
+export class CreatePostDto implements Partial<LazyPost> {
   @ApiProperty()
   name: string;
 
@@ -17,7 +17,7 @@ export class CreatePostDto implements Partial<LAFka.LazyPost> {
   @ApiProperty({
     example: ["Design", "Eat", "IT", "Other", "Programming", "Social"]
   })
-  tags: LAFka.Tag<false>[];
+  tags: PostTag[];
 
   @ApiProperty({
     examples: [
@@ -28,7 +28,7 @@ export class CreatePostDto implements Partial<LAFka.LazyPost> {
   type: "blog" | "forum";
 }
 
-export class UpdatePostDto implements Partial<LAFka.LazyPost> {
+export class UpdatePostDto implements Partial<LazyPost> {
   @ApiProperty()
   name: string;
   

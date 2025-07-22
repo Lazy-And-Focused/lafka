@@ -1,6 +1,6 @@
-export const POSTS_CONTROLLER = ["posts", "p"];
+export const ROUTE = ["posts", "p"];
 
-export const POSTS_ROUTES = {
+export const ROUTES = {
   GET: "",
   GET_ONE: ":id",
   POST: "",

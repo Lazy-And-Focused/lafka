@@ -1,12 +1,10 @@
 import { Next, Req, Res } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
+import { Auth, AUTH_TYPES, AuthTypes } from "lafka/types";
 
 import passport = require("passport");
 
-import { LAFka } from "lafka/types";
-import { AuthUser } from "lafka/types/auth/auth-user.types";
-
-const abbreviations: Map<string, LAFka.AuthTypes> = new Map([["ya", "yandex"]]);
+const abbreviations: Map<string, AuthTypes> = new Map([["ya", "yandex"]]);
 
 class AuthApi {
   private readonly _method: string;
@@ -18,12 +16,12 @@ class AuthApi {
   static get methods(): Record<"abbreviations" | "methods", readonly string[]> {
     return {
       abbreviations: Array.from(abbreviations.keys()),
-      methods: LAFka.AUTH_TYPES
+      methods: AUTH_TYPES
     };
   }
 
   private getMethod(): [boolean, { [key: string]: unknown; method: string; body: unknown }] {
-    if (!(LAFka.AUTH_TYPES as unknown as string[]).includes(this._method)) {
+    if (!(AUTH_TYPES as unknown as string[]).includes(this._method)) {
       if (abbreviations.get(this._method))
         return [true, { body: null, method: abbreviations.get(this._method) }];
 
@@ -32,7 +30,7 @@ class AuthApi {
         {
           body: {
             msg: "Sorry, but method " + this._method + " not found. Try next:",
-            methods: LAFka.AUTH_TYPES
+            methods: AUTH_TYPES
           },
           method: this._method
         }
@@ -55,7 +53,7 @@ class AuthApi {
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
-    callback: (...args: [unknown, AuthUser | null, unknown]) => unknown
+    callback: (...args: [unknown, Auth | null, unknown]) => unknown
   ): unknown {
     const [successed, { method, body }] = this.getMethod();
 

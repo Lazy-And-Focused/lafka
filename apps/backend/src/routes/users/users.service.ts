@@ -3,11 +3,8 @@ import { Injectable } from "@nestjs/common";
 import { UpdateWriteOpResult } from "mongoose";
 
 import { Models } from "lafka/database";
-import type { LAFka } from "lafka/types";
-import type { ServiceResponse } from "lafka/types/service.types";
 import { DeleteResult } from "lafka/database/types/mongodb.types";
-
-import type { GetData } from "lafka/types/backend/data.types";
+import { Response, User } from "lafka/types";
 
 const { users } = new Models();
 const keyGetSymbols = ["@"];
@@ -32,14 +29,13 @@ export class UsersService {
     return keyGetSymbolsMap.get(slug[0]) as "username" | "id";
   }
 
-  public static lazyGetSlug(slug: string): string | GetData<LAFka.User> {
+  public static lazyGetSlug(slug: string): string | Response<User> {
     if (!keyGetSymbols.includes(slug[0])) {
       if (isNaN(+slug[0]))
         return {
-          error: new Error(ERROR_BAD_SLUG),
+          error: ERROR_BAD_SLUG,
           successed: false,
-          type: "users",
-          resource: null
+          data: null
         };
 
       return slug;
@@ -49,9 +45,8 @@ export class UsersService {
     if (!type) {
       return {
         successed: false,
-        resource: null,
-        error: new Error(ERROR_BAD_SLUG),
-        type: "users"
+        data: null,
+        error: ERROR_BAD_SLUG,
       };
     };
 
@@ -60,19 +55,18 @@ export class UsersService {
 
   public static getSlug(
     slug: string
-  ): ({ "id": string } | { "username": string }) | GetData<LAFka.User> {
+  ): ({ "id": string } | { "username": string }) | Response<User> {
     const slugType = UsersService.getSlugType(slug);
 
     if (slugType instanceof Error) {
       return {
         successed: false,
-        resource: null,
-        error: slugType,
-        type: "users"
+        data: null,
+        error: slugType.message,
       }
     };
 
-    return { [slugType]: this.lazyGetSlug(slug) } as ({ "id": string } | { "username": string }) | GetData<LAFka.User>;
+    return { [slugType]: this.lazyGetSlug(slug) } as ({ "id": string } | { "username": string }) | Response<User>;
   }
 
   public static formatGettedData<Lazy extends boolean = false>(
@@ -84,23 +78,23 @@ export class UsersService {
     return data[key];
   }
 
-  public async getUser(data: Partial<LAFka.User> | string): Promise<ServiceResponse<LAFka.User>> {
+  public async getUser(data: Partial<User> | string): Promise<Response<User>> {
     try {
       const user = (await users.model.findOne(typeof data === "string" ? { id: data } : data)).toObject();
 
-      if (!user) return { successed: false, resource: null, error: "User not found" };
+      if (!user) return { successed: false, data: null, error: "User not found" };
 
       return {
         successed: true,
         error: null,
-        resource: user
+        data: user
       };
     } catch (error) {
       console.error(error);
 
       return {
         successed: false,
-        resource: null,
+        data: null,
         error
       };
     }
@@ -108,25 +102,25 @@ export class UsersService {
 
   public async updateUser(
     id: string,
-    data: Partial<LAFka.User>,
-  ): Promise<ServiceResponse<UpdateWriteOpResult>> {
+    data: Partial<User>,
+  ): Promise<Response<UpdateWriteOpResult>> {
     try {
       const updated = await users.update({ filter: { id }, update: data });
 
       if (!updated.acknowledged)
-        return { successed: false, error: "unknown error: 1", resource: null };
+        return { successed: false, error: "unknown error: 1", data: null };
 
       return {
         successed: true,
         error: null,
-        resource: updated
+        data: updated
       };
     } catch (error) {
       console.error(error);
 
       return {
         successed: false,
-        resource: null,
+        data: null,
         error
       };
     }
@@ -134,24 +128,24 @@ export class UsersService {
 
   public async deleteUser(
     id: string,
-  ): Promise<ServiceResponse<DeleteResult>> {
+  ): Promise<Response<DeleteResult>> {
     try {
       const deleted = await users.delete({id});
 
       if (!deleted.acknowledged)
-        return { successed: false, error: "unknown error: 2", resource: null };
+        return { successed: false, error: "unknown error: 2", data: null };
 
       return {
         successed: true,
         error: null,
-        resource: deleted
+        data: deleted
       };
     } catch (error) {
       console.error(error);
 
       return {
         successed: false,
-        resource: null,
+        data: null,
         error
       };
     }

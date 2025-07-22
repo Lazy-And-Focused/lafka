@@ -3,7 +3,7 @@ import { Request } from "express";
 import { Models } from "lafka/database";
 import Hash from "api/hash.api";
 
-const { auth_users, users } = new Models();
+const { auth, users } = new Models();
 
 class Service {
   public async validateRequest(req: Request) {
@@ -11,7 +11,7 @@ class Service {
 
     if (!successed) return false;
 
-    const findedUser = await auth_users.model.findOne({ id: id });
+    const findedUser = await auth.model.findOne({ id: id });
 
     if (!findedUser) return false;
     if (findedUser.profile_id !== profile_id) return false;
