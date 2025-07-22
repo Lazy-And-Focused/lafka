@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "build": "pnpm run compile && tsc && tsc-alias && pnpm run format && pnpm run remove-compiler",
-    "compile": "set NODE_ENV=rights_compile&& ts-node ./src/rights/rights.types.ts",
-    "format": "prettier ./src/rights/rights.types.ts -c -w",
-    "remove-compiler": "rimraf ./dist/rights/compiler.d.ts && rimraf ./dist/rights/compiler.js"
+    "compile": "set NODE_ENV=rights_compile&& ts-node ./src/rights.types.ts",
+    "format": "prettier ./src/rights.types.ts -c -w",
+    "remove-compiler": "rimraf ./dist/rights.compiler.d.ts && rimraf ./dist/rights.compiler.js"
   },
   "keywords": [
     "types"

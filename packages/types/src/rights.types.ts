@@ -1,9 +1,7 @@
 import { BitBuilder } from "fbit-field";
-import { Compiler } from "fbit-field/compiler";
-import { writeFileSync } from "fs";
-import { parse } from "path";
 
 type IRights<T extends any[] | readonly any[]> = Record<T[number], bigint>;
+
 export namespace Rights {
   export type My = IRights<typeof My.ALL>;
   export namespace My {
