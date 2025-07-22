@@ -7,10 +7,11 @@
 <!-- prettier-ignore -->
 > [!CAUTION]
 > Эта страница проектируется, пишется и обсуждается. Если есть предложения, то
-> не стесняйтксь писать в issue или в чат Telegram.
+> не стесняйтесь писать [в issue](https://github.com/Lazy-And-Focused/LAFka/issues)
+> или [в чат Telegram](https://t.me/laf_disccussion).
 
 Раздел посвящён неймингу и паттернам, которые Вы должны соблюдать в
-рамках кода для Frontentd-части приложения.
+рамках кода для Frontend-части приложения.
 
 ## Next.js | Layouts & Pages
 
