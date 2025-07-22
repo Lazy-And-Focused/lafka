@@ -24,7 +24,7 @@ export namespace Constructors {
 }
 
 class Database {
-  private readonly _auth_users: Model<Auth, Partial<Auth>>;
+  private readonly _auth: Model<Auth, Partial<Auth>>;
   private readonly _comments: Model<Comment>;
 
   private readonly _posts: Model<
@@ -41,7 +41,7 @@ class Database {
   public static readonly parse = Helpers.parse;
 
   public constructor() {
-    this._auth_users = new Model<Auth>(Schemas.databases.auth);
+    this._auth = new Model<Auth>(Schemas.databases.auth);
     this._comments = new Model<Comment>(Schemas.databases.comments);
     this._posts = new Model<LazyPost>(Schemas.databases.posts);
     this._users = new Model<User>(Schemas.databases.users);
@@ -55,8 +55,8 @@ class Database {
     return this._keys;
   }
 
-  public get auth_users() {
-    return this._auth_users;
+  public get auth() {
+    return this._auth;
   }
 
   public get comments() {
