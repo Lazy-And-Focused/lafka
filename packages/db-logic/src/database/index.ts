@@ -2,21 +2,17 @@ import { Schemas } from "./schemas";
 import Model from "./model";
 
 import type { PickCreateData, ModelData } from "lafka/types/mongodb.types";
-import { LAFka } from "lafka/types";
 import { Helpers } from "./helpers";
-
-type AuthUser = LAFka.AuthUser;
-type Comment = LAFka.Comment;
-type User = LAFka.User;
+import { Auth, Comment, LazyPost, User } from "lafka/types";
 
 export namespace Constructors {
-  export type auth_users = ModelData<Omit<AuthUser, "created_at">> & { profile_id?: string };
+  export type auth_users = ModelData<Omit<Auth, "created_at">> & { profile_id?: string };
   export type comments = PickCreateData<Comment, "author_id" | "post_id" | "content"> & {
     id?: string;
   };
 
   export type posts = PickCreateData<
-    LAFka.LazyPost,
+    LazyPost,
     "content" | "creator_id" | "name" | "type"
   > & { _id?: string };
 
@@ -28,12 +24,12 @@ export namespace Constructors {
 }
 
 class Database {
-  private readonly _auth_users: Model<AuthUser, Partial<AuthUser>>;
+  private readonly _auth_users: Model<Auth, Partial<Auth>>;
   private readonly _comments: Model<Comment>;
 
   private readonly _posts: Model<
-    LAFka.LazyPost,
-    Pick<LAFka.LazyPost, "content" | "creator_id" | "name" | "type">
+    LazyPost,
+    Pick<LazyPost, "content" | "creator_id" | "name" | "type">
   >;
 
   private readonly _users: Model<User, Pick<User, "username">>;
@@ -45,9 +41,9 @@ class Database {
   public static readonly parse = Helpers.parse;
 
   public constructor() {
-    this._auth_users = new Model<AuthUser>(Schemas.databases.auth_users);
+    this._auth_users = new Model<Auth>(Schemas.databases.auth);
     this._comments = new Model<Comment>(Schemas.databases.comments);
-    this._posts = new Model<LAFka.LazyPost>(Schemas.databases.posts);
+    this._posts = new Model<LazyPost>(Schemas.databases.posts);
     this._users = new Model<User>(Schemas.databases.users);
   }
 

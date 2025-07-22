@@ -19,6 +19,35 @@ export type CreatePost = {
   type: "forum"|"blog";
 }
 
+export type LazyPost = {
+  id: string;
+
+  name: string;
+  content: string;
+  description?: string;
+  comments: string[];
+  followers: number;
+  tags: PostTag[];
+
+  created_at: string;
+  changed_at?: string;
+
+  creator_id: string;
+
+  status: ViewStatus;
+  /* key: string, value: bigint */
+  rights: Map<string, string>;
+
+  /** blog */
+  likes: number;
+  /** blog */
+  dislikes: number;
+  /** blog */
+  reposts: number;
+
+  type: "blog"|"forum";
+}
+
 export type Post = {
   id: string;
 

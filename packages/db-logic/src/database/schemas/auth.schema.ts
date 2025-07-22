@@ -1,8 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import { LAFka } from "lafka/types";
-import { SchemaParameters } from "lafka/types/mongodb.types";
 
-const data: SchemaParameters<LAFka.AuthUser> = {
+import type { SchemaParameters } from "lafka/types/mongodb.types";
+import type { Auth } from "lafka/types";
+
+const data: SchemaParameters<Auth> = {
   id: {
     type: mongoose.SchemaTypes.String,
     required: true,
@@ -42,10 +43,10 @@ const data: SchemaParameters<LAFka.AuthUser> = {
     required: true
   }
 };
-const schema = new Schema<LAFka.AuthUser>(data);
-const keys = Object.keys(data) as unknown as (keyof LAFka.AuthUser)[];
+const schema = new Schema<Auth>(data);
+const keys = Object.keys(data) as unknown as (keyof Auth)[];
 
-const database = mongoose.model("auth-users", schema);
+const database = mongoose.model("auth", schema);
 
 export { schema as AuthUsersSchema, keys as AuthUsersKeys };
 
