@@ -16,7 +16,7 @@ const keyGetSymbolsMap = new Map<string, string>([
 const ERROR_BAD_SLUG = `argument must be username (@username) or id (id)` as const;
 
 @Injectable()
-export class UsersService {
+export class Service {
   public static getSlugType(slug: string): "id"|"username"|Error {
     if (!keyGetSymbols.includes(slug[0])) {
       if (isNaN(+slug[0])) {
@@ -56,7 +56,7 @@ export class UsersService {
   public static getSlug(
     slug: string
   ): ({ "id": string } | { "username": string }) | Response<User> {
-    const slugType = UsersService.getSlugType(slug);
+    const slugType = Service.getSlugType(slug);
 
     if (slugType instanceof Error) {
       return {
@@ -99,6 +99,48 @@ export class UsersService {
       };
     }
   }
+
+  public async followUser(follower: string, following: string): Promise<Response<unknown>> {
+    try {
+      const isFollow = !((await users.model.findOne({id: following})).toObject().followers.includes(follower));
+      
+      await users.model.updateOne({
+        id: following
+      }, isFollow ? {
+        $push: {
+          followers: follower
+        }
+      } : {
+        $pull: {
+          followers: follower
+        }
+      });
+
+      await users.model.updateOne({
+        id: follower
+      }, isFollow ? {
+        $push: {
+          following
+        }
+      } : {
+        $pull: {
+          following
+        }
+      })
+
+      return {
+        data: null,
+        successed: true,
+        error: null
+      }
+    } catch (error) {
+      return {
+        successed: false,
+        data: null,
+        error
+      }
+    }
+  };
 
   public async updateUser(
     id: string,

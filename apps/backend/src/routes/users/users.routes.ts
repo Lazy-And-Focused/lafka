@@ -1,9 +1,9 @@
 export const ROUTE = ["users", "u"];
 
 export const ROUTES = {
-  GET_ME: "/",
   GET: "/:id",
-  POST: "/:id",
+  PUT: "/:id",
   DELETE: "/:id",
-  PUT: "/:id"
+  
+  PATCH: "/:id/follow"
 } as const;
