@@ -14,16 +14,6 @@ export namespace Api {
   
   export type Routes = {
     users: {
-      "GET /": {
-        return: Response<User>,
-        path: "/",
-
-        headers: { token: string },
-
-        body?: null,
-        query?: { cache?: boolean }
-      },
-
       "GET /:id": {
         return: Response<User>,
         path: "/:id",

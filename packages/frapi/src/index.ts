@@ -24,7 +24,7 @@ type Return<
   data: Api.ParseRoute<Root, Url>["return"]
 };
 
-export class frapi<ApiUrl extends string> {
+export class Frapi<ApiUrl extends string> {
   public constructor(public readonly url: ApiUrl) {};
 
   public readonly parseInit = <
@@ -127,4 +127,4 @@ export class frapi<ApiUrl extends string> {
 
 export { Api };
 
-export default frapi;
+export default Frapi;
