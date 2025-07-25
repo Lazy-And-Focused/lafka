@@ -8,4 +8,4 @@ import { CacheModule } from "@nestjs/cache-manager";
   controllers: [PostsContoller],
   providers: [PostsService]
 })
-export class PostsModule {}
+export default class PostsModule {}
