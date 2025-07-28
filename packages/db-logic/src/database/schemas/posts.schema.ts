@@ -44,7 +44,7 @@ const data: SchemaParameters<LazyPost> = {
 };
 
 const schema = new Schema<LazyPost>(data);
-const keys = Object.keys(schema) as unknown as (keyof LazyPost)[];
+const keys = Object.keys(data) as unknown as (keyof LazyPost)[];
 
 const database = mongoose.model("posts", schema);
 

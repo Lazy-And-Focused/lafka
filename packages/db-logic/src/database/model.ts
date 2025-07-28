@@ -36,15 +36,14 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;
   };
 
-  public generateId = async (): Promise<string> => {
-    const id = await this._model.countDocuments();
-
-    return `${(id === 0 ? 0 : +(await this.findLast()).id) + 1}`;
+  public static generateId = (): string => {
+    return `${new Date().getTime()}`
   };
 
   public create = async (doc: CreateData<T> & K) => {
     return await this._model.create({
       ...doc,
+      created_at: new Date().toISOString(),
       id: await this.id
     });
   };
@@ -86,8 +85,8 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return await Helpers.deleteModel(name);
   };
 
-  get id(): Promise<string> {
-    return this.generateId();
+  get id(): string {
+    return Database.generateId();
   }
 }
 

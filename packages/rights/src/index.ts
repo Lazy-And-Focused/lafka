@@ -4,7 +4,7 @@ import { BitField } from "fbit-field";
 type MustArray<T, K=T> = [T, ...K[]];
 
 const resolveArrayToBigInt = <T extends LAFkaRights.Keys>(rightKey: T, ...rights: LAFkaRights.Rights<T>[]) =>
-  BitField.summarize(...(Object.keys(rights) as LAFkaRights.Rights<T>[]).map(key => LAFkaRights.CONSTANTS.object.available[rightKey][key]) as any);
+  BitField.summarize(...rights.map(key => LAFkaRights.CONSTANTS.object.available[rightKey][key]) as any);
 
 type RightsOnly<T extends { rights: unknown, id: unknown }, K extends keyof T | never = never> = {
   [P in K]: T[P];
