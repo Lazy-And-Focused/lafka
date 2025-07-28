@@ -1,18 +1,31 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 
-import { User } from "@/components/user/user.component";
-import { LAFka } from "@lafka/types";
+import { UserComponent } from "@/components/user/user.component";
+import { LazyPost, User } from "@lafka/types";
 import { validateCookies } from "@/api/validator";
 import { Post } from "@/components/posts/post.component";
+import { useEffect, useState } from "react";
+import { Posts } from "@/components/posts/posts.component";
 
 /* eslint-disable */
 type Props = {
-    user?: LAFka.User,
+    user?: User,
     headers?: any
 };
  /* eslint-enable */
 
 const Home: NextPage<Props> = ({ user, headers }) => {
+    const [ posts, setPosts ] = useState<LazyPost[]>();
+
+    useEffect(() => {
+        (async () => {
+            const data = await fetch("http://localhost:3001/api/posts?cache=false", { headers })
+            const posts = await data.json();
+
+            setPosts(posts.data);
+        })();
+    }, []);
+
     return (
         <div>
             <div>
@@ -30,7 +43,7 @@ const Home: NextPage<Props> = ({ user, headers }) => {
                 <div style={{width: "300px", height: "700px"}}>
                     <span>Your profile:</span>
                     <br />
-                    <User user={user} />
+                    <UserComponent user={user} />
                 </div>
 
                 <div>
@@ -40,9 +53,16 @@ const Home: NextPage<Props> = ({ user, headers }) => {
                             : <span>You must register</span>
                     }
                 </div>
-            </div>
-            <div id="posts">
 
+                <div id="posts-data">
+                    <button onClick={async () => {
+                        const data = await fetch("http://localhost:3001/api/posts?cache=false", { headers })
+                        const posts = await data.json();
+                        
+                        setPosts(posts.data);
+                    }}>Update</button>
+                    <Posts posts={posts} headers={headers}></Posts>
+                </div>
             </div>
         </div>
     )
@@ -54,13 +74,15 @@ export const getServerSideProps = async(ctx: GetServerSidePropsContext): Promise
     if(!headers)
         return {props: {}};
 
-    const user = await fetch("http://localhost:3001/api/users/", {headers});
+    const user = await fetch("http://localhost:3001/api/users/@me", {headers});
 
     if (user.status !== 200) return { props: {}};
 
+    const { data } = (await user.json());
+
     return {
         props: {
-            user: (await user.json()).resource,
+            user: data,
             headers,
         }
     };

@@ -1,11 +1,11 @@
 import React from "react";
-import { LAFka } from "@lafka/types";
+import { User } from "@lafka/types";
 
 type Props = {
-  user?: LAFka.User
+  user?: User
 }
 
-export class User extends React.Component<Props> {
+export class UserComponent extends React.Component<Props> {
   public constructor(props: Props) {
     super(props)
   }
