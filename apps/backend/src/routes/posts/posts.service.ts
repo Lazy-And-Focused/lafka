@@ -6,9 +6,9 @@ import { Rights } from "@lafka/rights";
 
 import { UpdateWriteOpResult } from "mongoose";
 import { DeleteResult } from "mongodb";
-import { LazyPost, Response } from "lafka/types";
+import { Comment, CreateComment, LazyPost, Response, User } from "lafka/types";
 
-const { posts, users } = new Models();
+const { posts, users, comments } = new Models();
 
 const FILTER = {
   offset: 0,
@@ -96,14 +96,7 @@ export class PostsService {
     };
   }
 
-  public async putPost(userId: string, post: Partial<LazyPost> & { id: string }): Promise<Response<UpdateWriteOpResult>> {
-    const isCreator = post.creator_id === userId;
-    const isManager = new Rights.PostService((await posts.model.findById(post.id)).toObject()).userHas(userId)("MANAGER");
-
-    if (!(isCreator || isManager)) {
-      return { successed: false, data: null, error: "User is not creator or manager." };
-    };
-
+  public async putPost(post: Partial<LazyPost> & { id: string }): Promise<Response<UpdateWriteOpResult>> {
     const data = await posts.update({
       filter: { id: post.id },
       update: {
@@ -114,6 +107,18 @@ export class PostsService {
     return { successed: true, error: null, data: data };
   }
   
+  public async blockPost(userId: string, postId: string): Promise<Response<User>> {
+    const data = await this.patchService("block", { id: postId }, userId);
+
+    return { successed: true, error: null, data };
+  };
+
+  public async followPost(userId: string, postId: string, type: "blog"|"forum"): Promise<Response<User>> {
+    const data = await this.patchService("follow", { id: postId, type }, userId);
+
+    return { successed: true, error: null, data };
+  };
+
   public async deletePost(userId: string, postId: string): Promise<Response<DeleteResult>> {
     const post = (await posts.model.findById(postId)).toObject();
   
@@ -126,6 +131,87 @@ export class PostsService {
     const data = await posts.delete({ id: postId });
 
     return { successed: true, error: null, data: data };
+  }
+
+  public async postComment(comment: CreateComment): Promise<Response<Comment>> {
+    try {
+      const data = (await comments.create({
+        ...comment,
+        created_at: new Date().toISOString()
+      })).toObject();
+
+      await posts.update({
+        filter: { id: comment.post_id },
+        update: {
+          $push: {
+            comments:data.id
+          }
+        }
+      });
+
+      return { 
+        successed: true,
+        error: null,
+        data
+      }
+    } catch (error) {
+      return { successed: false, data: null, error };
+    }
+  }
+
+  public async getComments(postId: string): Promise<Response<string[]>> {
+    try {
+      const data = (await posts.model.findOne({id: postId})).comments;
+
+      return {
+        successed: true,
+        data,
+        error: null
+      }
+    } catch (error) {
+      return { successed: false, error, data: null };
+    }
+  }
+
+  private async patchService<T extends "block"|"follow">(
+    type: T,
+    post: T extends "follow"
+      ? { id: string, type: "blog"|"forum" }
+      : { id: string, type?: undefined },
+    userId: string
+  ) {
+    const key = this.resolvePostKey(type, post);
+
+    const includes = (await users.model.findOne({id: userId}))[key].includes(post.id);
+
+    return (await users.model.findOneAndUpdate({
+      id: userId
+    }, includes ? {
+      $pull: {
+        [key]: post.id
+      }
+    } : {
+      $push: {
+        [key]: post.id
+      }
+    }, {
+      returnDocument: "after"
+    })).toObject();
+  }
+  
+  private resolvePostKey<T extends "block"|"follow">(
+    type: T,
+    post: T extends "follow"
+      ? { type: "blog"|"forum" }
+      : { type?: undefined }
+  ) {
+    if (type === "block") {
+      return "blocked_posts" as const;
+    } else {
+      return post.type === "blog"
+        ? "followed_blog_posts" as const
+        : "followed_forun_posts" as const;
+    }
   }
 
   private parseFilter(data: Record<keyof Filter, string>): Filter {

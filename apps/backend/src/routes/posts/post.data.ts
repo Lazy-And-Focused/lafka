@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { LazyPost, PostTag } from "lafka/types";
+import { CreateComment, LazyPost, PostTag } from "lafka/types";
 
 export class CreatePostDto implements Partial<LazyPost> {
   @ApiProperty()
@@ -42,4 +42,12 @@ export class UpdatePostDto implements Partial<LazyPost> {
     examples: ["open", "limited", "link"]
   })
   status: "open" | "limited" | "link";
+};
+
+export class CreateCommentDto implements Omit<CreateComment, "author_id"|"post_id"> {
+  @ApiProperty()
+  content: string;
+  
+  @ApiProperty()
+  reply?: string;
 };

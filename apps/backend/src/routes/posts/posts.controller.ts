@@ -1,4 +1,4 @@
-import { LazyPost, Response } from "lafka/types";
+import { CreateComment, LazyPost, Response } from "lafka/types";
 import Database, { Models } from "lafka/database";
 
 import { Request } from "express";
@@ -7,10 +7,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
   Inject,
   Injectable,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -29,7 +31,8 @@ import { AuthGuard } from "guards/auth/auth.guard";
 import Hash from "api/hash.api";
 import Api from "api/index.api";
 import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
-import { CreatePostDto, UpdatePostDto } from "./post.data";
+import { CreateCommentDto, CreatePostDto, UpdatePostDto } from "./post.data";
+import { Rights } from "@lafka/rights";
 
 const api = new Api();
 
@@ -148,8 +151,15 @@ export class PostsContoller {
     const { successed, profile_id } = Hash.parse(req);
 
     if (!successed) return api.createError("Hash parse error")
+    
+    const databasePost = await this.cacheManager.get<LazyPost>(`post-${postId}`) ?? (await posts.model.findById(postId)).toObject();
+    
+    const hasRights = new Rights.PostService(databasePost).userHas(profile_id)("MANAGER");
+    if (!hasRights) {
+      throw new HttpException("Forbidenn", HttpStatus.FORBIDDEN);
+    };
 
-    const post = Database.parse<LazyPost>({...(putData as LazyPost), id: postId}, "posts");
+    const post = Database.parse<LazyPost>(<LazyPost>putData, "posts");
     const keys = Object.keys(post);
 
     if (this._locked_keys_to_change.filter(locked => keys.includes(locked)).length !== 0) {
@@ -161,13 +171,58 @@ export class PostsContoller {
     };
 
     if (!post.id) return api.createError("Post id is not defined")
-    
-    const data = await this.postsService.putPost(profile_id, post);
+    const data = await this.postsService.putPost(post);
     
     posts.model.findById(post.id).then(p => this.cacheManager.set(`post-${post.id}`, p.toObject()));
 
     return data;
   };
+
+  @ApiOperation({summary: "Block post for self"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Blocked/Unblocked"
+  })
+  @Patch(ROUTES.PATCH_BLOCK)
+  public async patchBlock(
+    @Req() req: Request,
+    @Param("id") postId: string
+  ) {
+    const { successed, profile_id } = Hash.parse(req);
+
+    if (!successed) return api.createError("Hash parse error")
+
+    const data = await this.postsService.blockPost(profile_id, postId);
+
+    this.cacheManager.set(`user-${profile_id}`, data.data);
+
+    return data;
+  }
+
+  @ApiOperation({summary: "Follow to post"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Follow/Unfollow"
+  })
+  @Patch(ROUTES.PATCH_BLOCK)
+  public async patchFollow(
+    @Req() req: Request,
+    @Param("id") postId: string
+  ) {
+    const { successed, profile_id } = Hash.parse(req);
+
+    if (!successed) return api.createError("Hash parse error")
+
+    const databasePost = await this.cacheManager.get<LazyPost>(`post-${postId}`) ?? (await posts.model.findById(postId)).toObject();
+
+    const data = await this.postsService.followPost(profile_id, postId, databasePost.type);
+    
+    this.cacheManager.set(`user-${profile_id}`, data.data);
+    
+    return data;
+  }
 
   @ApiOperation({ summary: "Deletes a post by id"})
   @ApiUnauthorizedResponse({description: "Unauthorized"})
@@ -186,8 +241,50 @@ export class PostsContoller {
 
     const data = await this.postsService.deletePost(profile_id, postId);
 
-    this.cacheManager.del(`post-${postId}`)
+    this.cacheManager.del(`post-${postId}`);
 
     return data
   };
+
+  @ApiOperation({ summary: "Create commet to post"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: "Created"
+  })
+  @Delete(ROUTES.POST_COMMENT)
+  public async postComment(
+    @Req() req: Request,
+    @Param("id") postId: string,
+    @Body() body: CreateCommentDto
+  ) {
+    const { successed, profile_id } = Hash.parse(req);
+ 
+    if (!successed) return api.createError("Hash parse error");
+    
+    const data = Database.parse({ ...body, post_id: postId, author_id: profile_id }, "comments");
+
+    return this.postsService.postComment(data);
+  }
+
+  @ApiOperation({ summary: "Get post comments"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Getted"
+  })
+  @Delete(ROUTES.GET_COMMENTS)
+  @Public()
+  public async getComments(
+    @Param("id") postId: string,
+    @Query("cache") cache: string
+  ) {
+    const cacheManager = api.useCache<string[]>(this.cacheManager, cache);
+    
+    return cacheManager({
+      getFunction: this.postsService.getComments,
+      data: [postId],
+      key: `post-${postId}-comments`
+    });
+  }
 }
