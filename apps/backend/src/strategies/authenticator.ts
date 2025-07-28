@@ -1,4 +1,4 @@
-import { Models } from "lafka/database";
+import Database, { Models } from "lafka/database";
 
 import passport = require("passport");
 import { Profile } from "passport";
@@ -7,9 +7,30 @@ import { Strategy, VerifyCallback, VerifyFunction } from "passport-oauth2";
 
 import Api from "api/index.api";
 import { AuthTypes } from "lafka/types";
+import { Model } from "mongoose";
 
 const api = new Api();
 
+const CreateOrUpdate = async <T>({
+  model,
+  findData,
+  data
+}: {
+  model: Model<T>;
+  findData: Partial<T>;
+  data: Partial<T>;
+}) => {
+  const finded = await model.findOne(findData);
+
+  if (!finded) {
+    // ВЫНЕСТИ В static
+    return model.create({ ...findData, ...data, id: Database.generateId(), created_at: new Date().toISOString() });
+  }
+
+  return model.findOneAndUpdate(findData, data, {
+    returnDocument: "after"
+  });
+};
 /**
  * @types [AuthTypes, string, string[]?] (first, second, third)
  * @first the method of authentication
@@ -44,19 +65,26 @@ class Authenticator {
       try {
         const { id } = profile;
 
-        const user = (await new Models().users.create({
-          username: profile.displayName || profile.name.givenName
+        const user = (await CreateOrUpdate({
+          model: new Models().users.model,
+          findData: {
+            username: profile.displayName || profile.name.givenName
+          },
+          data: {}
         })).toObject();
 
-        const authUser = (await new Models().auth.create({
-          access_token,
-          refresh_token,
-          service_id: id,
-          type: type,
-          profile_id: user.id
+        const auth = (await CreateOrUpdate({
+          model: new Models().auth.model,
+          findData: { profile_id: user.id },
+          data: {
+            access_token,
+            refresh_token,
+            service_id: id,
+            type: type,            
+          }
         })).toObject();
 
-        return done(null, authUser);
+        return done(null, auth);
       } catch (error) {
         console.log(error);
 

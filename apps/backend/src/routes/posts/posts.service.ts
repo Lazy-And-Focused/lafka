@@ -3,10 +3,12 @@ import { Injectable } from "@nestjs/common";
 import { Constructors } from "lafka/database/database";
 import { Models } from "lafka/database";
 import { Rights } from "@lafka/rights";
+import { Rights as LafkaRights } from "lafka/types"
 
 import { UpdateWriteOpResult } from "mongoose";
 import { DeleteResult } from "mongodb";
 import { Comment, CreateComment, LazyPost, Response, User } from "lafka/types";
+import Database from "lafka/database/database/model";
 
 const { posts, users, comments } = new Models();
 
@@ -31,10 +33,70 @@ export type Filter = {
   sortType: 1 | -1
 }
 
+const parseFilter = (data: Record<keyof Filter, string>): Filter => {
+  return {
+    count: Number(data.count),
+    offset: Number(data.offset),
+    sortBy: FILTER.sortBy.includes(data.sortBy) ? data.sortBy as Filter["sortBy"] : "created_at",
+    sortType: typeof data.sortType === "boolean"
+      ? data.sortType === true
+        ? 1
+        : -1
+      : typeof data.sortType === "number"
+        ? data.sortType === 1
+          ? 1
+          : -1
+        : typeof data.sortType === "string"
+          ? data.sortType === "asc"
+            ? 1
+            : -1
+          : -1
+  };
+};
+
+const patchService = async <T extends "block"|"follow">(
+  type: T,
+  post: T extends "follow"
+    ? { id: string, type: "blog"|"forum" }
+    : { id: string, type?: undefined },
+  userId: string
+): Promise<User> => {
+  const key = resolvePostKey(type, post);
+  const includes = (await users.model.findOne({id: userId}))[key].includes(post.id);
+  return (await users.model.findOneAndUpdate({
+    id: userId
+  }, includes ? {
+    $pull: {
+      [key]: post.id
+    }
+  } : {
+    $push: {
+      [key]: post.id
+    }
+  }, {
+    returnDocument: "after"
+  })).toObject();
+}
+
+const resolvePostKey = <T extends "block"|"follow">(
+  type: T,
+  post: T extends "follow"
+    ? { type: "blog"|"forum" }
+    : { type?: undefined }
+) => {
+  if (type === "block") {
+    return "blocked_posts" as const;
+  } else {
+    return post.type === "blog"
+      ? "followed_blog_posts" as const
+      : "followed_forun_posts" as const;
+  }
+}
+
 @Injectable()
 export class PostsService {
   public async getPosts(rawFilter: Record<string, string>): Promise<Response<LazyPost[]>> {
-    const filter = this.parseFilter({
+    const filter = parseFilter({
       count: "0",
       offset: "0",
       sortBy: "created_at",
@@ -72,28 +134,49 @@ export class PostsService {
   }
 
   public async createPost(userId: string, post: Constructors.posts): Promise<Response<LazyPost>> {
-    const user = (await users.getData({filter: {id: userId}})).data;
+    try {
+      const user = (await users.model.findOne({id: userId})).toObject();
 
-    if (!user || !user[0]) return { successed: false, data: null, error: "User not found"};
+      if (!user) return { successed: false, data: null, error: "User not found"};
 
-    if (!new Rights.UserService(user[0]).has("POSTS_CREATE"))
-      return { successed: false, data: null, error: "403 Forbidenn" };
+      if (!new Rights.UserService(user).has("POSTS_CREATE"))
+        return { successed: false, data: null, error: "403 Forbidenn" };
 
-    for (const required of REQUIRED_DATA_TO_CREATE_POST) {
-      if (!Object.keys({...post, creator_id: userId}).includes(required)) {
-        return {
-          successed: false,
-          error: "there is no required data",
-          data: null
-        };
+      for (const required of REQUIRED_DATA_TO_CREATE_POST) {
+        if (!Object.keys({...post, creator_id: userId}).includes(required)) {
+          return {
+            successed: false,
+            error: "there is no required data",
+            data: null
+          };
+        }
       }
-    }
 
-    return {
-      successed: true,
-      data: (await posts.create({...post, creator_id: userId})).toObject(),
-      error: null,
-    };
+      const data = await posts.model.create({
+        id: Database.generateId(),
+        tags: [],
+        status: "open",
+        rights: new Map(),
+        reposts: 0,
+        likes: 0,
+        dislikes: 0,
+        followers: 0,
+        description: "",
+        created_at: new Date().toISOString(),
+        comments: [],
+        ...post,
+        creator_id: userId,
+      });
+
+      return {
+        successed: true,
+        data: data.toObject(),
+        error: null,
+      };
+    } catch (error) {
+      console.log(error);
+      return { successed: false, error, data: null }
+    }
   }
 
   public async putPost(post: Partial<LazyPost> & { id: string }): Promise<Response<UpdateWriteOpResult>> {
@@ -108,19 +191,19 @@ export class PostsService {
   }
   
   public async blockPost(userId: string, postId: string): Promise<Response<User>> {
-    const data = await this.patchService("block", { id: postId }, userId);
+    const data = await patchService("block", { id: postId }, userId);
 
     return { successed: true, error: null, data };
   };
 
   public async followPost(userId: string, postId: string, type: "blog"|"forum"): Promise<Response<User>> {
-    const data = await this.patchService("follow", { id: postId, type }, userId);
+    const data = await patchService("follow", { id: postId, type }, userId);
 
     return { successed: true, error: null, data };
   };
 
   public async deletePost(userId: string, postId: string): Promise<Response<DeleteResult>> {
-    const post = (await posts.model.findById(postId)).toObject();
+    const post = (await posts.model.findOne({id: postId})).toObject();
   
     const isCreator = post.creator_id === userId;
 
@@ -171,67 +254,5 @@ export class PostsService {
     } catch (error) {
       return { successed: false, error, data: null };
     }
-  }
-
-  private async patchService<T extends "block"|"follow">(
-    type: T,
-    post: T extends "follow"
-      ? { id: string, type: "blog"|"forum" }
-      : { id: string, type?: undefined },
-    userId: string
-  ) {
-    const key = this.resolvePostKey(type, post);
-
-    const includes = (await users.model.findOne({id: userId}))[key].includes(post.id);
-
-    return (await users.model.findOneAndUpdate({
-      id: userId
-    }, includes ? {
-      $pull: {
-        [key]: post.id
-      }
-    } : {
-      $push: {
-        [key]: post.id
-      }
-    }, {
-      returnDocument: "after"
-    })).toObject();
-  }
-  
-  private resolvePostKey<T extends "block"|"follow">(
-    type: T,
-    post: T extends "follow"
-      ? { type: "blog"|"forum" }
-      : { type?: undefined }
-  ) {
-    if (type === "block") {
-      return "blocked_posts" as const;
-    } else {
-      return post.type === "blog"
-        ? "followed_blog_posts" as const
-        : "followed_forun_posts" as const;
-    }
-  }
-
-  private parseFilter(data: Record<keyof Filter, string>): Filter {
-    return {
-      count: Number(data.count),
-      offset: Number(data.offset),
-      sortBy: FILTER.sortBy.includes(data.sortBy) ? data.sortBy as Filter["sortBy"] : "created_at",
-      sortType: typeof data.sortType === "boolean"
-        ? data.sortType === true
-          ? 1
-          : -1
-        : typeof data.sortType === "number"
-          ? data.sortType === 1
-            ? 1
-            : -1
-          : typeof data.sortType === "string"
-            ? data.sortType === "asc"
-              ? 1
-              : -1
-            : -1
-    };
   }
 }

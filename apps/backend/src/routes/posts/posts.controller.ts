@@ -115,18 +115,17 @@ export class PostsContoller {
     @Req() req: Request,
     @Body() postData: CreatePostDto
   ): Promise<Response<LazyPost>> {
-    const date = new Date().toISOString();
     const { successed, profile_id } = Hash.parse(req);
     
     if (!successed) return api.createError("Hash parse error")
 
-    const body = Database.parse({...postData, created_at: date}, "posts");
+    const body = Database.parse({...postData}, "posts");
     const post = await this.postsService.createPost(profile_id, body);
-
-    this.cacheManager.set(`post-${post.data.id}`, post.data);
 
     if (!post.successed)
       return api.createError(post.error)
+
+    this.cacheManager.set(`post-${post.data.id}`, post.data);
 
     return post;
   };
