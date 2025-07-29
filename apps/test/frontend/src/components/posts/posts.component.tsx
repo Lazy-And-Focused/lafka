@@ -1,5 +1,9 @@
-import { LazyPost } from '@lafka/types';
+import Image from 'next/image';
 import React from 'react';
+
+import styles from "./posts.module.css";
+
+import { LazyPost } from '@lafka/types';
 
 type Props = {
   posts?: LazyPost[] | undefined;
@@ -13,39 +17,16 @@ export class Posts extends React.Component<Props> {
 
   public post(post: LazyPost) {
     return (
-      <div id={post.id}>
-        <h3>
-          Название: {post.name} <br /> в {`${new Date(post.created_at)}`}
-        </h3>
-        <p>Контент: {post.content}</p>
-        {post.description ? (
-          <h5>Описание: {post.description}</h5>
-        ) : (
-          <h5>Описания нет</h5>
-        )}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
-          <span>Лайки: {post.likes}</span>
-          <span>Дизлайки: {post.dislikes}</span>
-          <span>Фолловеры: {post.followers}</span>
-          <span>Репосты: {post.reposts}</span>
-          {post.tags.map((tag) => (
-            <span>{tag.name}</span>
-          ))}
+      <div  className={styles.post} id={post.id}>
+        <div className={styles.cover}>
+          <Image alt={`post ${post.name}'s cover`} src={"/post-cover.png"} height={112} width={200} />
+          <span>{post.creator_id}</span>
         </div>
-        <button
-          onClick={async () => {
-            document.getElementById(post.id)?.remove();
 
-            await fetch('http://localhost:3001/api/posts/' + post.id, {
-              method: 'DELETE',
-              headers: this.props.headers,
-            });
-          }}
-        >
-          УДАЛИТЬ ПОСТ
-        </button>
-
-        <hr />
+        <div className={styles.content}>
+          <h6>{post.name}</h6>
+          <p>{post.content}</p>
+        </div>
       </div>
     );
   }
@@ -54,9 +35,9 @@ export class Posts extends React.Component<Props> {
     if (!this.props.posts) return <></>;
 
     return (
-      <div id='posts' style={{ height: '70vh', overflow: 'auto' }}>
+      <>
         {this.props.posts.map((post) => this.post(post))}
-      </div>
+      </>
     );
   }
 }
