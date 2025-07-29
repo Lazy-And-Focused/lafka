@@ -1,12 +1,9 @@
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext } from 'next';
 
 export const validateCookies = (ctx?: GetServerSidePropsContext) => {
-  if(!ctx)
-    return false;
+  if (!ctx) return false;
 
-  const token = ctx.req.cookies["id-token"];
+  const token = ctx.req.cookies['id-token'];
 
-  return token
-    ? ({ token })
-    : false;
+  return token ? { token } : false;
 };
