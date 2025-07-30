@@ -7,6 +7,7 @@ import { validateCookies } from "@/api/validator";
 import { LazyPost, User } from "@lafka/types";
 
 import { Posts } from "@/components/posts/posts.component";
+import { CreatePost } from "@/components/modals/create-post.modal";
 
 /* eslint-disable */
 type Props = {
@@ -32,6 +33,8 @@ const Page: NextPage<Props> = ({ user, headers }) => {
       <div id={styles.posts}>
         <Posts posts={posts}/>
       </div>
+      
+      <CreatePost type="forum" />
     </div>
   )
 };

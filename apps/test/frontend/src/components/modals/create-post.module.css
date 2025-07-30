@@ -1,0 +1,151 @@
+.modal_background {
+  backdrop-filter: blur(1.5px);
+  background-color: var(--block-color);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  height: 100vh;
+  width: 100vw;
+
+  animation: bg 0.3s;
+}
+
+@keyframes bg {
+  0% {
+    backdrop-filter: blur(0);
+    background-color: #00000000;
+  }
+
+  100% {
+    backdrop-filter: blur(1.5px);
+    background-color: var(--block-color);
+  }
+}
+
+.modal {
+  backdrop-filter: blur(3px);
+  background-color: var(--block-color);
+
+  display: flex;
+  position: relative;
+
+  flex-direction: column;
+  align-items: center;
+
+  border-radius: 2em;
+  padding: 1em 2em;
+
+  height: 40em;
+  width: 30em;
+
+  overflow-y: auto;
+
+  animation: modal 0.4s;
+}
+
+@keyframes modal {
+  0% {
+    backdrop-filter: blur(0);
+    background-color: #00000000;
+  }
+
+  100% {
+    backdrop-filter: blur(3px);
+    background-color: var(--block-color);
+  }
+}
+
+.modal * {
+  animation: children 0.4s;
+}
+
+@keyframes children {
+  0% {
+    opacity: 0; 
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: 10px 0 0 0;
+
+  width: 100%;
+
+  gap: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  width: 100%;
+}
+
+.content span {
+  margin: 10px 0 0 0;
+}
+
+.choosed_tags {
+  width: 10em;
+  
+  align-self: flex-start;
+
+  display: flex;
+  flex-direction: column;
+
+  max-height: 10em;
+  
+  gap: 10px;
+}
+
+.choosed_tags div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+
+  gap: 2.5px;
+  
+  height: 10em;
+  overflow-y: auto;
+
+  width: 100%;
+}
+
+.choosed_tag {
+  cursor: pointer;
+
+  background-color: color-mix(in srgb, var(--border-color-2), #ffffff80);
+  border-radius: 0.5em;
+  padding: 0.1em 0.5em;
+
+  max-height: fit-content;
+
+  max-width: 100%;
+}
+
+.tag {
+  cursor: pointer;
+
+  border: 1px solid var(--border-color);
+}

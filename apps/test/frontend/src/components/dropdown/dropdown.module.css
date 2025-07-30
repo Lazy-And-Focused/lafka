@@ -1,0 +1,36 @@
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+.dropdown .summary {
+  cursor: pointer;
+}
+
+.dropdown .content {
+  position: absolute;
+  display: none;
+  
+  gap: 10px;
+
+  min-width: 160px;
+  height: fit-content;
+
+  flex-direction: column;
+
+  right: 2em;
+  margin-top: 1em;
+  padding: 0.25em 0.75em;
+
+  background-color: color-mix(in srgb, var(--block-color), #00000080);
+  border-radius: 0.5em;
+}
+
+.dropdown .content * {
+  display: flex;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  color: var(--text-color);
+}
