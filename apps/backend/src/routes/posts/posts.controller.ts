@@ -104,6 +104,27 @@ export class PostsContoller {
     });
   }
 
+  @ApiOperation({ summary: "Get post comments"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Getted"
+  })
+  @Get(ROUTES.GET_COMMENTS)
+  @Public()
+  public async getComments(
+    @Param("id") postId: string,
+    @Query("cache") cache: string
+  ) {
+    const cacheManager = api.useCache<string[]>(this.cacheManager, cache);
+    
+    return cacheManager({
+      getFunction: this.postsService.getComments,
+      data: [postId],
+      key: `post-${postId}-comments`
+    });
+  }
+
   @ApiOperation({summary: "Creating a post"})
   @ApiUnauthorizedResponse({ description: "Unauthorized"})
   @ApiResponse({
@@ -129,6 +150,27 @@ export class PostsContoller {
 
     return post;
   };
+
+  @ApiOperation({ summary: "Create commet to post"})
+  @ApiUnauthorizedResponse({description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: "Created"
+  })
+  @Post(ROUTES.POST_COMMENT)
+  public async postComment(
+    @Req() req: Request,
+    @Param("id") postId: string,
+    @Body() body: CreateCommentDto
+  ) {
+    const { successed, profile_id } = Hash.parse(req);
+ 
+    if (!successed) return api.createError("Hash parse error");
+    
+    const data = Database.parse({ ...body, post_id: postId, author_id: profile_id }, "comments");
+
+    return this.postsService.postComment(data);
+  }
 
   private readonly _locked_keys_to_change = <((keyof LazyPost)[])>[
     "comments",
@@ -244,46 +286,4 @@ export class PostsContoller {
 
     return data
   };
-
-  @ApiOperation({ summary: "Create commet to post"})
-  @ApiUnauthorizedResponse({description: "Unauthorized"})
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: "Created"
-  })
-  @Delete(ROUTES.POST_COMMENT)
-  public async postComment(
-    @Req() req: Request,
-    @Param("id") postId: string,
-    @Body() body: CreateCommentDto
-  ) {
-    const { successed, profile_id } = Hash.parse(req);
- 
-    if (!successed) return api.createError("Hash parse error");
-    
-    const data = Database.parse({ ...body, post_id: postId, author_id: profile_id }, "comments");
-
-    return this.postsService.postComment(data);
-  }
-
-  @ApiOperation({ summary: "Get post comments"})
-  @ApiUnauthorizedResponse({description: "Unauthorized"})
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Getted"
-  })
-  @Delete(ROUTES.GET_COMMENTS)
-  @Public()
-  public async getComments(
-    @Param("id") postId: string,
-    @Query("cache") cache: string
-  ) {
-    const cacheManager = api.useCache<string[]>(this.cacheManager, cache);
-    
-    return cacheManager({
-      getFunction: this.postsService.getComments,
-      data: [postId],
-      key: `post-${postId}-comments`
-    });
-  }
 }
