@@ -41,7 +41,7 @@ const { posts } = new Models();
 @Injectable()
 @Controller(ROUTE)
 @UseGuards(AuthGuard)
-export class PostsContoller {
+export class PostsController {
   public constructor(
     private readonly postsService: PostsService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
@@ -55,17 +55,12 @@ export class PostsContoller {
   @Public()
   @Get(ROUTES.GET)
   public async getPosts(
-    @Req() req: Request,
     @Query("offset") offset?: string,
     @Query("count") count?: string,
     @Query("sortBy") sortBy?: string,
     @Query("sortType") sortType?: string,
     @Query("cache") cache?: string
   ): Promise<Response<LazyPost[]>> {
-    const { successed } = Hash.parse(req);
-
-    if (!successed) return api.createError("Hash parse error");
-
     const cacheManager = api.useCache<LazyPost[]>(this.cacheManager, cache);
     
     return cacheManager<[Partial<{
@@ -88,14 +83,9 @@ export class PostsContoller {
   @Public()
   @Get(ROUTES.GET_ONE)
   public async getPost(
-    @Req() req: Request,
     @Param("id") id: string,
     @Query("cache") cache?: string
   ): Promise<Response<LazyPost>> {
-    const { successed } = Hash.parse(req);
-
-    if (!successed) return api.createError("Hash parse error");
-
     const cacheManager = api.useCache<LazyPost>(this.cacheManager, cache);
     return await cacheManager<[Partial<LazyPost> | string]>({
       key: `post-${id}`,
