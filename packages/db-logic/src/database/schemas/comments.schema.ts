@@ -1,8 +1,9 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
-import { LAFka } from "lafka/types";
-import { SchemaParameters } from "lafka/types/mongodb.types";
 
-const data: SchemaParameters<LAFka.Comment> = {
+import type { SchemaParameters } from "lafka/types/mongodb.types";
+import type { Comment } from "lafka/types";
+
+const data: SchemaParameters<Comment> = {
   id: {
     type: mongoose.SchemaTypes.String,
     required: true,
@@ -19,8 +20,8 @@ const data: SchemaParameters<LAFka.Comment> = {
   
   reply: { type: SchemaTypes.String, ref: "comments", required: false }
 };
-const schema = new Schema<LAFka.Comment>(data);
-const keys = Object.keys(data) as unknown as (keyof LAFka.Comment)[];
+const schema = new Schema<Comment>(data);
+const keys = Object.keys(data) as unknown as (keyof Comment)[];
 
 const database = mongoose.model("comments", schema);
 

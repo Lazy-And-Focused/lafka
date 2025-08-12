@@ -5,12 +5,12 @@ import Hash from "api/hash.api";
 import AuthApi from "api/auth.api";
 import Api from "api/index.api";
 
-import { AUTH_CONTROLLER, AUTH_ROUTES } from "./auth.routes";
+import { ROUTE, ROUTES } from "./auth.routes";
 
 const api = new Api();
 
 @Injectable()
-@Controller(AUTH_CONTROLLER)
+@Controller(ROUTE)
 export class AuthController {
   @Get()
   public printMethods() {
@@ -24,14 +24,14 @@ export class AuthController {
     };
   }
 
-  @Get(AUTH_ROUTES.GET)
+  @Get(ROUTES.GET)
   public auth(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     new AuthApi(req.params.method).auth(req, res, next);
 
     return;
   }
 
-  @Get(AUTH_ROUTES.GET_CALLBACK)
+  @Get(ROUTES.GET_CALLBACK)
   public callback(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     new AuthApi(req.params.method).callback(req, res, next, (...args) => {
       const user = args[1];

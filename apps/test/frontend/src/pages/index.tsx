@@ -1,18 +1,17 @@
-import { LAFka } from '@lafka/types';
-
 import { GetServerSidePropsContext, NextPage } from 'next';
+import { useRouter } from 'next/router';
 
-import { User } from '@/components/user/user.component';
-import { Post } from '@/components/posts/post.component';
+import styles from './home.module.css';
+
 import { validateCookies } from '@/api/validator';
 
-import Link from 'next/link';
-
-import './main.css';
+import { AUTH_TYPES } from '@lafka/types';
+import { User } from '@lafka/types';
+import { useEffect } from 'react';
 
 /* eslint-disable */
 type Props = {
-  user?: LAFka.User;
+  user?: User;
   headers?: any;
 };
 /* eslint-enable */
@@ -20,47 +19,63 @@ type Props = {
 const authMethods = LAFka.AUTH_TYPES;
 
 const Home: NextPage<Props> = ({ user, headers }) => {
+  const router = useRouter();
+
+  if (user) {
+    useEffect(() => {
+      router.push('/posts');
+    }, []);
+  }
+
   return (
-    <>
-      <div className='auth-btns-wrapper'>
-        <h1 style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
-          Войти через
-        </h1>
-
-        {authMethods.map((method) => (
-          <button className='btn btn-auth'>
-            <Link href={`${process.env.NEXT_BACKEND_URL}/api/auth/${method}`}>
-              {method.toUpperCase()}
-            </Link>
-          </button>
-        ))}
+    <div id='page'>
+      <div className={styles.login}>
+        <span>Войти через...</span>
+        <div>
+          {AUTH_TYPES.map((type) => (
+            <button
+              key={type}
+              onClick={() =>
+                (window.location.href =
+                  'http://localhost:3001/api/auth/' + type)
+              }
+            >
+              {type[0].toUpperCase() + type.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
-
-      {user && <User user={user} />}
-      {/* {user && headers && <Post userId={user.id} headers={headers} />} */}
-    </>
+    </div>
   );
 };
 
 export const getServerSideProps = async (
   ctx: GetServerSidePropsContext,
 ): Promise<{ props: Props }> => {
-  const headers = validateCookies(ctx);
+  try {
+    const headers = validateCookies(ctx);
 
-  if (!headers) return { props: {} };
+    if (!headers) return { props: {} };
 
-  const user = await fetch(`${process.env.NEXT_BACKEND_URL}/api/users/`, {
-    headers,
-  });
-
-  if (user.status !== 200) return { props: {} };
-
-  return {
-    props: {
-      user: (await user.json()).resource,
+    const user = await fetch('http://localhost:3001/api/users/@me', {
       headers,
-    },
-  };
+    });
+
+    if (user.status !== 200) return { props: {} };
+
+    const { data } = await user.json();
+
+    return {
+      props: {
+        user: data,
+        headers,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {},
+    };
+  }
 };
 
 export default Home;

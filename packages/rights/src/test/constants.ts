@@ -1,6 +1,6 @@
-import { LAFka, Rights as LAFkaRights } from "@lafka/types";
+import { Rights as LAFkaRights, Organization, Post, User } from "@lafka/types";
 
-export const user: LAFka.User = {
+export const user: User = {
   blocked_posts: [],
   blog_posts: [],
   created_at: new Date().toISOString(),
@@ -15,7 +15,7 @@ export const user: LAFka.User = {
   username: "FOCKUSTY"
 };
 
-export const post: LAFka.Post = {
+export const post: Post = {
   type: "forum",
   id: "1",
   created_at: new Date().toISOString(),
@@ -34,11 +34,11 @@ export const post: LAFka.Post = {
   ])
 };
 
-export const organization: LAFka.Organization = {
-  creator_id: user.id,
-  id: "1",
-  members: ["1", "2", "3"],
+export const organization: Organization = {
   owner_id: user.id,
+  id: "1",
+  tags: [],
+  members: ["1", "2", "3"],
   rights: new Map<string, string>([
     ["4", LAFkaRights.CONSTANTS.raw.default.organizations.toString()],
     ["1", LAFkaRights.CONSTANTS.raw.default.organizations.toString()],

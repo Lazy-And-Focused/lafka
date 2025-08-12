@@ -1,9 +1,9 @@
-export const USERS_CONTROLLER = ["users", "u"];
+export const ROUTE = ["users", "u"];
 
-export const USERS_ROUTES = {
-  GET_ME: "",
-  GET: ":identifier",
-  POST: ":identifier",
-  DELETE: ":identifier",
-  PUT: ":identifier"
+export const ROUTES = {
+  GET: "/:id",
+  PUT: "/:id",
+  DELETE: "/:id",
+  
+  PATCH: "/:id/follow"
 } as const;

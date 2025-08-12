@@ -5,11 +5,15 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "!./**/compiler.js",
+    "!./**/compiler.d.ts"
   ],
   "scripts": {
-    "build": "pnpm run compile && tsc & tsc-alias",
-    "compile": "set NODE_ENV=rights_compile&& ts-node ./src/rights/rights.types.ts"
+    "build": "pnpm run compile && tsc && tsc-alias && pnpm run format && pnpm run remove-compiler",
+    "compile": "set NODE_ENV=rights_compile&& ts-node ./src/rights.types.ts",
+    "format": "prettier ./src/rights.types.ts -c -w",
+    "remove-compiler": "rimraf ./dist/rights.compiler.d.ts && rimraf ./dist/rights.compiler.js"
   },
   "keywords": [
     "types"
@@ -29,11 +33,13 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "mongoose": "catalog:",
-    "tsc-alias": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "^6.0.1",
     "ts-node": "catalog:",
+    "tsc-alias": "catalog:",
     "typescript": "catalog:"
   },
   "dependencies": {
-    "fbit-field": "1.4.0-alpha.1a"
+    "fbit-field": "1.4.0-alpha.1c"
   }
 }

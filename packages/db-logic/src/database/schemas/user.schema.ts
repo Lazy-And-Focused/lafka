@@ -1,11 +1,11 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { LAFka } from "lafka/types";
-import { Rights } from "lafka/types";
 import { Link } from "./link.utility-schema";
-import { SchemaParameters } from "lafka/types/mongodb.types";
 
-const data: SchemaParameters<LAFka.User> = {
+import type { SchemaParameters } from "lafka/types/mongodb.types";
+import { Rights, type User } from "lafka/types";
+
+const data: SchemaParameters<User> = {
   id: {
     type: mongoose.SchemaTypes.String,
     required: true,
@@ -43,8 +43,8 @@ const data: SchemaParameters<LAFka.User> = {
     default: Rights.CONSTANTS.raw.default.my.toString()
   }
 } as const;
-const schema = new Schema<LAFka.User>(data);
-const keys = Object.keys(data) as unknown as (keyof LAFka.User)[];
+const schema = new Schema<User>(data);
+const keys = Object.keys(data) as unknown as (keyof User)[];
 
 const database = mongoose.model("users", schema);
 

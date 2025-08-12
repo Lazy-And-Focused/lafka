@@ -1,10 +1,11 @@
 import mongoose, { Schema, SchemaTypes } from "mongoose";
 
-import type { LAFka } from "lafka/types";
 import { Tag } from "./tag.utility-schema";
-import { SchemaParameters } from "lafka/types/mongodb.types";
 
-const data: SchemaParameters<LAFka.LazyPost> = {
+import type { SchemaParameters } from "lafka/types/mongodb.types";
+import type { LazyPost } from "lafka/types";
+
+const data: SchemaParameters<LazyPost> = {
   id: {
     type: mongoose.SchemaTypes.String,
     required: true,
@@ -42,8 +43,8 @@ const data: SchemaParameters<LAFka.LazyPost> = {
   }
 };
 
-const schema = new Schema<LAFka.LazyPost>(data);
-const keys = Object.keys(schema) as unknown as (keyof LAFka.LazyPost)[];
+const schema = new Schema<LazyPost>(data);
+const keys = Object.keys(data) as unknown as (keyof LazyPost)[];
 
 const database = mongoose.model("posts", schema);
 

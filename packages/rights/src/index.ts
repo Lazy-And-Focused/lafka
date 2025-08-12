@@ -1,14 +1,21 @@
-import { LAFka, Rights as LAFkaRights } from "@lafka/types";
+import { Rights as LAFkaRights, Organization, Post, User } from "@lafka/types";
 import { BitField } from "fbit-field";
 
 type MustArray<T, K=T> = [T, ...K[]];
 
 const resolveArrayToBigInt = <T extends LAFkaRights.Keys>(rightKey: T, ...rights: LAFkaRights.Rights<T>[]) =>
-  BitField.summarize(...(Object.keys(rights) as LAFkaRights.Rights<T>[]).map(key => LAFkaRights.CONSTANTS.object.available[rightKey][key]) as any);
+  BitField.summarize(...rights.map(key => LAFkaRights.CONSTANTS.object.available[rightKey][key]) as any);
+
+type RightsOnly<T extends { rights: unknown, id: unknown }, K extends keyof T | never = never> = {
+  [P in K]: T[P];
+} & {
+  rights: T["rights"],
+  id: T["id"]
+};
 
 export namespace Rights {
   export class UserService {
-    public constructor(public readonly user: LAFka.User) {};
+    public constructor(public readonly user: RightsOnly<User>) {};
 
     public has = <
       T extends keyof LAFkaRights.My,
@@ -18,17 +25,17 @@ export namespace Rights {
       return (BigInt(this.user.rights) & r) === r;
     }
 
-    public hasPostRights(post: LAFka.Post) {
+    public hasPostRights(post: RightsOnly<Post, "creator_id">) {
       return new PostService(post).userHas(this.user.id);
     };
 
-    public hasOrganizationRights(organization: LAFka.Organization) {
+    public hasOrganizationRights(organization: RightsOnly<Organization, "owner_id"|"members">) {
       return new OrganizationService(organization).userHas(this.user.id);
     }
   }
 
   export class PostService {
-    public constructor(private readonly post: LAFka.Post) {};
+    public constructor(private readonly post: RightsOnly<Post, "creator_id">) {};
 
     public readonly hasRights = <
       T extends keyof LAFkaRights.Posts
@@ -62,7 +69,7 @@ export namespace Rights {
   }
 
   export class OrganizationService {
-    public constructor(public readonly organization: LAFka.Organization) {};
+    public constructor(public readonly organization: RightsOnly<Organization, "owner_id"|"members">) {};
 
     public readonly hasRights = <
       T extends keyof LAFkaRights.Organizations

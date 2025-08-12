@@ -1,0 +1,45 @@
+.post {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns: 40% 60%;
+
+  border-radius: 5px;
+  border: 2px solid var(--border-color-1);
+}
+
+.cover {
+  position: relative;
+}
+
+.cover span {
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+
+  margin: 0.5em 0.75em;
+
+  font-size: 12px;
+
+  padding: 0.25em 0.5em;
+  border-radius: 0.5em;
+  background-color: var(--block-color);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  padding: 0.25em 0.5em;
+  gap: 10px;
+}
+
+.content p {
+  max-height: 86px;
+  
+  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow: hidden;
+}

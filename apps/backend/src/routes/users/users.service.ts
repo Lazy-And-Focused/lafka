@@ -3,11 +3,8 @@ import { Injectable } from "@nestjs/common";
 import { UpdateWriteOpResult } from "mongoose";
 
 import { Models } from "lafka/database";
-import type { LAFka } from "lafka/types";
-import type { ServiceResponse } from "lafka/types/service.types";
 import { DeleteResult } from "lafka/database/types/mongodb.types";
-
-import type { GetData } from "lafka/types/backend/data.types";
+import { Response, User } from "lafka/types";
 
 const { users } = new Models();
 const keyGetSymbols = ["@"];
@@ -19,7 +16,7 @@ const keyGetSymbolsMap = new Map<string, string>([
 const ERROR_BAD_SLUG = `argument must be username (@username) or id (id)` as const;
 
 @Injectable()
-export class UsersService {
+export class Service {
   public static getSlugType(slug: string): "id"|"username"|Error {
     if (!keyGetSymbols.includes(slug[0])) {
       if (isNaN(+slug[0])) {
@@ -32,14 +29,13 @@ export class UsersService {
     return keyGetSymbolsMap.get(slug[0]) as "username" | "id";
   }
 
-  public static lazyGetSlug(slug: string): string | GetData<LAFka.User> {
+  public static lazyGetSlug(slug: string): string | Response<User> {
     if (!keyGetSymbols.includes(slug[0])) {
       if (isNaN(+slug[0]))
         return {
-          error: new Error(ERROR_BAD_SLUG),
+          error: ERROR_BAD_SLUG,
           successed: false,
-          type: "users",
-          resource: null
+          data: null
         };
 
       return slug;
@@ -49,9 +45,8 @@ export class UsersService {
     if (!type) {
       return {
         successed: false,
-        resource: null,
-        error: new Error(ERROR_BAD_SLUG),
-        type: "users"
+        data: null,
+        error: ERROR_BAD_SLUG,
       };
     };
 
@@ -60,19 +55,18 @@ export class UsersService {
 
   public static getSlug(
     slug: string
-  ): ({ "id": string } | { "username": string }) | GetData<LAFka.User> {
-    const slugType = UsersService.getSlugType(slug);
+  ): ({ "id": string } | { "username": string }) | Response<User> {
+    const slugType = Service.getSlugType(slug);
 
     if (slugType instanceof Error) {
       return {
         successed: false,
-        resource: null,
-        error: slugType,
-        type: "users"
+        data: null,
+        error: slugType.message,
       }
     };
 
-    return { [slugType]: this.lazyGetSlug(slug) } as ({ "id": string } | { "username": string }) | GetData<LAFka.User>;
+    return { [slugType]: this.lazyGetSlug(slug) } as ({ "id": string } | { "username": string }) | Response<User>;
   }
 
   public static formatGettedData<Lazy extends boolean = false>(
@@ -84,81 +78,116 @@ export class UsersService {
     return data[key];
   }
 
-  public async getUser(data: Partial<LAFka.User> | string): Promise<ServiceResponse<LAFka.User>> {
+  public async getUser(data: Partial<User> | string): Promise<Response<User>> {
     try {
       const user = (await users.model.findOne(typeof data === "string" ? { id: data } : data)).toObject();
 
-      if (!user) return { successed: false, resource: null, error: "User not found" };
+      if (!user) return { successed: false, data: null, error: "User not found" };
 
       return {
         successed: true,
         error: null,
-        resource: user
+        data: user
       };
     } catch (error) {
       console.error(error);
 
       return {
         successed: false,
-        resource: null,
+        data: null,
         error
       };
     }
   }
 
-  public async updateUser<T extends UpdateWriteOpResult | LAFka.User>(
+  public async followUser(follower: string, following: string): Promise<Response<unknown>> {
+    try {
+      const isFollow = !((await users.model.findOne({id: following})).toObject().followers.includes(follower));
+      
+      await users.model.updateOne({
+        id: following
+      }, isFollow ? {
+        $push: {
+          followers: follower
+        }
+      } : {
+        $pull: {
+          followers: follower
+        }
+      });
+
+      await users.model.updateOne({
+        id: follower
+      }, isFollow ? {
+        $push: {
+          following
+        }
+      } : {
+        $pull: {
+          following
+        }
+      })
+
+      return {
+        data: null,
+        successed: true,
+        error: null
+      }
+    } catch (error) {
+      return {
+        successed: false,
+        data: null,
+        error
+      }
+    }
+  };
+
+  public async updateUser(
     id: string,
-    data: Partial<LAFka.User>,
-    returnUser: T extends LAFka.User ? true : false
-  ): Promise<ServiceResponse<T>> {
+    data: Partial<User>,
+  ): Promise<Response<UpdateWriteOpResult>> {
     try {
       const updated = await users.update({ filter: { id }, update: data });
 
-      const resource: T = returnUser
-        ? (await users.model.findOne({ id })).toObject() as any
-        : (updated as T);
-
       if (!updated.acknowledged)
-        return { successed: false, error: "unknown error: 1", resource: null };
+        return { successed: false, error: "unknown error: 1", data: null };
 
       return {
         successed: true,
         error: null,
-        resource: resource
+        data: updated
       };
     } catch (error) {
       console.error(error);
 
       return {
         successed: false,
-        resource: null,
+        data: null,
         error
       };
     }
   }
 
-  public async deleteUser<T extends DeleteResult | LAFka.User>(
+  public async deleteUser(
     id: string,
-    returnUser: T extends LAFka.User ? true : false
-  ): Promise<ServiceResponse<T>> {
+  ): Promise<Response<DeleteResult>> {
     try {
-      const resource = returnUser ? users.getData({filter: {id}}) : null;
       const deleted = await users.delete({id});
 
       if (!deleted.acknowledged)
-        return { successed: false, error: "unknown error: 2", resource: null };
+        return { successed: false, error: "unknown error: 2", data: null };
 
       return {
         successed: true,
         error: null,
-        resource: returnUser ? (deleted as T) : (resource as unknown as T)
+        data: deleted
       };
     } catch (error) {
       console.error(error);
 
       return {
         successed: false,
-        resource: null,
+        data: null,
         error
       };
     }

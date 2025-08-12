@@ -1,49 +1,54 @@
-import { Env } from "services/env.service";
-import { LAFka } from "lafka/types";
+import { env } from "services/env.service";
 import { Cache } from "cache-manager";
-
-import { ServiceResponse } from "lafka/types/service.types";
-import { GetData } from "lafka/types/backend/data.types";
+import { AuthTypes, Response } from "lafka/types";
 
 class Api {
-  public readonly env = new Env().env;
+  public readonly env = env;
 
-  public useCache<T>(cacheManager: Cache, cache: string, type: GetData<T>["type"]) {
+  public createError(error: string): { successed: false, data: null, error: string } {
+    return {
+      successed: false,
+      error: error,
+      data: null,
+    };
+  };
+
+  public useCache<T>(cacheManager: Cache, cache: string) {
     const cacheEnabled = (!!cache && Boolean(cache) && cache !== "false") || typeof cache === "undefined";
-    
-    return async <K extends any[] = any[]>({
+      
+    return (async <K extends any[] = any[]>({
       getFunction,
       key,
       data
     }: {
       key: string,
-      getFunction: (...data: K) => Promise<ServiceResponse<T>>,
+      getFunction: (...data: K) => Promise<Response<T>>,
       data: K
-    }): Promise<GetData<T>> => {
+    }): Promise<Response<T>> => {
       if (cacheEnabled) {
         const valueFromCache = (await cacheManager.get<T>(key)) || false;
         
         const value = valueFromCache
-          ? <GetData<T>>{ resource: valueFromCache, error: null, successed: true, type }
-          : <GetData<T>>{ ...await getFunction(...data), type };
+          ? <Response<T>>{ data: valueFromCache, error: null, successed: true }
+          : <Response<T>>{ ...await getFunction(...data) };
   
-        if (!value.successed) return { ...value, type };
-        if (!valueFromCache) cacheManager.set(key, value.resource);
+        if (!value.successed) return value;
+        if (!valueFromCache) cacheManager.set(key, value.data);
   
         return value;
       };
   
       const value = await getFunction(...data);
       
-      if (!value.successed) return { ...value, type };
+      if (!value.successed) return value;
 
-      cacheManager.set(key, value.resource);
+      cacheManager.set(key, value.data);
   
-      return { ...value, type };
-    };
+      return value;
+    });
   }
 
-  public getApi(type: Uppercase<LAFka.AuthTypes>) {
+  public getApi(type: Uppercase<AuthTypes>) {
     return {
       id: this.env[type + "_CLIENT_ID"],
       secret: this.env[type + "_CLIENT_SECRET"],

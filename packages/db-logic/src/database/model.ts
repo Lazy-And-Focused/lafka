@@ -30,21 +30,20 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return this._model;
   }
 
-  public static parse = <T extends { id: string }>(data: T, type: Schemas.Models): T => Helpers.parse<T>(data, type);
+  public static parse = <K>(data: K, type: Schemas.Models): K => Helpers.parse<K>(data, type);
 
   public findLast = async (): Promise<Readonly<T>> => {
     return (await this._model.findOne({}, {}, { sort: { "created_at": -1 }, new: true }))!;
   };
 
-  public generateId = async (): Promise<string> => {
-    const id = await this._model.countDocuments();
-
-    return `${(id === 0 ? 0 : +(await this.findLast()).id) + 1}`;
+  public static generateId = (): string => {
+    return `${new Date().getTime()}`
   };
 
   public create = async (doc: CreateData<T> & K) => {
     return await this._model.create({
       ...doc,
+      created_at: new Date().toISOString(),
       id: await this.id
     });
   };
@@ -86,8 +85,8 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return await Helpers.deleteModel(name);
   };
 
-  get id(): Promise<string> {
-    return this.generateId();
+  get id(): string {
+    return Database.generateId();
   }
 }
 

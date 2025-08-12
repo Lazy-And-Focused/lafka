@@ -1,13 +1,13 @@
-import { LAFka } from "lafka/types";
-import { UpdateWriteOpResult } from "mongoose";
-import { DeleteResult } from "lafka/database/types/mongodb.types";
 import Database from "lafka/database/index";
 
 import { Request } from "express";
 import {
+  Body,
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   Param,
@@ -19,144 +19,147 @@ import {
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 
-import { UsersService } from "./users.service";
-import { USERS_ROUTES, USERS_CONTROLLER } from "./users.routes";
+import { Service } from "./users.service";
+import { ROUTES, ROUTE } from "./users.routes";
 
 import { AuthGuard } from "guards/auth/auth.guard";
 import { Public } from "decorators/public.decorator";
 
 import Hash from "api/hash.api";
 import Api from "api/index.api";
+import { ApiOperation, ApiResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { UserUpdateDto } from "./user.data";
+import type { Response, User } from "lafka/types";
 
 const api = new Api();
 
 @Injectable()
-@Controller(USERS_CONTROLLER)
+@Controller(ROUTE)
 @UseGuards(AuthGuard)
 export class UsersController {
   public constructor(
-    private usersService: UsersService,
+    private service: Service,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
-  @Get(USERS_ROUTES.GET)
+  @ApiOperation({ summary: "Getting a user by slug" })
+  @Get(ROUTES.GET)
   @Public()
   public async get(
-    @Param("identifier") identifier: string,
-    @Query("cache") cache?: string
-  ): Promise<LAFka.Response.GetData<LAFka.User>> {
-    const slug = UsersService.lazyGetSlug(identifier);
-
-    if (typeof slug !== "string")
-      return { ...slug, successed: false, resource: null };
-    
-    const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
-    const user = await cacheManager<[Partial<LAFka.User> | string]>({
-      key: `user-${slug}`,
-      getFunction: this.usersService.getUser,
-      data: [slug]
-    });
-
-    return user;
-  }
-
-  @Get(USERS_ROUTES.GET_ME)
-  public async getMe(
     @Req() req: Request,
+    @Param("id") id: string,
     @Query("cache") cache?: string
-  ): Promise<LAFka.Response.GetData<LAFka.User>> {
+  ): Promise<Response<User>> {
+    const slug = Service.lazyGetSlug(id);
+    
+    if (typeof slug !== "string") return slug;
+    if (id !== "@me") return this.getUser(slug, cache);
+    
     const { successed, profile_id } = Hash.parse(req);
-    const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
-
-    if (!successed) return { successed: false, error: "Hash parse error", resource: null, type: "users" };
-
-    const user = cacheManager<[Partial<LAFka.User> | string]>({
-      getFunction: this.usersService.getUser,
-      key: `user-${profile_id}`,
-      data: [profile_id]
-    });
-
-    return user;
+    if (!successed) throw new HttpException(api.createError("Hash parse error"), HttpStatus.FORBIDDEN);;
+    
+    return this.getUser(profile_id, cache);
   }
 
-  @Put(USERS_ROUTES.PUT)
+  @ApiOperation({ summary: "Update user's data" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Updated"
+  })
+  @Put(ROUTES.PUT)
   public async put(
     @Req() req: Request,
-    @Param("identifier") identifier: string,
-    @Query("returnUser") returnUser?: string,
-    @Query("cache") cache?: string
-  ): Promise<LAFka.Response.ChangeData<LAFka.User>> {
-    const date = new Date().toISOString();
-
-    const slug = UsersService.lazyGetSlug(identifier);
+    @Param("id") id: string,
+    @Query("cache") cache?: string,
+    @Body() putData?: UserUpdateDto
+  ): Promise<Response<unknown>> {
+    const slug = Service.lazyGetSlug(id);
     if (typeof slug !== "string")
-      return { ...slug, successed: false, date, changed_resource: null };
+      return slug;
 
     const { successed } = Hash.parse(req);
 
     if (!successed)
-      return { successed: false, error: "Hash parse error", date, changed_resource: null, type: "users" };
-    const user: Partial<LAFka.User> = Database.parse(req.body, "users");
-    const cacheManager = api.useCache<LAFka.User>(this.cacheManager, cache, "users");
+      throw new HttpException(api.createError("Hash parse error"), HttpStatus.FORBIDDEN);
+    
+    const user: Partial<User> = Database.parse(putData, "users");
+    const cacheManager = api.useCache<User>(this.cacheManager, cache);
 
-    const data = await this.usersService.updateUser(slug, user, returnUser === "true");
+    const data = await this.service.updateUser(slug, user);
 
     (async () => {
-      if (returnUser === "true") {
-        this.cacheManager.set(`user-${slug}`, data.resource)
-      } else {
-        this.cacheManager.set(`user-${slug}`, {
-          ...cacheManager<[Partial<LAFka.User> | string]>({
-            key: `user-${slug}`,
-            getFunction: this.usersService.getUser,
-            data: [slug],
-          }),
-          ...user
-        });
-      };
+      this.cacheManager.set(`user-${slug}`, {
+        ...cacheManager<[Partial<User> | string]>({
+          key: `user-${slug}`,
+          getFunction: this.service.getUser,
+          data: [slug],
+        }),
+        ...user
+      });
     })();
 
-    if (!data.successed)
-      return { successed: false, type: "users", error: data.error, date, changed_resource: null };
-
-    return {
-      successed: true,
-      date,
-      error: null,
-      changed_resource_type: returnUser === "true" ? "resource" : "update",
-      changed_resource: data.resource as LAFka.User & UpdateWriteOpResult,
-      type: "users"
-    };
+    return data;
   }
 
-  @Delete(USERS_ROUTES.DELETE)
+  @ApiOperation({ summary: "Update user's data" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Updated"
+  })
+  @Put(ROUTES.PUT)
+  public async patchFollow(
+    @Req() req: Request,
+    @Param("id") id: string,
+  ) {
+    const { successed, profile_id } = Hash.parse(req);
+
+    if (!successed)
+      throw new HttpException(api.createError("Hash parse error"), HttpStatus.FORBIDDEN);
+
+    if (id === profile_id)
+      throw new HttpException("You can't follow self", HttpStatus.BAD_REQUEST);
+
+    const data = await this.service.followUser(profile_id, id);
+    
+    if (!data.successed) throw new HttpException(data.error, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    return data;
+  }
+
+  @ApiOperation({ summary: "Deletes a user by slug"})
+  @ApiUnauthorizedResponse({ description: "Unauthorized"})
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Deleted"
+  })
+  @Delete(ROUTES.DELETE)
   public async delete(
     @Req() req: Request,
-    @Param("identifier") identifier: string,
-    @Query("returnUser") returnUser?: string
-  ): Promise<LAFka.Response.DeleteData<LAFka.User>> {
-    const date = new Date().toISOString();
-    const deleted_resource_type = returnUser === "true" ? "resource" : "delete"
-
-    const slug = UsersService.lazyGetSlug(identifier);
+    @Param("id") id: string,
+  ): Promise<Response<unknown>> {
+    const slug = Service.lazyGetSlug(id);
+    
     if (typeof slug !== "string")
-      return { ...slug, successed: false, date, deleted_resource: null };
+      throw new HttpException(slug, HttpStatus.BAD_REQUEST);;
 
     const { successed } = Hash.parse(req);
     if (!successed)
-      return { successed: false, deleted_resource: null, date, error: "Hash parse error", type: "users" };
+      throw new HttpException(api.createError("Hash parse error"), HttpStatus.FORBIDDEN);
 
     this.cacheManager.del(`user-${slug}`);
 
-    const data = await this.usersService.deleteUser(slug, returnUser === "true");
+    return this.service.deleteUser(slug);
+  }
 
-    return {
-      successed: data.successed,
-      date, 
-      deleted_resource_type,
-      type: "users",
-      error: null,
-      deleted_resource: data.resource as LAFka.User & DeleteResult
-    };
+  private getUser(slug: string, cache: string) {
+    const cacheManager = api.useCache<User>(this.cacheManager, cache);
+    
+    return cacheManager<[Partial<User> | string]>({
+      key: `user-${slug}`,
+      getFunction: this.service.getUser,
+      data: [slug]
+    });
   }
 }

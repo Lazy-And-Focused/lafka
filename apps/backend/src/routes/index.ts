@@ -1,9 +1,3 @@
-import { AuthModule } from "./auth/auth.module";
-import { UsersModule } from "./users/users.module";
-import { PostsModule } from "./posts/posts.module";
+import Deployer from "./deployer";
 
-export const modules = [
-  AuthModule,
-  UsersModule,
-  PostsModule
-] as const;
+export const modules = new Deployer().execute();
