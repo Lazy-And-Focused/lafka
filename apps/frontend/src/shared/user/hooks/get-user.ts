@@ -12,13 +12,13 @@ type ComponentResponse = LAFka.User | null;
 /**
  * Fetch the user from server.
  *
- * @param usernameOrId Slug of username or user ID
+ * @param userSlug Slug of username or user ID
  * @param cached Should the request to the server be cached?
  *
  * @returns Promise<ComponentResponse>
  */
-async function getUser(
-  usernameOrId?: string,
+export async function getUser(
+  userSlug: string = '',
   cached: boolean = true,
 ): Promise<ComponentResponse> {
   const isDevMode =
@@ -34,18 +34,11 @@ async function getUser(
     return null;
   }
 
+  if (!isUserSlug(userSlug)) {
+    return null;
+  }
+
   try {
-    let userSlug: string = '';
-    if (usernameOrId) {
-      const isValidSlug: boolean = validateUserSlug(usernameOrId);
-
-      if (!isValidSlug) {
-        throw new Error('User slug is not valid');
-      }
-
-      userSlug = usernameOrId;
-    }
-
     const cacheOptions: RequestInit = {
       cache: 'no-cache',
       next: {
@@ -54,8 +47,9 @@ async function getUser(
     };
 
     const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_API}/users`;
+    const finalUrl = `${baseUrl}/${userSlug}`;
 
-    const res = await fetch(`${baseUrl}/${userSlug}`, {
+    const res = await fetch(finalUrl, {
       method: 'GET',
       headers: {
         token,
@@ -70,13 +64,16 @@ async function getUser(
   }
 }
 
+// Желательно вынести код ниже, да так, чтобы было по соглашениям,
+// включая FAiL
+
 /**
  * Function checks whether the Slug is a valid username or a number (ID).
  *
  * @param slug Username or User ID
  * @returns boolean
  */
-function validateUserSlug(slug: string): boolean {
+function isUserSlug(slug: string): boolean {
   // '%40' == '@' (not '===' !)
   if (slug.startsWith('%40') || !isNaN(+slug)) {
     return true;
