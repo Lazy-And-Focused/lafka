@@ -1,5 +1,8 @@
 import { LAFka } from '@lafka/types';
 
+/**
+ * Test object by User type
+ */
 const DefaultUser: LAFka.User = {
   id: '0',
   username: 'test_cool_userIUS',

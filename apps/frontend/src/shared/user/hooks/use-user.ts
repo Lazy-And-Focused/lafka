@@ -4,6 +4,9 @@ import { LAFka } from '@lafka/types';
 import { useState, useEffect } from 'react';
 import getUser from './get-user';
 
+/**
+ * Alternative function from getUser, but works in client components
+ */
 export default function useUser() {
   const [user, setUser] = useState<LAFka.User | null>(null);
 

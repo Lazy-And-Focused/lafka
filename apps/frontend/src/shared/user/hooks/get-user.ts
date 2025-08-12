@@ -15,7 +15,7 @@ type ComponentResponse = LAFka.User | null;
  * @param userSlug Slug of username or user ID
  * @param cached Should the request to the server be cached?
  *
- * @returns Promise<ComponentResponse>
+ * @returns {Promise<ComponentResponse>} User or null
  */
 export async function getUser(
   userSlug: string = '',
@@ -29,6 +29,8 @@ export async function getUser(
     return DefaultUser;
   }
 
+  // id-token «— магическая строка, лол. Вынесите, как добавите файлы
+  //             с константами
   const token = await validateCookie('id-token');
   if (!token) {
     return null;
@@ -71,7 +73,7 @@ export async function getUser(
  * Function checks whether the Slug is a valid username or a number (ID).
  *
  * @param slug Username or User ID
- * @returns boolean
+ * @returns {boolean}
  */
 function isUserSlug(slug: string): boolean {
   // '%40' == '@' (not '===' !)
