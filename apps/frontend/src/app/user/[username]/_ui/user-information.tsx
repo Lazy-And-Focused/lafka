@@ -38,8 +38,7 @@ function Avatar({ name, src }: { name: string; src?: string }) {
       src={src || '/avatar.webp'}
       alt={`${name}'s avatar`}
       className='min-w-[9.5rem] rounded-md'
-      width={150}
-      height={150}
+      fill
     />
   );
 }

@@ -1,19 +1,19 @@
 {
   "name": "frontend",
-  "displayName": "Frontend",
-  "version": "0.4.7",
-  "description": "Frontend for LAFka.",
+  "displayName": "Lafka's frontend",
+  "version": "0.4.10",
+  "description": "Frontend for Lafka.",
   "license": "MIT",
   "private": true,
   "author": {
     "name": "Lazy-And-Focused",
-    "url": "https://laf-love.netlify.app/"
+    "url": "https://laf-team.ru/"
   },
   "contributors": [
     {
       "name": "lanvalird",
       "email": "strazhognay@gmail.com",
-      "url": "http://lanvalird.ru/"
+      "url": "https://lanvalird.ru/"
     }
   ],
   "scripts": {

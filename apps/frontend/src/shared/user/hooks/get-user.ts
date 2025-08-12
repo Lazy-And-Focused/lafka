@@ -31,7 +31,6 @@ export async function getUser(
   //             с константами
   const token = await validateCookie('id-token');
   if (!token) {
-    console.log('нет токена');
     return null;
   }
 

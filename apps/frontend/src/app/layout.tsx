@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'The best forum of the World.',
   applicationName: 'Lafka',
   authors: [
-    { name: 'Valentin Bird', url: 'https://lanvalird.netlify.app/' },
+    { name: 'Valentin Bird', url: 'https://lanvalird.ru/' },
     { name: 'FOCKUSTY', url: 'https://fockusty.netlify.app/' },
   ],
   category: 'forum',
@@ -30,7 +30,7 @@ export default function RootLayout({
         <main>{children}</main>
 
         <footer>
-          <a href='https://laf-info.netlify.app/' target='_blank'>
+          <a href={process.env.TEAM_URL} target='_blank'>
             <Image
               className='h-6 w-auto'
               src='/made-laf.png'
