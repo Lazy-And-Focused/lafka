@@ -31,6 +31,7 @@ export async function getUser(
   //             с константами
   const token = await validateCookie('id-token');
   if (!token) {
+    console.log('нет токена');
     return null;
   }
 
@@ -58,8 +59,11 @@ export async function getUser(
     });
     const data = await res.json();
 
+    console.log(data);
+
     return data.resource;
-  } catch {
+  } catch (e) {
+    if (isDevMode) console.error(e);
     return null;
   }
 }

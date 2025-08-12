@@ -7,7 +7,7 @@ export default function UserInformation({ user }: { user: LAFka.User }) {
   const name = user.nickname || user.username;
 
   return (
-    <div className='section-block flex max-w-min flex-col items-center'>
+    <div className='section-block col-span-2 flex flex-col items-center'>
       <Avatar name={name} src={user.avatar} />
       <Title name={name} />
 
