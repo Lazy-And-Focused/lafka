@@ -7,20 +7,18 @@ import { cache } from 'react';
 import DefaultUser from '../../dev/DefaultUser';
 import validateCookie from '../validate-cookies';
 
-type ComponentResponse = LAFka.User | null;
-
 /**
  * Fetch the user from server.
  *
  * @param userSlug Slug of username or user ID
  * @param cached Should the request to the server be cached?
  *
- * @returns {Promise<ComponentResponse>} User or null
+ * @returns {Promise<LAFka.User | null>} User or null
  */
 export async function getUser(
   userSlug: string = '',
   cached: boolean = true,
-): Promise<ComponentResponse> {
+): Promise<LAFka.User | null> {
   const isDevMode =
     process.env.NODE_ENV === 'development' &&
     process.env.ENABLE_TEST_USER === 'true';
