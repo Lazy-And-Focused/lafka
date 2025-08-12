@@ -1,10 +1,10 @@
-import type { LAFka } from '@lafka/types';
+import type { User } from '@lafka/types';
 
 import FilePencil from '@/icons/file-pencil';
 import Link from 'next/link';
 import Avatar from './avatar';
 
-export default function DisplayUser({ user }: { user: LAFka.User }) {
+export default function DisplayUser({ user }: { user: User }) {
   return (
     <div className='flex flex-row items-center justify-center'>
       <EditButton />

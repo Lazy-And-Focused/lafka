@@ -1,6 +1,6 @@
 'use client';
 
-import { LAFka } from '@lafka/types';
+import { User } from '@lafka/types';
 import { useState, useEffect } from 'react';
 import getUser from './get-user';
 
@@ -10,13 +10,13 @@ import getUser from './get-user';
  * @param userSlug Slug of username or user ID
  * @param cached Should the request to the server be cached?
  *
- * @returns {Promise<LAFka.User | null>} User or null
+ * @returns {Promise<User | null>} User or null
  */
 export default function useUser(
   userSlug?: string,
   cached?: boolean,
-): LAFka.User | null {
-  const [user, setUser] = useState<LAFka.User | null>(null);
+): User | null {
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     async function setter() {
@@ -25,7 +25,7 @@ export default function useUser(
     }
 
     setter();
-  }, [userSlug]);
+  }, [userSlug, cached]);
 
   return user;
 }

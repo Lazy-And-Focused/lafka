@@ -1,9 +1,9 @@
-import { LAFka } from '@lafka/types';
+import { User } from '@lafka/types';
 
 /**
  * Test object by User type
  */
-const DefaultUser: LAFka.User = {
+const DefaultUser: User = {
   id: '0',
   username: 'test_cool_userIUS',
   nickname: 'Mr Testy UsKra',
@@ -18,8 +18,8 @@ const DefaultUser: LAFka.User = {
   forum_posts: [],
   following: [],
   links: [
-    { name: '1test', link: 'http://localhost:3000/' },
-    { name: '2test', link: 'http://localhost:3001/' },
+    { name: '1test', url: 'http://localhost:3000/' },
+    { name: '2test', url: 'http://localhost:3001/' },
   ],
   rights: '',
 };

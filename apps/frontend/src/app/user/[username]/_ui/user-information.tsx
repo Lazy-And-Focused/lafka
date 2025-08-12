@@ -1,9 +1,9 @@
 import type { SVGProps } from 'react';
-import type { LAFka } from '@lafka/types';
+import type { User } from '@lafka/types';
 
 import Image from 'next/image';
 
-export default function UserInformation({ user }: { user: LAFka.User }) {
+export default function UserInformation({ user }: { user: User }) {
   const name = user.nickname || user.username;
 
   return (
@@ -15,7 +15,7 @@ export default function UserInformation({ user }: { user: LAFka.User }) {
         {user.links.map((l, i) => (
           <li key={l.name + '-' + i} className='mb-2 flex max-h-max w-full'>
             <a
-              href={l.link}
+              href={l.url}
               target='_blank'
               className='inline-flex w-full items-center justify-start gap-2 rounded-lg border border-[#EFDBB3]'
             >

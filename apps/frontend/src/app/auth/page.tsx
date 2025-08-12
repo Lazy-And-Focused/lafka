@@ -1,6 +1,6 @@
 'use client';
 
-import { LAFka } from '@lafka/types';
+import { type AuthTypes, AUTH_TYPES } from '@lafka/types';
 
 import { redirect } from 'next/navigation';
 
@@ -27,9 +27,9 @@ export default function AuthPage() {
   );
 }
 
-const services = LAFka.AUTH_TYPES;
+const services = AUTH_TYPES;
 
-const locale: Record<LAFka.AuthTypes, string> = {
+const locale: Record<AuthTypes, string> = {
   google: 'Google',
   yandex: 'Яндекс',
 };

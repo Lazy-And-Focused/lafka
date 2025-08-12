@@ -1,6 +1,6 @@
 'use server';
 
-import type { LAFka } from '@lafka/types';
+import type { User } from '@lafka/types';
 
 import { cache } from 'react';
 
@@ -13,12 +13,12 @@ import validateCookie from '../validate-cookies';
  * @param userSlug Slug of username or user ID
  * @param cached Should the request to the server be cached?
  *
- * @returns {Promise<LAFka.User | null>} User or null
+ * @returns {Promise<User | null>} User or null
  */
 export async function getUser(
   userSlug: string = '',
   cached: boolean = true,
-): Promise<LAFka.User | null> {
+): Promise<User | null> {
   const isDevMode =
     process.env.NODE_ENV === 'development' &&
     process.env.ENABLE_TEST_USER === 'true';
