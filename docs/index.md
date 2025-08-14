@@ -15,7 +15,4 @@
 
 ## Frontend
 
-- [Index](../apps/frontend/docs/index.md)
-  - [Architecture](../apps/frontend/docs/architecture/index.md) +1
-  - [API маршрутизации](../apps/frontend/docs/api-routes.md)
-  - [InDev & Tasks](../apps/frontend/docs/wip.md)
+- [FAiL ↗](https://docs.laf-team.ru/architectures/fail)
