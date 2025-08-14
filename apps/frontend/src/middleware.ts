@@ -2,15 +2,18 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { getUser } from './shared/user';
 
-// This function can be marked `async` if using `await` inside
+// Вынесите в отдельный файл
+const AUTH_PATH = "/auth";
+
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname !== AUTH_PATH) return;
+  
   const user = await getUser();
+  if (!user) return;
 
-  const pathname = request.nextUrl.pathname;
-
-  if (pathname === '/auth' && user) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
+  return NextResponse.redirect(new URL('/', request.url));
 }
 
 export const config = {
