@@ -3,13 +3,13 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getUser } from './shared/user';
 
 // Вынесите в отдельный файл
-const AUTH_PATH = "/auth";
+const AUTH_PATH = '/auth';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname !== AUTH_PATH) return;
-  
+
   const user = await getUser();
   if (!user) return;
 

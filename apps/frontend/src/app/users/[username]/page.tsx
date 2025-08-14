@@ -1,7 +1,6 @@
 import { getUser } from '@/shared/user';
 import { UserContent, UserInformation } from './_ui';
 
-
 export default async function UserPage({
   params,
 }: {

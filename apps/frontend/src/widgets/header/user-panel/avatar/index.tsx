@@ -5,7 +5,7 @@ interface UserProps {
   username: string;
 }
 
-export default function Avatar({user}: {user: UserProps}) {
+export default function Avatar({ user }: { user: UserProps }) {
   return (
     <Image
       className='aspect-square h-8 w-8 rounded-full'
