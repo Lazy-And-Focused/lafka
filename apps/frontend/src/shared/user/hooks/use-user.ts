@@ -1,6 +1,7 @@
 'use client';
 
-import { User } from '@lafka/types';
+import type { User } from '@lafka/types';
+
 import { useState, useEffect } from 'react';
 import getUser from './get-user';
 

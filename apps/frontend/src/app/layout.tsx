@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 
-import './_lib/fonts-loader';
-import './globals.css';
-
 import Image from 'next/image';
 import Header from '@/widgets/header';
+
+import './_lib/fonts-loader';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Lafka',

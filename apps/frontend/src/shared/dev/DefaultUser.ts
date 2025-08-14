@@ -1,4 +1,4 @@
-import { User } from '@lafka/types';
+import type { User } from '@lafka/types';
 
 /**
  * Test object by User type

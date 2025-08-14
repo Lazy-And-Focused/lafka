@@ -1,10 +1,13 @@
 'use client';
 
-import { type AuthTypes, AUTH_TYPES } from '@lafka/types';
+import type { AuthTypes } from '@lafka/types';
+
+import { AUTH_TYPES } from '@lafka/types';
 
 import { redirect } from 'next/navigation';
 
 export default function AuthPage() {
+                  // Нужно вынести путь в константу
   const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_API}/auth`;
 
   return (
