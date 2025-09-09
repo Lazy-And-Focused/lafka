@@ -1,13 +1,13 @@
 {
   "name": "@lafka/rights",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rights service for LAFka",
   "types": "index.d.ts",
   "main": "index.js",
   "files": [
+    "!./**/test/**",
     "./**/*.js",
-    "./**/*.d.ts",
-    "!./**/test"
+    "./**/*.d.ts"
   ],
   "scripts": {
     "dev": "nodemon src/rights.service.ts",
