@@ -1,8 +1,8 @@
-import Database from "./database/index.database";
-import Models from "./database/models.database";
+import Database from "./src/database/index.database";
+import Models from "./src/database";
 
-import { Classes } from "./classes";
+import Model from "./src/database/model";
 
-export default Classes;
+export default Model;
 
 export { Database, Models };

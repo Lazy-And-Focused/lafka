@@ -2,8 +2,8 @@
   "name": "@lafka/database",
   "version": "1.0.0",
   "description": "",
-  "types": "./index.d.ts",
-  "main": "./index.js",
+  "types": "index.d.ts",
+  "main": "index.js",
   "files": [
     "./**/*.js",
     "./**/*.d.ts"
@@ -12,12 +12,12 @@
     "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
     "start:prod": "node dist/database/start.database.js",
     "start": "pnpm run build && pnpm run start:prod",
-    "build": "tsc && tsc-alias"
+    "build": "tsc"
   },
   "keywords": [],
   "author": {
     "name": "Lazy-And-Focused",
-    "url": "https://laf-info.netlify.app/"
+    "url": "https://laf-team.ru/"
   },
   "contributors": [
     {
@@ -28,18 +28,17 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "fock-logger": "catalog:",
-    "mongodb": "catalog:",
-    "mongoose": "catalog:"
+    "fock-logger": "4.0.1-a",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.9.5"
   },
   "devDependencies": {
-    "@lafka/rights": "workspace:^",
-    "@lafka/types": "workspace:^",
-    "@types/node": "catalog:",
-    "nodemon": "catalog:",
-    "ts-node": "catalog:",
-    "tsc-alias": "catalog:",
-    "tsconfig-paths": "catalog:",
-    "typescript": "catalog:"
+    "@lafka/rights": "^1.0.2",
+    "@lafka/types": "^1.0.0",
+    "@types/node": "^24.3.1",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2"
   }
 }

@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
     "target": "ES2024",
-    "module": "CommonJS",
-    "removeComments": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "skipLibCheck": true, 
-    "outDir": "./",
-    "baseUrl": "./",
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    
     "declaration": true,
     "declarationDir": "./",
+    "outDir": "./",
+
+    "paths": {
+      "@lafka/types/*": ["./src/types/*"]
+    }
   },
-  "include": [ "./**/*.ts" ],
-  "exclude": [ "node_modules", "dist" ]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

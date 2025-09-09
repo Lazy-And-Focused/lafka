@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 import "./schemas/index";
-import "./models.database";
-import "../classes/index";
+import ".";
+import "./model";
 
 export default async (url: string) => {
   mongoose

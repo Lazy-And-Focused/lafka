@@ -1,12 +1,12 @@
+import type { FindOptions, Status as DatabaseStatus, GetData } from "@lafka/types/mongodb.types";
 import type { Model as ModelType } from "mongoose";
 
-import { Error, Status } from "lafka/types/status.classes";
-import type { FindOptions, Status as DatabaseStatus } from "lafka/types/mongodb.types";
+import { Error, Status } from "@lafka/types/status.classes";
 
-const getData = async <T>(
+export const getData = async <T>(
   Model: ModelType<T>,
   options: FindOptions<T>
-): Promise<DatabaseStatus<T[], any, boolean>> => {
+): Promise<DatabaseStatus<GetData<T>, any, boolean>> => {
   try {
     const data = await Model.find(options.filter, options.projection, options.options);
 
