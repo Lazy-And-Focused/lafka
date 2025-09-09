@@ -1,6 +1,6 @@
 {
   "name": "@lafka/frapi",
-  "version": "0.1.0-beta",
+  "version": "0.1.0",
   "description": "rest api utils for lafka",
   "types": "index.d.ts",
   "main": "index.js",
