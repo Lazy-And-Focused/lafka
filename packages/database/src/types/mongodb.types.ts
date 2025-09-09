@@ -14,10 +14,10 @@ import type {
 
 export { DeleteResult } from "mongoose";
 
-import { Schemas } from "../database/schemas";
+export { Models } from "../database/schemas";
+
 import mongoose from "mongoose";
 
-export type Models = Schemas.Models;
 export type Filter<T> = FilterQuery<T>;
 export type Update<T> = UpdateQuery<T> | UpdateWithAggregationPipeline;
 export type Projection<T> = ProjectionType<T> | null | undefined;

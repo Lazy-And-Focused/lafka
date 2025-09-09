@@ -13,7 +13,7 @@ import type {
   DeleteData
 } from "@lafka/types/mongodb.types";
 
-import { Schemas } from "./schemas/index";
+import type { Models as SchemaModels } from "./schemas/index";
 
 import { Helpers } from "./helpers";
 
@@ -32,7 +32,7 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return this._model;
   }
 
-  public static parse = <K>(data: K, type: Schemas.Models): K => Helpers.parse<K>(data, type);
+  public static parse = <K>(data: K, type: SchemaModels): K => Helpers.parse<K>(data, type);
 
   public static generateId(): string {
     return `${new Date().getTime()}`

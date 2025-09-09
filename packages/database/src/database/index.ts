@@ -1,7 +1,7 @@
 import type { PickCreateData, ModelData } from "@lafka/types/mongodb.types";
 import type { Auth, Comment, LazyPost, User } from "@lafka/types";
 
-import { Schemas } from "./schemas";
+import { keys, databases } from "./schemas";
 import Model from "./model";
 
 import { Helpers } from "./helpers";
@@ -34,7 +34,7 @@ class Database {
   >;
 
   private readonly _users: Model<User, Pick<User, "username">>;
-  private readonly _keys = Schemas.keys;
+  private readonly _keys = keys;
   private readonly _model = Model;
 
   public readonly helpers = Helpers;
@@ -42,10 +42,10 @@ class Database {
   public static readonly parse = Helpers.parse;
 
   public constructor() {
-    this._auth = new Model<Auth>(Schemas.databases.auth);
-    this._comments = new Model<Comment>(Schemas.databases.comments);
-    this._posts = new Model<LazyPost>(Schemas.databases.posts);
-    this._users = new Model<User>(Schemas.databases.users);
+    this._auth = new Model<Auth>(databases.auth);
+    this._comments = new Model<Comment>(databases.comments);
+    this._posts = new Model<LazyPost>(databases.posts);
+    this._users = new Model<User>(databases.users);
   }
 
   public get model() {
