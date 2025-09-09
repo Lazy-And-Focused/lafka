@@ -3,11 +3,11 @@ name: Node.js CI/CD
 on:
   push:
     branches:
-      - main
+      - issue-19/packages
 
   pull_request:
     branches:
-      - main
+      - issue-19/packages
 
 jobs:
   build:
