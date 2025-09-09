@@ -1,19 +1,29 @@
+import type { Reflector } from "@nestjs/core";
+import type { Request } from "express";
+import type { Observable } from "rxjs";
+
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { Request } from "express";
-import { Observable } from "rxjs";
 
 import Service from "./auth-guard.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  public constructor(private readonly reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    if (this.reflector.get<boolean>("isPublic", context.getHandler())) return true;
+  public canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const isPublic = this.reflector.get<boolean>(
+      "isPublic",
+      context.getHandler(),
+    );
+    if (isPublic) {
+      return true;
+    }
 
     const request = context.switchToHttp().getRequest<Request>();
-
-    return new Service().validateRequest(request);
+    return Service.validateRequest(request);
   }
 }
+
+export default AuthGuard;
