@@ -1,7 +1,7 @@
-import authUserClass from "../classes/auth-user.class";
-import commentClass from "../classes/comment.class";
+import authUserClass from "./auth-user.class";
+import commentClass from "./comment.class";
 import postClass from "./post.class";
-import userClass from "../classes/user.class";
+import userClass from "./user.class";
 
 import DatabaseClass, { DatabaseType as DatabaseTypeT } from "./database.class";
 
