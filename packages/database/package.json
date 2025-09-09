@@ -2,10 +2,11 @@
   "name": "@lafka/database",
   "version": "1.0.0",
   "description": "",
-  "types": "dist/database/models.database.d.ts",
-  "main": "dist/database/models.database.js",
+  "types": "./index.d.ts",
+  "main": "./index.js",
   "files": [
-    "./dist"
+    "./**/*.js",
+    "./**/*.d.ts"
   ],
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
@@ -25,7 +26,7 @@
       "url": "http://fockusty.netlify.app/"
     }
   ],
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "fock-logger": "catalog:",
     "mongodb": "catalog:",

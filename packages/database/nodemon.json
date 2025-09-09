@@ -1,7 +1,0 @@
-{
-	"ignore": [
-        "./**/*.log",
-        "./**/loggers.json",
-        "./loggercfg"
-    ]
-}
