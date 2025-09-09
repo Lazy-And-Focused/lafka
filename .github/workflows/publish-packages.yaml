@@ -27,24 +27,22 @@ jobs:
       - name: "Building packages"
         run: pnpm run build:packages
 
-      # WIP
-      
-      # - name: "Publishing @lafka/types"
-      #   run: npm publish --access public --tag latest
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: "Publishing @lafka/types"
+        run: cd packages/types && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # - name: "Publishing @lafka/rights"
-      #   run: npm publish --access public --tag latest
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: "Publishing @lafka/rights"
+        run: cd packages/rights && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # - name: "Publishing @lafka/frapi"
-      #   run: npm publish --access public --tag latest
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: "Publishing @lafka/frapi"
+        run: cd packages/frapi && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # - name: "Publishing @lafka/database"
-      #   run: npm publish --access public --tag latest
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: "Publishing @lafka/database"
+        run: cd packages/database && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
