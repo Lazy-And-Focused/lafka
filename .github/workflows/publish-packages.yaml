@@ -1,0 +1,50 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: https://registry.npmjs.org
+
+      - name: "Installing dependencies"
+        run: pnpm install
+
+      - name: "Building packages"
+        run: pnpm run build:packages
+
+      # WIP
+      
+      # - name: "Publishing @lafka/types"
+      #   run: npm publish --access public --tag latest
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # - name: "Publishing @lafka/rights"
+      #   run: npm publish --access public --tag latest
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # - name: "Publishing @lafka/frapi"
+      #   run: npm publish --access public --tag latest
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # - name: "Publishing @lafka/database"
+      #   run: npm publish --access public --tag latest
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
