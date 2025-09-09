@@ -1,4 +1,4 @@
-name: Node.js CI/CD
+name: publishing packages CI/CD
 
 on:
   push:
@@ -31,20 +31,24 @@ jobs:
 
       - name: "Publishing @lafka/types"
         run: cd packages/types && npm publish --access public
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Publishing @lafka/rights"
         run: cd packages/rights && npm publish --access public
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Publishing @lafka/frapi"
         run: cd packages/frapi && npm publish --access public
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Publishing @lafka/database"
         run: cd packages/database && npm publish --access public
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
