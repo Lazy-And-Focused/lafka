@@ -1,5 +1,5 @@
 {
-  "name": "@lafka/db-logic",
+  "name": "@lafka/database",
   "version": "1.0.0",
   "description": "",
   "types": "dist/database/models.database.d.ts",
