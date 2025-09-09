@@ -1,4 +1,4 @@
-import { CreateComment, LazyPost, Response } from "lafka/types";
+import { LazyPost, Response } from "lafka/types";
 import Database, { Models } from "lafka/database";
 
 import { Request } from "express";
@@ -47,7 +47,7 @@ export class PostsController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
-  @ApiOperation({ summary: "get a posts by query"})
+  @ApiOperation({ summary: "get a posts by query" })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Getted"
