@@ -1,6 +1,6 @@
 import { Api } from "./api";
 
-export class frapi<ApiURL extends string> {
+export class Frapi<ApiURL extends string> {
   public constructor(public readonly url: ApiURL) {};
 
   public readonly parseInit = <
@@ -127,4 +127,4 @@ export class frapi<ApiURL extends string> {
 
 export { Api };
 
-export default frapi;
+export default Frapi;

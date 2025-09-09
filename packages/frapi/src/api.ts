@@ -1,7 +1,4 @@
-import { LAFka } from "@lafka/types";
-
-// type CreateCommentType = Pick<LAFka.Comment, "author_id" | "post_id" | "content">;
-type CreatePostType = Pick<LAFka.Post, "content" | "name" | "type">
+import type { Post, Response, User, CreatePost } from "@lafka/types";
 
 export namespace Api {
   export const METHOD_REGEXP = /GET|POST|PUT|DELETE|PAST/;
@@ -9,7 +6,7 @@ export namespace Api {
   export type Routes = {
     users: {
       "GET /": {
-        return: LAFka.Response.GetData<LAFka.User>,
+        return: Response<User>,
         path: "/",
 
         headers: { token: string },
@@ -19,7 +16,7 @@ export namespace Api {
       },
 
       "GET /:identifier": {
-        return: LAFka.Response.GetData<LAFka.User>,
+        return: Response<User>,
         path: "/:identifier",
         
         body?: null,
@@ -28,17 +25,17 @@ export namespace Api {
       },
 
       "PUT /:identifier": {
-        return: LAFka.Response.ChangeData<LAFka.User>,
+        return: Response<User>,
         path: "/:identifier",
 
-        body: Partial<LAFka.User>,
+        body: Partial<User>,
         headers: { token: string },
 
         query?: { cache?: boolean, returnUser?: boolean }
       },
 
       "DELETE /:identifier": {
-        return: LAFka.Response.DeleteData<LAFka.User>,
+        return: Response<User>,
         path: "/:identifier",
 
         headers: { token: string }
@@ -50,7 +47,7 @@ export namespace Api {
 
     posts: {
       "GET /": {
-        return: LAFka.Response.GetData<LAFka.Post>,
+        return: Response<Post>,
         path: "/",
 
         query?: {
@@ -65,7 +62,7 @@ export namespace Api {
       },
 
       "GET /:id": {
-        return: LAFka.Response.GetData<LAFka.Post>,
+        return: Response<Post>,
         path: "/:id",
         
         body?: null,
@@ -74,27 +71,27 @@ export namespace Api {
       },
 
       "POST /": {
-        return: LAFka.Response.CreateData<LAFka.Post>,
+        return: Response<Post>,
         path: "/",
 
         headers: { token: string },
-        body: CreatePostType,
+        body: CreatePost,
 
         query?: null
       },
 
       "PUT /:id": {
-        return: LAFka.Response.ChangeData<LAFka.Post>,
+        return: Response<Post>,
         path: "/:id",
 
-        body: Partial<LAFka.Post>,
+        body: Partial<Post>,
         headers: { token: string },
         
         query?: null
       },
 
       "DELETE /:id": {
-        return: LAFka.Response.DeleteData<LAFka.Post>,
+        return: Response<Post>,
         path: "/:id",
 
         headers: { token: string },

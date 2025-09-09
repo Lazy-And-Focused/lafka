@@ -1,14 +1,15 @@
 {
   "name": "@lafka/frapi",
-  "version": "0.0.1",
+  "version": "0.1.0-beta",
   "description": "rest api utils for lafka",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "main": "index.js",
   "files": [
-    "dist"
+    "./**/*.js",
+    "./**/*.d.ts"
   ],
   "scripts": {
-    "build": "tsc & tsc-alias"
+    "build": "tsc"
   },
   "keywords": [
     "rest api",
@@ -18,7 +19,7 @@
   ],
   "author": {
     "name": "Lazy-And-Focused",
-    "url": "https://laf-info.netlify.app/"
+    "url": "https://laf-team.ru/"
   },
   "contributors": [
     {
@@ -29,9 +30,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@lafka/types": "workspace:^",
-    "tsc-alias": "catalog:",
-    "typescript": "catalog:",
-    "@types/node": "catalog:"
+    "@lafka/types": "1.0.0",
+    "@types/node": "^24.3.1",
+    "typescript": "5.9.2"
   }
 }
