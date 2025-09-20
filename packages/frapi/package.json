@@ -37,6 +37,6 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "fouter": "^0.1.0"
+    "fouter": "^0.1.2"
   }
 }

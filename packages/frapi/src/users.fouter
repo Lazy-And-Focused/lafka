@@ -1,20 +1,12 @@
 GET / -> [Response<User>]
   query: cache=[boolean]
-  body: [null|undefined]
-  query: [null|undefined]
 
 GET /:slug -> [Response<User>]
   query: cache=[boolean]
-  body: [null|undefined]
-  query: [null|undefined]
 
 PUT /:slug -> [Response<User>]
   body: [Partial<User>]
   headers: token=[string]
-  query:
-    cache=[boolean]
 
 DELETE /:slug -> [Response<User>]
   headers: token=[string]
-  body: [null|undefined]
-  query: [null|undefined]
