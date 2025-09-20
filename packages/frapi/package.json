@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "builder": "ts-node ./src/builder.ts",
-    "build": "tsc"
+    "build": "pnpm run builder && tsc"
   },
   "keywords": [
     "rest api",
@@ -36,9 +36,7 @@
     "@lafka/types": "1.0.0",
     "@types/node": "^24.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "5.9.2"
-  },
-  "dependencies": {
+    "typescript": "5.9.2",
     "fouter": "^0.1.2"
   }
 }
