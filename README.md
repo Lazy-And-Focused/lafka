@@ -1,6 +1,10 @@
 # Lafka
 
+<<<<<<< HEAD
 ![Cover](docs/cover.png)
+=======
+![workflow](https://github.com/Lazy-And-Focused/LAFka/actions/workflows/code-styling.yml/badge.svg)
+>>>>>>> aaf93a0 (-up workflows #2. Istoriya povtoryaetsya)
 
 ## 👀 Что это такое?
 
