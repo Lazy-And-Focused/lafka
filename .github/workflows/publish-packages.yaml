@@ -3,11 +3,15 @@ name: publishing packages CI/CD
 on:
   push:
     branches:
-      - issue-19/packages
+      - main
+      - dev
+      - packages
 
   pull_request:
     branches:
-      - issue-19/packages
+      - main
+      - dev
+      - packages
 
 jobs:
   build:
