@@ -5,17 +5,16 @@ import type {
   Filter,
   FindOptions,
   UpdateOptions,
-  Status as DatabaseStatus,
   Models,
   PickTypeInObject,
   GetData,
-  DeleteResult,
   DeleteData
 } from "@lafka/types/mongodb.types";
 
 import type { Models as SchemaModels } from "./schemas/index";
 
 import { Helpers } from "./helpers";
+import { Response } from "@lafka/types";
 
 class Database<T extends { id: string }, K = Partial<T>> {
   private readonly _model: Model<T>;
@@ -65,19 +64,19 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return this._model.deleteOne({ ...filter });
   };
 
-  public getData(options: FindOptions<T>): Promise<DatabaseStatus<GetData<T>>> {
+  public getData(options: FindOptions<T>): Promise<Response<GetData<T>>> {
     return Helpers.getData<T>(this._model, options);
   };
 
-  public deleteModel(): Promise<DatabaseStatus> {
+  public deleteModel(): Promise<Response<string>> {
     return Helpers.deleteModel(this._model.name);
   };
 
-  public static getAllModels(): Promise<DatabaseStatus> {
+  public static getAllModels(): Promise<Response<Models[]>> {
     return Helpers.getAllModels();
   };
 
-  public static deleteModel(name: string): Promise<DatabaseStatus> {
+  public static deleteModel(name: string): Promise<Response<string>> {
     return Helpers.deleteModel(name);
   };
 }

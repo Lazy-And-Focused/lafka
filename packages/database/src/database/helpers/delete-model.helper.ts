@@ -1,23 +1,24 @@
-import type { Status as DatabaseStatus } from "@lafka/types/mongodb.types";
+import type { Response } from "@lafka/types";
 
-import { Error } from "@lafka/types/status.classes";
+import { deleteModel as deleteMongooseModel } from "mongoose";
 
-import mongoose from "mongoose";
-
-export const deleteModel = async (name: string): Promise<DatabaseStatus<mongoose.Mongoose, any, boolean>> => {
+export const deleteModel = async (name: string): Promise<Response<string>> => {
   try {
-    const data = mongoose.deleteModel(name);
+    deleteMongooseModel(name);
 
     return {
-      text: `Успешно удалена модель ${name}`,
       successed: true,
       error: undefined,
-      data: data
+      data: "deleted"
     };
   } catch (err) {
     console.log(err);
 
-    return new Error(`${err}`);
+    return {
+      successed: false,
+      data: null,
+      error: "unknown error"
+    };
   }
 };
 

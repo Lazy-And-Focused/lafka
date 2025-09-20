@@ -1,26 +1,33 @@
-import type { Status as DatabaseStatus, Models } from "@lafka/types/mongodb.types";
-
-import { Error } from "@lafka/types/status.classes";
+import type { Response } from "@lafka/types";
+import type { Models } from "@lafka/types/mongodb.types";
 
 import mongoose from "mongoose";
 
-export const getAllModels = async (): Promise<DatabaseStatus<Models[], any, boolean>> => {
+export const getAllModels = async (): Promise<Response<Models[]>> => {
   try {
     const models = mongoose.modelNames() as Models[];
 
-    if (!models)
-      return new Error("Возможно таблиц не существует", {data: []});
+    if (!models) {
+      return {
+        successed: false,
+        error: "Возможно таблиц не существует",
+        data: null
+      }
+    };
 
     return {
-      text: "Успешно найдены таблицы",
       successed: true,
-      error: undefined,
-      data: models
+      data: models,
+      error: null
     };
   } catch (err) {
     console.error(err);
 
-    return new Error(`${err}`, {data: []});
+    return {
+      successed: false,
+      error: "unknown error",
+      data: null
+    };
   }
 };
 

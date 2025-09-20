@@ -57,16 +57,3 @@ export type PickCreateData<T, K extends keyof ModelData<T>> = Partial<ModelData<
 export type SchemaParameters<T> = ConstructorParameters<
   typeof mongoose.Schema<T>
 >["0"];
-
-export interface Status<
-  Data extends any = any,
-  Error extends any = undefined,
-  isError extends boolean = Error extends undefined ? false : true
-> {
-  text: string;
-  successed: isError extends true ? false : true;
-
-  data: isError extends true ? Data|undefined : Data
-  
-  error: isError extends true ? Error : undefined;
-}
