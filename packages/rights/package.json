@@ -1,6 +1,6 @@
 {
   "name": "@lafka/rights",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Rights service for LAFka",
   "types": "index.d.ts",
   "main": "index.js",
