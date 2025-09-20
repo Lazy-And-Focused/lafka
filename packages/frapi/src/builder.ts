@@ -2,7 +2,7 @@ import Compiler from "fouter";
 
 import { join } from "path";
 
-const compiler = new Compiler(__dirname, join(__dirname, "routes.ts"));
+const compiler = new Compiler(join(__dirname, "endpoints"), join(__dirname, "routes.ts"));
 const data = compiler.execute(false);
 
 const COMPILED_OVERWRRITE_TEXT = `// FOUTER__COMPILED__OVERWRITE_THIS \\\\`;
