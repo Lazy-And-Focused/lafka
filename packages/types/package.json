@@ -11,7 +11,9 @@
     "./**/*.js"
   ],
   "scripts": {
-    "build": "tsc"
+    "compiler": "ts-node ./src/rights.compiler.ts",
+    "prettier": "prettier . -c -w",
+    "build": "pnpm run compiler && pnpm run prettier && tsc"
   },
   "keywords": [
     "types",
@@ -35,6 +37,8 @@
   "devDependencies": {
     "@types/node": "^24.3.1",
     "mongoose": "^8.9.5",
+    "@lazy-and-focused/prettier-config": "^1.0.0",
+    "prettier": "^3.0.0",
     "typescript": "5.9.2"
   },
   "dependencies": {

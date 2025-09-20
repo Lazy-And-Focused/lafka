@@ -1,5 +1,7 @@
-import Compiler from "fbit-field/compiler";
-import { Rights } from "./rights.types";
+import Compiler from 'fbit-field/compiler';
+import { Rights } from './rights.types';
+
+import { join } from 'path';
 
 const rights = Object.fromEntries(
   Object.keys(Rights.CONSTANTS.object.available).map((key) => [
@@ -8,14 +10,13 @@ const rights = Object.fromEntries(
   ]),
 );
 
-if (process.env.NODE_ENV === "rights_compile")
-  new Compiler(
-    rights,
-    __dirname + "\\rights.types.ts",
-    {},
-    {
-      writeInCompiler: true,
-      defaultExportOn: false,
-      name: "raw",
-    },
-  ).execute();
+new Compiler(
+  rights,
+  join(__dirname, 'rights.types.ts'),
+  {},
+  {
+    writeInCompiler: true,
+    defaultExportOn: false,
+    name: 'raw',
+  },
+).execute();

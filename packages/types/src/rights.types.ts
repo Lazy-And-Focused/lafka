@@ -1,4 +1,4 @@
-import { BitBuilder } from "fbit-field";
+import { BitBuilder } from 'fbit-field';
 
 type IRights<T extends any[] | readonly any[]> = Record<T[number], bigint>;
 
@@ -6,23 +6,23 @@ export namespace Rights {
   export type My = IRights<typeof My.ALL>;
   export namespace My {
     export const EXCLUDE = [
-      "ADMINISTRATOR",
-      "MODERATOR",
-      "MUTE",
-      "BAN",
-      "POSTS_MANAGE",
-      "COMMENTS_MANAGE",
-      "ORGANIZATIONS_MANAGE",
-      "POSTS_DELETE",
-      "COMMENTS_DELETE",
-      "ORGANIZATIONS_DELETE",
+      'ADMINISTRATOR',
+      'MODERATOR',
+      'MUTE',
+      'BAN',
+      'POSTS_MANAGE',
+      'COMMENTS_MANAGE',
+      'ORGANIZATIONS_MANAGE',
+      'POSTS_DELETE',
+      'COMMENTS_DELETE',
+      'ORGANIZATIONS_DELETE',
     ] as const;
     export const ALL = [
       ...EXCLUDE,
-      "USER",
-      "POSTS_CREATE",
-      "COMMENTS_CREATE",
-      "ORGANIZATIONS_CREATE",
+      'USER',
+      'POSTS_CREATE',
+      'COMMENTS_CREATE',
+      'ORGANIZATIONS_CREATE',
     ] as const;
     const builder = new BitBuilder(ALL);
 
@@ -35,23 +35,23 @@ export namespace Rights {
   export type Posts = IRights<typeof Posts.ALL>;
   export namespace Posts {
     export const EXCLUDE = [
-      "OWNER",
-      "MANAGER",
-      "MANAGE",
-      "DELETE",
-      "COMMENTS_DELETE",
-      "COMMENTS_MANAGE",
-      "VIEWERS_MUTE",
-      "VIEWERS_BLOCK",
+      'OWNER',
+      'MANAGER',
+      'MANAGE',
+      'DELETE',
+      'COMMENTS_DELETE',
+      'COMMENTS_MANAGE',
+      'VIEWERS_MUTE',
+      'VIEWERS_BLOCK',
     ] as const;
     export const ALL = [
       ...EXCLUDE,
-      "VIEW",
-      "REACT",
-      "ATTACH_FILES",
-      "COMMENTS_READ",
-      "COMMENTS_CREATE",
-      "COMMENTS_REACT",
+      'VIEW',
+      'REACT',
+      'ATTACH_FILES',
+      'COMMENTS_READ',
+      'COMMENTS_CREATE',
+      'COMMENTS_REACT',
     ] as const;
     const builder = new BitBuilder(ALL);
     export const AVAILABLE: Posts = builder.execute(My.AVAILABLE);
@@ -63,20 +63,20 @@ export namespace Rights {
   export type Organizations = IRights<typeof Organizations.ALL>;
   export namespace Organizations {
     export const EXCLUDE = [
-      "OWNER",
-      "ADMINISTRATOR",
-      "INVITE_CREATE",
-      "RIGHTS_MANAGE",
-      "MANAGE",
-      "DELETE",
-      "POSTS_CREATE",
-      "POSTS_MANAGE",
-      "POSTS_DELETE",
-      "ROLES_MANAGE",
-      "MEMBERS_KICK",
-      "VIEWERS_BLOCK",
+      'OWNER',
+      'ADMINISTRATOR',
+      'INVITE_CREATE',
+      'RIGHTS_MANAGE',
+      'MANAGE',
+      'DELETE',
+      'POSTS_CREATE',
+      'POSTS_MANAGE',
+      'POSTS_DELETE',
+      'ROLES_MANAGE',
+      'MEMBERS_KICK',
+      'VIEWERS_BLOCK',
     ] as const;
-    export const ALL = [...EXCLUDE, "READ", "POSTS_READ"] as const;
+    export const ALL = [...EXCLUDE, 'READ', 'POSTS_READ'] as const;
     const builder = new BitBuilder(ALL);
 
     export const AVAILABLE: Organizations = builder.execute(Posts.AVAILABLE);
