@@ -1,4 +1,4 @@
-import { Link, OrganizationTag } from './utility.types';
+import { Link, OrganizationTag } from "./utility.types";
 
 export interface CreateOrganization {
   name: string;

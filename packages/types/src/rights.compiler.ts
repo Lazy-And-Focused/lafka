@@ -1,7 +1,7 @@
-import Compiler from 'fbit-field/compiler';
-import { Rights } from './rights.types';
+import Compiler from "fbit-field/compiler";
+import { Rights } from "./rights.types";
 
-import { join } from 'path';
+import { join } from "path";
 
 const rights = Object.fromEntries(
   Object.keys(Rights.CONSTANTS.object.available).map((key) => [
@@ -12,11 +12,11 @@ const rights = Object.fromEntries(
 
 new Compiler(
   rights,
-  join(__dirname, 'rights.types.ts'),
+  join(__dirname, "rights.types.ts"),
   {},
   {
     writeInCompiler: true,
     defaultExportOn: false,
-    name: 'raw',
+    name: "raw",
   },
 ).execute();

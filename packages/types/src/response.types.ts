@@ -1,6 +1,6 @@
-import { Models } from './database.types';
+import { Models } from "./database.types";
 
-export type DataType = Exclude<Models, 'auth'>;
+export type DataType = Exclude<Models, "auth">;
 
 export type Response<T, K = null> =
   | {

@@ -1,4 +1,4 @@
-import { Link } from './utility.types';
+import { Link } from "./utility.types";
 
 export interface User {
   id: string;

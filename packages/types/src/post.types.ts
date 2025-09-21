@@ -1,9 +1,9 @@
-import { PostTag } from './utility.types';
+import { PostTag } from "./utility.types";
 
-export const POST_TYPES = ['forum', 'blog'] as const;
+export const POST_TYPES = ["forum", "blog"] as const;
 export type PostTypes = (typeof POST_TYPES)[number];
 
-export const VIEW_STAUTS = ['open', 'limited', 'link'] as const;
+export const VIEW_STAUTS = ["open", "limited", "link"] as const;
 export type ViewStatus = (typeof VIEW_STAUTS)[number];
 
 export type CreatePost = {
@@ -16,7 +16,7 @@ export type CreatePost = {
 
   creator_id: string;
 
-  type: 'forum' | 'blog';
+  type: "forum" | "blog";
 };
 
 export type LazyPost = {
@@ -45,7 +45,7 @@ export type LazyPost = {
   /** blog */
   reposts: number;
 
-  type: 'blog' | 'forum';
+  type: "blog" | "forum";
 };
 
 export type Post = {
@@ -68,7 +68,7 @@ export type Post = {
   rights: Map<string, string>;
 } & (
   | {
-      type: 'forum';
+      type: "forum";
     }
   | {
       /** blog */
@@ -78,6 +78,6 @@ export type Post = {
       /** blog */
       reposts: number;
 
-      type: 'blog';
+      type: "blog";
     }
 );

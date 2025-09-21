@@ -1,4 +1,4 @@
-import { AuthTypes } from './database.types';
+import { AuthTypes } from "./database.types";
 
 export { AuthTypes };
 

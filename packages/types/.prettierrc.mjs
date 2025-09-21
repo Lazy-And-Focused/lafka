@@ -1,3 +1,7 @@
-import { PrettierLafConfiguration } from '@lazy-and-focused/prettier-config';
+import { PrettierLafConfiguration } from "@lazy-and-focused/prettier-config";
 
-export default PrettierLafConfiguration;
+/** @type import("prettier").Config */
+export default {
+  ...PrettierLafConfiguration,
+  singleQuote: false,
+};
