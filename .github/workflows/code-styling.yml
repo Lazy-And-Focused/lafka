@@ -39,10 +39,12 @@ jobs:
 
       - name: Save Changes ⇒ Commit formatted code
         run: |
-          git config --global user.name '${{ github.event.head_commit.author.name }}'
-          git config --global user.email '${{ github.event.head_commit.author.username }}@${{ github.event.head_commit.author.email }}'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
-          git commit -m '${{ github.event.head_commit.message }} (formatted ~~ backend)'
+          git commit -m "${{ github.event.head_commit.message }} (formatted ~~ backend)
+          
+          Co-authored-by: ${{ github.event.head_commit.author.name }} <${{ github.event.head_commit.author.email }}>"
           git push
         continue-on-error: true
 
@@ -73,9 +75,11 @@ jobs:
 
       - name: Save Changes ⇒ Commit formatted code
         run: |
-          git config --global user.name '${{ github.event.head_commit.author.name }}'
-          git config --global user.email '${{ github.event.head_commit.author.username }}@${{ github.event.head_commit.author.email }}'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
-          git commit -m '${{ github.event.head_commit.message }} (formatted ~~ frontend)'
+          git commit -m "${{ github.event.head_commit.message }} (formatted ~~ frontend)
+          
+          Co-authored-by: ${{ github.event.head_commit.author.name }} <${{ github.event.head_commit.author.email }}>"
           git push
         continue-on-error: true
