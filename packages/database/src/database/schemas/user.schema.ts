@@ -1,15 +1,13 @@
-import type { SchemaParameters } from "@lafka/types/mongodb.types";
 import type { User } from "@lafka/types";
-
-import mongoose, { Schema, SchemaTypes } from "mongoose";
 
 import { Rights } from "@lafka/types";
 
+import Schema, { SchemaTypes } from "./schema";
 import { Link } from "./link.utility-schema";
 
-const data: SchemaParameters<User> = {
+export const schema = new Schema<User>(Schema.models.users, {
   id: {
-    type: mongoose.SchemaTypes.String,
+    type: SchemaTypes.String,
     required: true,
     unique: true
   },
@@ -22,16 +20,16 @@ const data: SchemaParameters<User> = {
   
   created_at: { type: SchemaTypes.String, required: true, unique: false },
   
-  blocked_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
+  blocked_posts: { type: [SchemaTypes.String], ref: Schema.models.posts, default: [] },
   
-  blog_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
-  forum_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
+  blog_posts: { type: [SchemaTypes.String], ref: Schema.models.posts, default: [] },
+  forum_posts: { type: [SchemaTypes.String], ref: Schema.models.posts, default: [] },
   
-  followed_blog_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
-  followed_forum_posts: { type: [SchemaTypes.String], ref: "posts", default: [] },
+  followed_blog_posts: { type: [SchemaTypes.String], ref: Schema.models.posts, default: [] },
+  followed_forum_posts: { type: [SchemaTypes.String], ref: Schema.models.posts, default: [] },
   
-  followers: { type: [SchemaTypes.String], ref: "users", default: [] },
-  following: { type: [SchemaTypes.String], ref: "users", default: [] },
+  followers: { type: [SchemaTypes.String], ref: Schema.models.users, default: [] },
+  following: { type: [SchemaTypes.String], ref: Schema.models.users, default: [] },
   
   links: {
     type: [Link],
@@ -44,12 +42,6 @@ const data: SchemaParameters<User> = {
     unique: false,
     default: Rights.CONSTANTS.raw.default.my.toString()
   }
-} as const;
-const schema = new Schema<User>(data);
-const keys = Object.keys(data) as unknown as (keyof User)[];
+});
 
-const database = mongoose.model("users", schema);
-
-export { schema as UserSchema, keys as UserKeys };
-
-export default database;
+export default schema;

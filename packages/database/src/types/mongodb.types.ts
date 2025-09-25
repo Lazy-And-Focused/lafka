@@ -9,7 +9,12 @@ import type {
   UpdateQuery,
   UpdateWithAggregationPipeline,
   DeleteResult,
-  Query
+  Query,
+  InferSchemaType,
+  Model,
+  ObtainSchemaGeneric,
+  HydratedDocument,
+  Schema
 } from "mongoose";
 
 export { DeleteResult } from "mongoose";
@@ -49,6 +54,21 @@ export type PickType<T, K = any[]> = T extends K ? T : never;
 export type PickTypeInObject<T extends { [key: string]: any }, K = any[]> = RemoveNever<
   Required<{ [P in keyof T]: PickType<T[P], K> }>
 >;
+
+export type DatabaseModel<TSchema extends Schema = any> = Model<
+  InferSchemaType<TSchema>,
+  ObtainSchemaGeneric<TSchema, 'TQueryHelpers'>,
+  ObtainSchemaGeneric<TSchema, 'TInstanceMethods'>,
+  ObtainSchemaGeneric<TSchema, 'TVirtuals'>,
+  HydratedDocument<
+    InferSchemaType<TSchema>,
+    ObtainSchemaGeneric<TSchema, 'TVirtuals'> & ObtainSchemaGeneric<TSchema, 'TInstanceMethods'>,
+    ObtainSchemaGeneric<TSchema, 'TQueryHelpers'>,
+    ObtainSchemaGeneric<TSchema, 'TVirtuals'>,
+    ObtainSchemaGeneric<TSchema, 'TSchemaOptions'>
+  >,
+  TSchema
+> & ObtainSchemaGeneric<TSchema, 'TStaticMethods'>
 
 export type ModelData<T> = Omit<T, "id" | "_id">;
 export type CreateData<T> = Partial<ModelData<T>>;

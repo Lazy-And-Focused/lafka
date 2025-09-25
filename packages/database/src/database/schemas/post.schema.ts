@@ -1,13 +1,12 @@
-import type { SchemaParameters } from "@lafka/types/mongodb.types";
 import type { LazyPost } from "@lafka/types";
 
-import mongoose, { Schema, SchemaTypes } from "mongoose";
+import Schema, { SchemaTypes } from "./schema";
 
 import { Tag } from "./tag.utility-schema";
 
-const data: SchemaParameters<LazyPost> = {
+export const schema = new Schema<LazyPost>(Schema.models.posts, {
   id: {
-    type: mongoose.SchemaTypes.String,
+    type: SchemaTypes.String,
     required: true,
     unique: true
   },
@@ -16,7 +15,7 @@ const data: SchemaParameters<LazyPost> = {
   content: { type: SchemaTypes.String, required: true, unique: false },
   description: { type: SchemaTypes.String, unique: false, default: "" },
   
-  comments: { type: [SchemaTypes.String], ref: "comments" },
+  comments: { type: [SchemaTypes.String], ref: Schema.models.comments },
   followers: { type: SchemaTypes.Number, required: true, unique: false },
   
   created_at: { type: SchemaTypes.String, required: true, unique: false },
@@ -41,13 +40,6 @@ const data: SchemaParameters<LazyPost> = {
     unique: false,
     default: new Map()
   }
-};
+})
 
-const schema = new Schema<LazyPost>(data);
-const keys = Object.keys(data) as unknown as (keyof LazyPost)[];
-
-const database = mongoose.model("posts", schema);
-
-export { schema as PostsSchema, keys as PostsKeys };
-
-export default database;
+export default schema;
