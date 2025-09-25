@@ -3,18 +3,16 @@ import type {
   SchemaParameters,
 } from "@lafka/types/mongodb.types";
 
+import { MODELS, Models } from "@lafka/types/src/database.types";
 import { model, Schema as MongoSchema, SchemaTypes } from "mongoose";
 
 export const createLazySchema = <T>(parametrs: SchemaParameters<T>) =>
   parametrs;
 
 export class Schema<T> {
-  public static readonly models = {
-    auth: "auth",
-    posts: "posts",
-    comments: "comments",
-    users: "users",
-  } as const;
+  public static readonly models = Object.fromEntries(MODELS.map(k => [k, k])) as {
+    [P in Models]: P
+  };
 
   public static readonly modelsArray = Object.values(Schema.models);
 
