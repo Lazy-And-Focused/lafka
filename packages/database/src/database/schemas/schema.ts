@@ -10,8 +10,10 @@ export const createLazySchema = <T>(parametrs: SchemaParameters<T>) =>
   parametrs;
 
 export class Schema<T> {
-  public static readonly models = Object.fromEntries(MODELS.map(k => [k, k])) as {
-    [P in Models]: P
+  public static readonly models = Object.fromEntries(
+    MODELS.map((k) => [k, k]),
+  ) as {
+    [P in Models]: P;
   };
 
   public static readonly modelsArray = Object.values(Schema.models);

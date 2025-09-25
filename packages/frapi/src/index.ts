@@ -1,13 +1,13 @@
 import { Api } from "./api";
 
 export class Frapi<ApiURL extends string> {
-  public constructor(public readonly url: ApiURL) {};
+  public constructor(public readonly url: ApiURL) {}
 
   public readonly parseInit = <
     Root extends keyof Api.Routes,
-    URL extends Api.Path<Root>
+    URL extends Api.Path<Root>,
   >(
-    init: Api.RequestInitialize<Root, URL>
+    init: Api.RequestInitialize<Root, URL>,
   ): RequestInit => {
     const body = JSON.stringify(init.body);
     const headers = {
@@ -17,67 +17,69 @@ export class Frapi<ApiURL extends string> {
 
     return {
       ...init,
-      headers, body,
+      headers,
+      body,
     };
-  }
+  };
 
   public readonly parseURL = <
     Root extends keyof Api.Routes,
-    URL extends Api.Path<Root>
+    URL extends Api.Path<Root>,
   >({
-    root, url
+    root,
+    url,
   }: {
-    root: Root,
-    url: URL
+    root: Root;
+    url: URL;
   }) => {
     const stringUrl = String(url);
     const method = stringUrl.match(Api.METHOD_REGEXP);
-    
+
     if (!method || !method[0]) throw new Error("url is does not have method");
 
-    const path = stringUrl.slice(method[0].length+1);
-    
+    const path = stringUrl.slice(method[0].length + 1);
+
     return { method: method[0], url: root + path } as {
-      method: string,
-      url: `${ApiURL}/${Root}${Api.ParseRoute<Root, URL>["path"]}`
+      method: string;
+      url: `${ApiURL}/${Root}${Api.ParseRoute<Root, URL>["path"]}`;
     };
   };
 
   public readonly fetch = async <
     Root extends keyof Api.Routes,
-    URL extends Api.Path<Root>
+    URL extends Api.Path<Root>,
   >(data: {
-    root: Root,
-    url: URL,
-    init: Api.RequestInitialize<Root, URL, undefined>
+    root: Root;
+    url: URL;
+    init: Api.RequestInitialize<Root, URL, undefined>;
   }): Promise<{
-    url: string,
-    type: ResponseType,
-    statusText: string,
-    body: ReadableStream<Uint8Array<ArrayBufferLike>>,
-    bodyUsed: boolean,
-    status: string,
-    headers: Headers,
-    ok: boolean,
-    redirected: boolean,
+    url: string;
+    type: ResponseType;
+    statusText: string;
+    body: ReadableStream<Uint8Array<ArrayBufferLike>>;
+    bodyUsed: boolean;
+    status: string;
+    headers: Headers;
+    ok: boolean;
+    redirected: boolean;
 
-    blob: () => Promise<Blob>,
-    arrayBuffer: () => Promise<ArrayBuffer>,
-    bytes: () => Promise<Uint8Array>,
-    clone: () => Response,
-    formData: () => Promise<FormData>,
+    blob: () => Promise<Blob>;
+    arrayBuffer: () => Promise<ArrayBuffer>;
+    bytes: () => Promise<Uint8Array>;
+    clone: () => Response;
+    formData: () => Promise<FormData>;
 
     //@ts-ignore
-    data: Api.ParseRoute<Root, URL>["return"] & { type: Root }
+    data: Api.ParseRoute<Root, URL>["return"] & { type: Root };
   }> => {
     const url = this.parseURL(data).url;
     const query = this.parseQuery(data.init.query);
 
     const fetched = await fetch(url + query, this.parseInit(data.init));
-    
+
     try {
       const json = await fetched.json();
-      
+
       return this.writeFetched["return"](fetched, json);
     } catch (error) {
       return this.writeFetched["return"](fetched, {
@@ -88,9 +90,9 @@ export class Frapi<ApiURL extends string> {
         changed_resource: null,
         deleted_resource: null,
         type: data.root,
-        date: new Date().toISOString()
-      })
-    };
+        date: new Date().toISOString(),
+      });
+    }
   };
 
   private readonly parseQuery = (query?: unknown): string => {
@@ -99,8 +101,12 @@ export class Frapi<ApiURL extends string> {
 
     return Object.keys(query).length === 0
       ? ""
-      : "?" + Object.keys(query).map(k => [k, query[k]]).map(e => e.join("=")).join("&");
-  }
+      : "?" +
+          Object.keys(query)
+            .map((k) => [k, query[k]])
+            .map((e) => e.join("="))
+            .join("&");
+  };
 
   private readonly writeFetched = <T>(fetched: Response, data: T) => {
     return {
@@ -120,10 +126,10 @@ export class Frapi<ApiURL extends string> {
       clone: fetched.clone,
       formData: fetched.formData,
 
-      data
-    }
-  }
-};
+      data,
+    };
+  };
+}
 
 export { Api };
 
