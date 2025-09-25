@@ -16,7 +16,7 @@ import type { Models as SchemaModels } from "./schemas/index";
 import { Helpers } from "./helpers";
 import { Response } from "@lafka/types";
 
-class Database<T extends { id: string }, K = Partial<T>> {
+export class Database<T, K = Partial<T>> {
   private readonly _model: Model<T>;
 
   public constructor(model: Model<T>) {
@@ -81,7 +81,5 @@ class Database<T extends { id: string }, K = Partial<T>> {
     return Helpers.deleteModel(name);
   }
 }
-
-export { Database };
 
 export default Database;

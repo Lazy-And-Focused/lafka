@@ -4,9 +4,9 @@ import { Tag } from "./tag.utility-schema";
 import Schema from "./schema";
 
 import auth from "./auth.schema";
-import comment from "./comment.schema";
-import post from "./post.schema";
-import user from "./user.schema";
+import comments from "./comments.schema";
+import posts from "./posts.schema";
+import users from "./users.schema";
 
 export const models = Schema.modelsArray;
 export type Models = (typeof models)[number];
@@ -18,9 +18,11 @@ export const utility = {
 
 export const schemas = {
   auth,
-  comment,
-  post,
-  user,
+  comments,
+  posts,
+  users,
 } as const;
+
+export type Schemas = typeof schemas;
 
 export default schemas;

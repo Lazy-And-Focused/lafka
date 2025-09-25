@@ -23,12 +23,12 @@ export class Schema<T> {
   public readonly database: DatabaseModel<MongoSchema<T>>;
 
   public constructor(
-    public readonly name: string,
+    public readonly name: keyof typeof Schema.models,
     public readonly parametrs: SchemaParameters<T>,
   ) {
     this.schema = new MongoSchema<T>(parametrs);
     this.keys = Object.keys(parametrs) as (keyof T)[];
-    this.database = model(this.name, this.schema);
+    this.database = model(Schema.models[this.name], this.schema);
   }
 }
 
