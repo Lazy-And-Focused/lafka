@@ -1,15 +1,19 @@
-import type { DatabaseModel, SchemaParameters } from "@lafka/types/mongodb.types";
+import type {
+  DatabaseModel,
+  SchemaParameters,
+} from "@lafka/types/mongodb.types";
 
 import { model, Schema as MongoSchema, SchemaTypes } from "mongoose";
 
-export const createLazySchema = <T>(parametrs: SchemaParameters<T>) => parametrs;
+export const createLazySchema = <T>(parametrs: SchemaParameters<T>) =>
+  parametrs;
 
 export class Schema<T> {
   public static readonly models = {
     auth: "auth",
     posts: "posts",
     comments: "comments",
-    users: "users"
+    users: "users",
   } as const;
 
   public static readonly modelsArray = Object.values(Schema.models);
@@ -20,7 +24,7 @@ export class Schema<T> {
 
   public constructor(
     public readonly name: string,
-    public readonly parametrs: SchemaParameters<T>
+    public readonly parametrs: SchemaParameters<T>,
   ) {
     this.schema = new MongoSchema<T>(parametrs);
     this.keys = Object.keys(parametrs) as (keyof T)[];
@@ -28,8 +32,6 @@ export class Schema<T> {
   }
 }
 
-export {
-  SchemaTypes
-}
+export { SchemaTypes };
 
 export default Schema;

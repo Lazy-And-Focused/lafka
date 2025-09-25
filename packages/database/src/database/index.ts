@@ -7,8 +7,13 @@ import Model from "./model";
 import { Helpers } from "./helpers";
 
 export namespace Constructors {
-  export type auth_users = ModelData<Omit<Auth, "created_at">> & { profile_id?: string };
-  export type comments = PickCreateData<Comment, "author_id" | "post_id" | "content"> & {
+  export type auth_users = ModelData<Omit<Auth, "created_at">> & {
+    profile_id?: string;
+  };
+  export type comments = PickCreateData<
+    Comment,
+    "author_id" | "post_id" | "content"
+  > & {
     id?: string;
   };
 
@@ -17,7 +22,9 @@ export namespace Constructors {
     "content" | "creator_id" | "name" | "type"
   > & { _id?: string };
 
-  export type users_data = PickCreateData<User, "username" | "created_at"> & { id?: string };
+  export type users_data = PickCreateData<User, "username" | "created_at"> & {
+    id?: string;
+  };
 
   export type users<T> = T extends true
     ? Partial<User> & { id: string }

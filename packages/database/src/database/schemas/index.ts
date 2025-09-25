@@ -13,14 +13,14 @@ export type Models = (typeof models)[number];
 
 export const utility = {
   link: Link,
-  tag: Tag
+  tag: Tag,
 } as const;
 
 export const schemas = {
   auth,
   comment,
   post,
-  user
+  user,
 } as const;
 
 export default schemas;
