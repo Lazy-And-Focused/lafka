@@ -1,5 +1,7 @@
 import type { Model } from "mongoose";
 
+import type { Models as SchemaModels } from "./schemas/index";
+import type { Response } from "@lafka/types";
 import type {
   CreateData,
   Filter,
@@ -11,10 +13,8 @@ import type {
   DeleteData,
 } from "@lafka/types/mongodb.types";
 
-import type { Models as SchemaModels } from "./schemas/index";
-
+import { v4 as uuidV4 } from "uuid";
 import { Helpers } from "./helpers";
-import { Response } from "@lafka/types";
 
 export class Database<T, K = Partial<T>> {
   private readonly _model: Model<T>;
@@ -35,7 +35,7 @@ export class Database<T, K = Partial<T>> {
     Helpers.parse<K>(data, type);
 
   public static generateId(): string {
-    return `${new Date().getTime()}`;
+    return uuidV4();
   }
 
   public create(doc: CreateData<T> & K) {
