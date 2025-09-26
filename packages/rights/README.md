@@ -15,13 +15,13 @@
 - Скажем, что `00001` (один в десятичное) — наше первое право, тогда следующим будет `00010` (Два в десятичное). Тогда пересечение этих прав образует `00011` — такие права у нас имеются. Чтобы проверить, имеется ли у нас первое право, нужно использовать оператор `&`: `00011` & `00001`, тогда у нас получится `00001`, означающее, что право у нас имеется, на языке программирования JavaScript это будет выглядеть следующим образом:
 
 ```js
-const userRights = 0x00001 // Допустим, что тут объявлены наши права
+const userRights = 0x00001; // Допустим, что тут объявлены наши права
 /**
  * @param bit bit of permisson, what we want to checks
  * @return {boolean}
  */
 function hasPermission(bit) {
-  return (userRights & bit) === bitж
+  return (userRights & bit) === bit;
 }
 ```
 
@@ -42,22 +42,24 @@ function hasPermission(bit) {
 ```js
 import { UserService } from "@lafka/rights";
 
-(async() => {
-  const { data: fockusty } = await (await fetch(api_url + "/users/", {headers})).json();
+(async () => {
+  const { data: fockusty } = await (
+    await fetch(api_url + "/users/", { headers })
+  ).json();
 
   new UserService(fockusty).has({
     right: "me",
-    rights: ["POSTS_CREATE"] // equalt rights: "POSTS_CREATE"
+    rights: ["POSTS_CREATE"], // equalt rights: "POSTS_CREATE"
   }); // boolean
 
   new UserService(fockusty).has({
     right: "users",
     rights: {
-      "123": ["MANAGE", "MODERATE", "READ"],
-      "321": ["READ"],
-      "666": "MODERATE",
-    }
-  }) // { "123": boolean, "321": boolean "666": boolean };
+      123: ["MANAGE", "MODERATE", "READ"],
+      321: ["READ"],
+      666: "MODERATE",
+    },
+  }); // { "123": boolean, "321": boolean "666": boolean };
 })();
 ```
 
@@ -66,29 +68,31 @@ import { UserService } from "@lafka/rights";
 ```js
 import { PostService } from "@lafka/rights";
 
-(async() => {
+(async () => {
   // const fockusty: LAFka.User;
 
-  const { data: post } = (await (await fetch(api_url + "posts/" + myCoolPostId, {headers})).json());
+  const { data: post } = await (
+    await fetch(api_url + "posts/" + myCoolPostId, { headers })
+  ).json();
 
   new PostService(post).has({
     rights: "VIEW",
-    userId: fockusty.id
+    userId: fockusty.id,
   }); // boolean
 
   new PostService(post).has({
     rights: "DELETE",
-    userId: fockusty.id
+    userId: fockusty.id,
   }); // boolean
 
   new PostService(post).has({
     rights: "OWNER",
-    userId: "2"
+    userId: "2",
   }); // boolean
 
   new PostService(post).has({
     rights: ["VIEW", "REACT", "COMMENTS_READ"],
-    userId: "4"
+    userId: "4",
   }); // boolean
-})()
+})();
 ```

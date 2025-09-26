@@ -1,30 +1,26 @@
-import type { SchemaParameters } from "@lafka/types/mongodb.types";
+import Schema, { SchemaTypes } from "./schema";
 import type { Comment } from "@lafka/types";
 
-import mongoose, { Schema, SchemaTypes } from "mongoose";
-
-const data: SchemaParameters<Comment> = {
+export const schema = new Schema<Comment>(Schema.models.comments, {
   id: {
-    type: mongoose.SchemaTypes.String,
+    type: SchemaTypes.String,
     required: true,
-    unique: true
+    unique: true,
   },
-  
+
   content: { type: SchemaTypes.String, required: true },
-  
+
   created_at: { type: SchemaTypes.String, required: true },
   changed_at: { type: SchemaTypes.String, required: false },
-  
+
   author_id: { type: SchemaTypes.String, required: true },
   post_id: { type: SchemaTypes.String, required: true },
-  
-  reply: { type: SchemaTypes.String, ref: "comments", required: false }
-};
-const schema = new Schema<Comment>(data);
-const keys = Object.keys(data) as unknown as (keyof Comment)[];
 
-const database = mongoose.model("comments", schema);
+  reply: {
+    type: SchemaTypes.String,
+    ref: Schema.models.comments,
+    required: false,
+  },
+});
 
-export { schema as CommentsSchema, keys as CommentsKeys };
-
-export default database;
+export default schema;

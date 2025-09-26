@@ -8,12 +8,16 @@ new Test("User test", [
     must: false,
     returned: new UserService(user).has("ADMINISTRATOR"),
     log: ["ADMINISTRATOR"],
-    name: "Adminstrator rights"
+    name: "Adminstrator rights",
   },
   {
     must: true,
-    returned: new UserService(user).has("USER", "POSTS_CREATE", "ORGANIZATIONS_CREATE"),
+    returned: new UserService(user).has(
+      "USER",
+      "POSTS_CREATE",
+      "ORGANIZATIONS_CREATE",
+    ),
     log: ["USER", "POSTS_CREATE", "ORGANIZATIONS_CREATE"],
-    name: "Standar user rights"
-  }
+    name: "Standar user rights",
+  },
 ]).execute();

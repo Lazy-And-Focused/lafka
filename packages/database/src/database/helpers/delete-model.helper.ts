@@ -9,7 +9,7 @@ export const deleteModel = async (name: string): Promise<Response<string>> => {
     return {
       successed: true,
       error: undefined,
-      data: "deleted"
+      data: "deleted",
     };
   } catch (err) {
     console.log(err);
@@ -17,7 +17,7 @@ export const deleteModel = async (name: string): Promise<Response<string>> => {
     return {
       successed: false,
       data: null,
-      error: "unknown error"
+      error: "unknown error",
     };
   }
 };

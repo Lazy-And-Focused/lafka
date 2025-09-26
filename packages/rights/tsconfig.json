@@ -5,10 +5,10 @@
 
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    
+
     "declaration": true,
     "declarationDir": "./",
-    "outDir": "./",
+    "outDir": "./"
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules", "./src/test/**"]

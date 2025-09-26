@@ -11,14 +11,14 @@ export const getAllModels = async (): Promise<Response<Models[]>> => {
       return {
         successed: false,
         error: "Возможно таблиц не существует",
-        data: null
-      }
-    };
+        data: null,
+      };
+    }
 
     return {
       successed: true,
       data: models,
-      error: null
+      error: null,
     };
   } catch (err) {
     console.error(err);
@@ -26,7 +26,7 @@ export const getAllModels = async (): Promise<Response<Models[]>> => {
     return {
       successed: false,
       error: "unknown error",
-      data: null
+      data: null,
     };
   }
 };
