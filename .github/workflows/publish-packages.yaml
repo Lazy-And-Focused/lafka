@@ -4,13 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
-      - packages
-
-  pull_request:
-    branches:
-      - main
-      - dev
       - packages
 
 jobs:
