@@ -6,8 +6,8 @@ import type {
 import { MODELS, Models } from "@lafka/types/src/database.types";
 import { model, Schema as MongoSchema, SchemaTypes } from "mongoose";
 
-export const createLazySchema = <T>(parametrs: SchemaParameters<T>) =>
-  parametrs;
+export const createLazySchema = <T>(parameters: SchemaParameters<T>) =>
+  parameters;
 
 export class Schema<T> {
   public static readonly models = Object.fromEntries(
@@ -24,10 +24,10 @@ export class Schema<T> {
 
   public constructor(
     public readonly name: keyof typeof Schema.models,
-    public readonly parametrs: SchemaParameters<T>,
+    public readonly parameters: SchemaParameters<T>,
   ) {
-    this.schema = new MongoSchema<T>(parametrs);
-    this.keys = Object.keys(parametrs) as (keyof T)[];
+    this.schema = new MongoSchema<T>(parameters);
+    this.keys = Object.keys(parameters) as (keyof T)[];
     this.database = model(Schema.models[this.name], this.schema);
   }
 }
