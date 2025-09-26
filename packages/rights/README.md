@@ -21,7 +21,7 @@ const userRights = 0x00001; // Допустим, что тут объявлен�
  * @return {boolean}
  */
 function hasPermission(bit) {
-  return (userRights & bit) === bitж;
+  return (userRights & bit) === bit;
 }
 ```
 
