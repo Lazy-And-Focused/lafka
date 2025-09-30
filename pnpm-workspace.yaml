@@ -16,6 +16,7 @@ catalog:
   # ⇑ PLUGINS
   eslint-config-prettier: ^9
   eslint-plugin-prettier: ^5
+  "@lazy-and-focused/prettier-config": ^1.0.0
 
   # ENVIRONMENT
   dotenv: ^16.4.7
