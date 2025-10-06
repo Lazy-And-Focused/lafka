@@ -1,26 +1,31 @@
 {
   "name": "@lafka/rights",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Rights service for LAFka",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "main": "index.js",
   "files": [
-    "./dist"
+    "!./**/test/**",
+    "./**/*.js",
+    "./**/*.d.ts"
   ],
   "scripts": {
     "dev": "nodemon src/rights.service.ts",
     "start": "pnpm run build && node dist/rights.service.js",
-    "build": "tsc && tsc-alias",
-    "test": "nodemon test/index.ts"
+    "build": "tsc",
+    "test": "ts-mocha --paths ./src/test/**/*.spec.ts"
   },
   "keywords": [
     "rights",
-    "bitfield",
-    "lafka"
+    "bit-field",
+    "lafka",
+    "lazy-and-focused",
+    "fockusty"
   ],
   "author": {
     "name": "Lazy-And-Focused",
-    "url": "https://laf-info.netlify.app/"
+    "url": "https://laf-team.ru/",
+    "email": "laf.love.command@gmail.com"
   },
   "contributors": [
     {
@@ -31,13 +36,16 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@lafka/types": "workspace:^",
-    
-    "@types/node": "catalog:",
-    "nodemon": "catalog:",
-    "ts-node": "catalog:",
-    "tsc-alias": "catalog:",
-    "tsconfig-paths": "catalog:",
-    "typescript": "catalog:"
+    "@lafka/types": "1.0.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.3.1",
+    "expect": "^30.1.2",
+    "mocha": "^11.7.2",
+    "ts-mocha": "^11.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "fbit-field": "1.4.0-alpha.1c"
   }
 }
