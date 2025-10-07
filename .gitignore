@@ -4,6 +4,9 @@
 .vs/
 pnpm-lock.yaml
 
+# Locks
+pnpm-lock.yaml
+
 # Logs
 logs/
 npm-debug.log*
