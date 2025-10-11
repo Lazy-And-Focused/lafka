@@ -6,15 +6,18 @@ import { BitField } from "fbit-field";
 
 type MustArray<T, K = T> = [T, ...K[]];
 
-const resolveArrayToBigInt = <T extends Rights.Keys>(
+const AVAILABLE_RIGHTS = Rights.CONSTANTS.object.available
+const DEFAULT_RIGHTS = Rights.CONSTANTS.raw.default;
+
+const resolveArrayRightsToBigInt = <T extends Rights.Keys>(
   rightKey: T,
   ...rights: Rights.Rights<T>[]
-) =>
-  BitField.summarize(
-    ...(rights.map(
-      (key) => Rights.CONSTANTS.object.available[rightKey][key],
-    ) as any),
-  );
+) => {
+  const data = rights.map(key =>
+    AVAILABLE_RIGHTS[rightKey][key] as bigint);
+
+  return BitField.summarize(...data);
+}
 
 type RightsOnly<
   T extends { rights: unknown; id: unknown },
@@ -29,10 +32,10 @@ type RightsOnly<
 export class UserService {
   public constructor(public readonly user: RightsOnly<User>) {}
 
-  public has = <T extends keyof Rights.My>(...rights: T[]): boolean => {
-    const r = resolveArrayToBigInt("my", ...rights);
+  public has<T extends keyof Rights.My>(...rights: T[]): boolean {
+    const resolvedRights = resolveArrayRightsToBigInt("my", ...rights);
 
-    return (BigInt(this.user.rights) & r) === r;
+    return BitField.equals(this.user.rights, resolvedRights);
   };
 
   public hasPostRights(post: RightsOnly<Post, "creator_id">) {
@@ -49,48 +52,43 @@ export class UserService {
 export class PostService {
   public constructor(private readonly post: RightsOnly<Post, "creator_id">) {}
 
-  public readonly hasRights = <T extends keyof Rights.Posts>(
+  public getUserRights(userId: string) {
+    return this.post.rights.get(userId) || DEFAULT_RIGHTS.posts;
+  }
+
+  public hasRights<T extends keyof Rights.Posts>(
     ...rights: T[]
-  ): ((userId: string) => boolean) => {
-    const r = resolveArrayToBigInt("posts", ...rights);
+  ): ((userId: string) => boolean) {
+    const resolvedRights = resolveArrayRightsToBigInt("posts", ...rights);
 
     return (userId: string) => {
       if (this.post.creator_id === userId) return true;
+      const userRights = this.getUserRights(userId);
 
-      return (
-        (BigInt(
-          this.post.rights.get(userId) || Rights.CONSTANTS.raw.default.posts,
-        ) &
-          r) ===
-        r
-      );
+      return BitField.equals(userRights, resolvedRights);
     };
   };
 
-  public readonly userHas = <T extends keyof Rights.Posts>(
+  public userHas<T extends keyof Rights.Posts>(
     userId: string,
-  ): ((...rights: T[]) => boolean) => {
+  ): ((...rights: T[]) => boolean) {
+    const userRights = this.getUserRights(userId);
+
     return (...rights: T[]) => {
       if (this.post.creator_id === userId) return true;
 
-      const r = resolveArrayToBigInt("posts", ...rights);
-      return (
-        (BigInt(
-          this.post.rights.get(userId) || Rights.CONSTANTS.raw.default.posts,
-        ) &
-          r) ===
-        r
-      );
+      const resolvedRights = resolveArrayRightsToBigInt("posts", ...rights);
+      return BitField.equals(userRights, resolvedRights);
     };
   };
 
-  public readonly has = <T extends keyof Rights.Posts>({
+  public has<T extends keyof Rights.Posts>({
     rights,
     userId,
   }: {
     rights: MustArray<T>;
     userId: string;
-  }): boolean => {
+  }): boolean {
     if (this.post.creator_id === userId) return true;
     return this.hasRights(...rights)(userId);
   };
@@ -104,53 +102,46 @@ export class OrganizationService {
     >,
   ) {}
 
-  public readonly hasRights = <T extends keyof Rights.Organizations>(
+  public getUserRights(userId: string) {
+    return BigInt(this.organization.members.includes(userId)
+      ? this.organization.rights.get(userId) || DEFAULT_RIGHTS.organizations
+      : DEFAULT_RIGHTS.organizations);
+  }
+
+  public hasRights<T extends keyof Rights.Organizations>(
     ...rights: T[]
-  ): ((userId: string) => boolean) => {
-    const r = resolveArrayToBigInt("organizations", ...rights);
+  ): ((userId: string) => boolean) {
+    const resolvedRights = resolveArrayRightsToBigInt("organizations", ...rights);
 
     return (userId: string) => {
       if (this.organization.owner_id === userId) return true;
-      return (
-        ((this.organization.members.includes(userId)
-          ? BigInt(
-              this.organization.rights.get(userId) ||
-                Rights.CONSTANTS.raw.default.organizations,
-            )
-          : Rights.CONSTANTS.raw.default.organizations) &
-          r) ===
-        r
-      );
+      
+      const userRights = this.getUserRights(userId);
+      return BitField.equals(userRights, resolvedRights);
     };
   };
 
-  public readonly userHas = <T extends keyof Rights.Organizations>(
+  public userHas<T extends keyof Rights.Organizations>(
     userId: string,
-  ): ((...rights: T[]) => boolean) => {
+  ): ((...rights: T[]) => boolean) {
+    const userRights = this.getUserRights(userId);
+
     return (...rights: T[]) => {
       if (this.organization.owner_id === userId) return true;
 
-      const r = resolveArrayToBigInt("organizations", ...rights);
-      return (
-        ((this.organization.members.includes(userId)
-          ? BigInt(
-              this.organization.rights.get(userId) ||
-                Rights.CONSTANTS.raw.default.organizations,
-            )
-          : Rights.CONSTANTS.raw.default.organizations) &
-          r) ===
-        r
-      );
+      const resolvedRights = resolveArrayRightsToBigInt("organizations", ...rights);
+      
+      return BitField.equals(userRights, resolvedRights);
     };
   };
 
-  public readonly has = <T extends keyof Rights.Organizations>({
+  public has<T extends keyof Rights.Organizations>({
     rights,
     userId,
   }: {
     rights: MustArray<T>;
     userId: string;
-  }): boolean => {
+  }): boolean {
     if (this.organization.owner_id === userId) return true;
 
     return this.hasRights(...rights)(userId);
