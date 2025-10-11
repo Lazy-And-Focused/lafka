@@ -3,8 +3,8 @@ import { PostTag } from "./utility.types";
 export const POST_TYPES = ["forum", "blog"] as const;
 export type PostTypes = (typeof POST_TYPES)[number];
 
-export const VIEW_STAUTS = ["open", "limited", "link"] as const;
-export type ViewStatus = (typeof VIEW_STAUTS)[number];
+export const VIEW_STATUS = ["open", "limited", "link"] as const;
+export type ViewStatus = (typeof VIEW_STATUS)[number];
 
 export type CreatePost = {
   name: string;
