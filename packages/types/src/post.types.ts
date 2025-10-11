@@ -35,7 +35,7 @@ export type LazyPost = {
   creator_id: string;
 
   status: ViewStatus;
-  /* key: string, value: bigint */
+  /** @key {string} @value {bigint} */
   rights: Map<string, string>;
 
   /** blog */
@@ -47,6 +47,18 @@ export type LazyPost = {
 
   type: "blog" | "forum";
 };
+
+export type ForumPost = {
+  type: "forum"
+};
+
+export type BlogPost = {
+  likes: number;
+  dislikes: number;
+  reposts: number;
+
+  type: "blog";
+}
 
 export type Post = {
   id: string;
@@ -64,20 +76,6 @@ export type Post = {
   creator_id: string;
 
   status: ViewStatus;
-  /* key: string, value: bigint */
+  /** @key {string}, @value {bigint} */
   rights: Map<string, string>;
-} & (
-  | {
-      type: "forum";
-    }
-  | {
-      /** blog */
-      likes: number;
-      /** blog */
-      dislikes: number;
-      /** blog */
-      reposts: number;
-
-      type: "blog";
-    }
-);
+} & (ForumPost | BlogPost);
