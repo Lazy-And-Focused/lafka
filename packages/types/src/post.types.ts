@@ -49,7 +49,7 @@ export type LazyPost = {
 };
 
 export type ForumPost = {
-  type: "forum"
+  type: "forum";
 };
 
 export type BlogPost = {
@@ -58,7 +58,7 @@ export type BlogPost = {
   reposts: number;
 
   type: "blog";
-}
+};
 
 export type Post = {
   id: string;
