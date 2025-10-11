@@ -1,4 +1,4 @@
-import { Link as ILink } from "@lafka/types";
+import type { Link as ILink } from "@lafka/types";
 
 import { createLazySchema, SchemaTypes } from "./schema";
 
