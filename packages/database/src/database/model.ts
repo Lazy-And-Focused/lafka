@@ -38,9 +38,9 @@ export class Database<T, K = Partial<T>> {
     return uuidV4();
   }
 
-  public create(doc: CreateData<T> & K) {
+  public create(data: CreateData<T> & K) {
     return this._model.create({
-      ...doc,
+      ...data,
       created_at: new Date().toISOString(),
       id: Database.generateId(),
     });
