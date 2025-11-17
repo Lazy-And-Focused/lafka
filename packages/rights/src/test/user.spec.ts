@@ -1,4 +1,4 @@
-import { Rights } from "../index";
+import { UserService } from "../index";
 
 import { user } from "./constants";
 import Test from "./test.class";
@@ -6,14 +6,18 @@ import Test from "./test.class";
 new Test("User test", [
   {
     must: false,
-    returned: new Rights.UserService(user).has("ADMINISTRATOR"),
+    returned: new UserService(user).has("ADMINISTRATOR"),
     log: ["ADMINISTRATOR"],
-    name: "Adminstrator rights"
+    name: "Adminstrator rights",
   },
   {
     must: true,
-    returned: new Rights.UserService(user).has("USER", "POSTS_CREATE", "ORGANIZATIONS_CREATE"),
+    returned: new UserService(user).has(
+      "USER",
+      "POSTS_CREATE",
+      "ORGANIZATIONS_CREATE",
+    ),
     log: ["USER", "POSTS_CREATE", "ORGANIZATIONS_CREATE"],
-    name: "Standar user rights"
-  }
+    name: "Standar user rights",
+  },
 ]).execute();

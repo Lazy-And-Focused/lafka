@@ -1,0 +1,20 @@
+GET / -> [Response<Post>]
+  query:
+    offset=[number?]
+    count=[number?]
+    sortBy=[SortBy?]
+    sortType=[SortTypes?]
+
+GET /:id -> [Response<Post>]
+  query: [undefined?]
+
+POST / -> [Response<Post>]
+  headers: token=[string]
+  body: [CreatePost]
+
+PUT /:id -> [Response<Post>]
+  headers: token=[string]
+  body: [Partial<Post>]
+
+DELETE /:id -> [Response<string>]
+  headers: token=[string]

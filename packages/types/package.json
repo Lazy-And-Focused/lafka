@@ -1,22 +1,31 @@
 {
   "name": "@lafka/types",
-  "version": "0.0.1",
-  "description": "types for lafka",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "version": "1.1.0",
+  "description": "all types for lafka",
+  "types": "index.d.ts",
+  "main": "index.js",
+  "private": false,
+  "license": "MIT",
   "files": [
-    "dist"
+    "./**/*.d.ts",
+    "./**/*.js"
   ],
   "scripts": {
-    "build": "pnpm run compile && tsc & tsc-alias",
-    "compile": "set NODE_ENV=rights_compile&& ts-node ./src/rights/rights.types.ts"
+    "compiler": "ts-node ./src/rights.compiler.ts",
+    "prettier": "prettier . -c -w",
+    "build": "pnpm run compiler && pnpm run prettier && tsc"
   },
   "keywords": [
-    "types"
+    "types",
+    "lafka",
+    "lazy-and-focused",
+    "laf",
+    "fockusty"
   ],
   "author": {
     "name": "Lazy-And-Focused",
-    "url": "https://laf-info.netlify.app/"
+    "url": "https://laf-team.ru/",
+    "email": "laf.love.command@gmail.com"
   },
   "contributors": [
     {
@@ -25,15 +34,14 @@
       "url": "http://fockusty.netlify.app/"
     }
   ],
-  "license": "MIT",
   "devDependencies": {
-    "@types/node": "catalog:",
-    "mongoose": "catalog:",
-    "tsc-alias": "catalog:",
-    "ts-node": "catalog:",
-    "typescript": "catalog:"
+    "@types/node": "^24.3.1",
+    "mongoose": "^8.9.5",
+    "@lazy-and-focused/prettier-config": "^1.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "5.9.2"
   },
   "dependencies": {
-    "fbit-field": "1.4.0-alpha.1a"
+    "fbit-field": "1.4.0-alpha.1c"
   }
 }

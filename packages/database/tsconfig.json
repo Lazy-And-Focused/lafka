@@ -8,8 +8,12 @@
 
     "declaration": true,
     "declarationDir": "./",
-    "outDir": "./"
+    "outDir": "./",
+
+    "paths": {
+      "@lafka/types/*": ["./src/types/*"]
+    }
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "./src/test/**"]
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

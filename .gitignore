@@ -2,6 +2,7 @@
 *.bat
 .vscode/
 .vs/
+pnpm-lock.yaml
 
 # Locks
 pnpm-lock.yaml
