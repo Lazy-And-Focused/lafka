@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-import styles from "./home.module.css";
+import styles from './home.module.css';
 
 import { validateCookies } from '@/api/validator';
 
@@ -16,31 +16,33 @@ type Props = {
 };
 /* eslint-enable */
 
+const authMethods = LAFka.AUTH_TYPES;
+
 const Home: NextPage<Props> = ({ user, headers }) => {
   const router = useRouter();
 
-  
   if (user) {
     useEffect(() => {
-      router.push("/posts");
+      router.push('/posts');
     }, []);
   }
 
   return (
-    <div id="page">
+    <div id='page'>
       <div className={styles.login}>
         <span>Войти через...</span>
         <div>
-          {
-            AUTH_TYPES.map(type =>
-              <button
-                key={type}
-                onClick={() => window.location.href = "http://localhost:3001/api/auth/"+type}
-              >
-                {type[0].toUpperCase() + type.slice(1)}
-              </button>
-            )
-          }
+          {AUTH_TYPES.map((type) => (
+            <button
+              key={type}
+              onClick={() =>
+                (window.location.href =
+                  'http://localhost:3001/api/auth/' + type)
+              }
+            >
+              {type[0].toUpperCase() + type.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -52,15 +54,17 @@ export const getServerSideProps = async (
 ): Promise<{ props: Props }> => {
   try {
     const headers = validateCookies(ctx);
-    
+
     if (!headers) return { props: {} };
-  
-    const user = await fetch('http://localhost:3001/api/users/@me', { headers });
-  
+
+    const user = await fetch('http://localhost:3001/api/users/@me', {
+      headers,
+    });
+
     if (user.status !== 200) return { props: {} };
-  
+
     const { data } = await user.json();
-  
+
     return {
       props: {
         user: data,
@@ -69,8 +73,8 @@ export const getServerSideProps = async (
     };
   } catch (error) {
     return {
-      props: {}
-    }    
+      props: {},
+    };
   }
 };
 
