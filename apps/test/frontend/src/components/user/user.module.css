@@ -1,0 +1,42 @@
+.user {
+  display: grid;
+
+  grid-template-rows: 40% 60%;
+  grid-template-columns: 100%;
+
+  justify-content: center;
+
+  height: 100%;
+  width: 100%;
+}
+
+.user div {
+  height: 100%;
+  width: 100%;
+}
+
+.user_avatar {
+  display: grid;
+
+  grid-template-columns: 40% 60%;
+  grid-template-rows: 100%;
+
+  align-items: center;
+}
+
+.user_avatar img {
+  margin: 0 auto;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.user_biography {
+  display: flex;
+
+  align-items: flex-start ;
+  flex-direction: column;
+}

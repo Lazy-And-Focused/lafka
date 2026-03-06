@@ -4,7 +4,7 @@ export interface CreateComment {
   post_id: string;
 
   reply?: string;
-}
+};
 
 export interface Comment {
   id: string;

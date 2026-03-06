@@ -4,7 +4,10 @@ import Schema, { SchemaTypes } from "./schema";
 
 import { Tag } from "./tag.utility-schema";
 
-export const schema = new Schema<LazyPost>(Schema.models.posts, {
+import type { SchemaParameters } from "lafka/types/mongodb.types";
+import type { LazyPost } from "lafka/types";
+
+const data: SchemaParameters<LazyPost> = {
   id: {
     type: SchemaTypes.String,
     required: true,
@@ -42,4 +45,11 @@ export const schema = new Schema<LazyPost>(Schema.models.posts, {
   },
 });
 
-export default schema;
+const schema = new Schema<LazyPost>(data);
+const keys = Object.keys(data) as unknown as (keyof LazyPost)[];
+
+const database = mongoose.model("posts", schema);
+
+export { schema as PostsSchema, keys as PostsKeys };
+
+export default database;

@@ -1,19 +1,21 @@
-import type { Organization, Post, User } from "@lafka/types";
-
-import { Rights } from "@lafka/types";
-
+import { Rights as LAFkaRights, Organization, Post, User } from "@lafka/types";
 import { BitField } from "fbit-field";
 
 type MustArray<T, K = T> = [T, ...K[]];
 
-const AVAILABLE_RIGHTS = Rights.CONSTANTS.object.available;
-const DEFAULT_RIGHTS = Rights.CONSTANTS.raw.default;
+const resolveArrayToBigInt = <T extends LAFkaRights.Keys>(rightKey: T, ...rights: LAFkaRights.Rights<T>[]) =>
+  BitField.summarize(...rights.map(key => LAFkaRights.CONSTANTS.object.available[rightKey][key]) as any);
 
-const resolveArrayRightsToBigInt = <T extends Rights.Keys>(
-  rightKey: T,
-  ...rights: Rights.Rights<T>[]
-) => {
-  const data = rights.map((key) => AVAILABLE_RIGHTS[rightKey][key] as bigint);
+type RightsOnly<T extends { rights: unknown, id: unknown }, K extends keyof T | never = never> = {
+  [P in K]: T[P];
+} & {
+  rights: T["rights"],
+  id: T["id"]
+};
+
+export namespace Rights {
+  export class UserService {
+    public constructor(public readonly user: RightsOnly<User>) {};
 
   return BitField.summarize(...data);
 };
@@ -28,18 +30,17 @@ type RightsOnly<
   id: T["id"];
 };
 
-export class UserService {
-  public constructor(public readonly user: RightsOnly<User>) {}
+    public hasPostRights(post: RightsOnly<Post, "creator_id">) {
+      return new PostService(post).userHas(this.user.id);
+    };
 
-  public has<T extends keyof Rights.My>(...rights: T[]): boolean {
-    const resolvedRights = resolveArrayRightsToBigInt("my", ...rights);
-
-    return BitField.equals(this.user.rights, resolvedRights);
+    public hasOrganizationRights(organization: RightsOnly<Organization, "owner_id"|"members">) {
+      return new OrganizationService(organization).userHas(this.user.id);
+    }
   }
 
-  public hasPostRights(post: RightsOnly<Post, "creator_id">) {
-    return new PostService(post).userHas(this.user.id);
-  }
+  export class PostService {
+    public constructor(private readonly post: RightsOnly<Post, "creator_id">) {};
 
   public hasOrganizationRights(
     organization: RightsOnly<Organization, "owner_id" | "members">,
@@ -68,10 +69,8 @@ export class PostService {
     };
   }
 
-  public userHas<T extends keyof Rights.Posts>(
-    userId: string,
-  ): (...rights: T[]) => boolean {
-    const userRights = this.getUserRights(userId);
+  export class OrganizationService {
+    public constructor(public readonly organization: RightsOnly<Organization, "owner_id"|"members">) {};
 
     return (...rights: T[]) => {
       if (this.post.creator_id === userId) return true;

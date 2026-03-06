@@ -1,123 +1,189 @@
-import type { Post, Response, User, CreatePost } from "@lafka/types";
+import type {
+  Response,
+
+  CreateComment,
+  CreatePost,
+
+  Comment,
+  Post,
+  User
+} from "@lafka/types";
 
 export namespace Api {
   export const METHOD_REGEXP = /GET|POST|PUT|DELETE|PAST/;
 
   export type Routes = {
     users: {
-      "GET /": {
-        return: Response<User>;
-        path: "/";
+      "GET /:id": {
+        return: Response<User>,
+        path: "/:id",
+        
+        body?: null,
+        headers?: null,
+        query?: { cache?: boolean }
+      },
+
+      "PUT /:id": {
+        return: Response<unknown>,
+        path: "/:id",
+
+        body: Partial<User>,
+        headers: { token: string },
+
+        query?: { cache?: boolean }
+      },
+
+      "PATCH /:id/follow": {
+        return: Response<unknown>,
+        path: "/:id/follow",
+
+        body?: null,
+        query?: null,
+
+        headers: { token: string },
+      },
+
+      "DELETE /:id": {
+        return: Response<unknown>,
+        path: "/:id",
 
         headers: { token: string };
 
-        body?: null;
-        query?: { cache?: boolean };
-      };
-
-      "GET /:identifier": {
-        return: Response<User>;
-        path: "/:identifier";
-
-        body?: null;
-        headers?: null;
-        query?: { cache?: boolean };
-      };
-
-      "PUT /:identifier": {
-        return: Response<User>;
-        path: "/:identifier";
-
-        body: Partial<User>;
-        headers: { token: string };
-
-        query?: { cache?: boolean; returnUser?: boolean };
-      };
-
-      "DELETE /:identifier": {
-        return: Response<User>;
-        path: "/:identifier";
-
-        headers: { token: string };
-
-        body?: null;
-        query?: { returnUser?: boolean };
-      };
-    };
+        body?: null,
+        query?: null,
+      }
+    },
 
     posts: {
       "GET /": {
-        return: Response<Post>;
-        path: "/";
+        return: Response<Post>,
+        path: "/",
+
+        body?: null,
+        headers?: null,
 
         query?: {
-          offset?: number;
-          count?: number;
-          sortBy?:
-            | "likes"
-            | "dislikes"
-            | "followers"
-            | "created_at"
-            | "changed_at";
-          sortType?: "asc" | "desc" | 1 | -1 | true | false;
-        };
-
-        body?: null;
-        headers?: null;
-      };
+          offset?: number,
+          count?: number,
+          sortBy?: "likes" | "dislikes" | "followers" | "created_at",
+          sortType?: "asc" | "desc" | 1 | -1 | true | false,
+        }
+      },
 
       "GET /:id": {
-        return: Response<Post>;
-        path: "/:id";
-
-        body?: null;
-        headers?: null;
-        query?: null;
-      };
+        return: Response<Post>,
+        path: "/:id",
+        
+        body?: null,
+        headers?: null,
+        query?: null
+      },
 
       "POST /": {
-        return: Response<Post>;
-        path: "/";
+        return: Response<Post>,
+        path: "/",
 
-        headers: { token: string };
-        body: CreatePost;
+        body: CreatePost,
+        headers: { token: string },
 
         query?: null;
       };
 
       "PUT /:id": {
-        return: Response<Post>;
-        path: "/:id";
+        return: Response<unknown>,
+        path: "/:id",
 
-        body: Partial<Post>;
-        headers: { token: string };
+        body: Partial<Post>,
+        headers: { token: string },
+        
+        query?: null
+      },
 
-        query?: null;
-      };
+      "PATCH /:id/block": {
+        return: Response<unknown>,
+        path: "/:id/block",
+
+        body?: null,
+        headers: { token: string },
+
+        query?: null
+      },
+
+      "PATCH /:id/follow": {
+        return: Response<unknown>,
+        path: "/:id/follow",
+
+        body?: null,
+        headers: { token: string },
+
+        query?: null
+      },
 
       "DELETE /:id": {
-        return: Response<Post>;
-        path: "/:id";
+        return: Response<unknown>,
+        path: "/:id",
 
-        headers: { token: string };
+        headers: { token: string },
+        
+        body?: null,
+        query?: null
+      },
 
-        body?: null;
-        query?: null;
-      };
-    };
+      "GET /:id/comments": {
+        return: Response<string[]>,
+        path: "/:id/comments",
 
-    /** @template */
+        body?: null,
+        headers?: null,
+        query?: {
+          cache?: boolean,
+          length?: number,
+          offset?: number
+        }
+      },
+
+      "POST /:id/comments": {
+        return: Response<Comment>,
+        path: "/:id/comments",
+
+        body: CreateComment,
+        headers: { token: string },
+        query?: null
+      }
+    },
+
     comments: {
       "GET /": {
-        return: undefined;
-        path: undefined;
+        return: Response<Comment>,
+        path: "/",
 
-        body: undefined;
-        headers: undefined;
-        query: undefined;
-      };
-    };
+        body?: null,
+        headers?: null
+        query: {
+          cache?: boolean,
+          ids?: string[]
+        },
+      },
 
+      "PUT /:id": {
+        return: Response<unknown>,
+        path: "/:id",
+
+        body?: Partial<Comment>,
+        headers: { token: string },
+        query?: null
+      },
+
+      "DELETE /:id": {
+        return: Response<unknown>,
+        path: "/:id",
+
+        body?: null,
+        headers: { token: string },
+        query?: null
+      }
+    },
+    
     /** @template */
     organizations: {
       "GET /": {

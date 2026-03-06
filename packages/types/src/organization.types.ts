@@ -12,14 +12,14 @@ export interface CreateOrganization {
 
 export interface Organization {
   id: string;
-
+  
   name: string;
   description?: string;
   email?: string;
 
   logo?: string;
   banner?: string;
-
+  
   owner_id: string;
   members: string[];
   posts: string[];

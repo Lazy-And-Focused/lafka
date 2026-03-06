@@ -3,8 +3,8 @@ import { PostTag } from "./utility.types";
 export const POST_TYPES = ["forum", "blog"] as const;
 export type PostTypes = (typeof POST_TYPES)[number];
 
-export const VIEW_STATUS = ["open", "limited", "link"] as const;
-export type ViewStatus = (typeof VIEW_STATUS)[number];
+export const VIEW_STAUTS = ["open", "limited", "link"] as const;
+export type ViewStatus = (typeof VIEW_STAUTS)[number];
 
 export type CreatePost = {
   name: string;
@@ -16,8 +16,8 @@ export type CreatePost = {
 
   creator_id: string;
 
-  type: "forum" | "blog";
-};
+  type: "forum"|"blog";
+}
 
 export type LazyPost = {
   id: string;
@@ -35,7 +35,7 @@ export type LazyPost = {
   creator_id: string;
 
   status: ViewStatus;
-  /** @key {string} @value {bigint} */
+  /* key: string, value: bigint */
   rights: Map<string, string>;
 
   /** blog */
@@ -45,20 +45,8 @@ export type LazyPost = {
   /** blog */
   reposts: number;
 
-  type: "blog" | "forum";
-};
-
-export type ForumPost = {
-  type: "forum";
-};
-
-export type BlogPost = {
-  likes: number;
-  dislikes: number;
-  reposts: number;
-
-  type: "blog";
-};
+  type: "blog"|"forum";
+}
 
 export type Post = {
   id: string;
@@ -76,6 +64,17 @@ export type Post = {
   creator_id: string;
 
   status: ViewStatus;
-  /** @key {string}, @value {bigint} */
+  /* key: string, value: bigint */
   rights: Map<string, string>;
-} & (ForumPost | BlogPost);
+} & ({
+  type: "forum"
+} | {
+  /** blog */
+  likes: number;
+  /** blog */
+  dislikes: number;
+  /** blog */
+  reposts: number;
+
+  type: "blog"
+});

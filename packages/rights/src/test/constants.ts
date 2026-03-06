@@ -1,5 +1,4 @@
-import type { Organization, Post, User } from "@lafka/types";
-import { Rights } from "@lafka/types";
+import { Rights as LAFkaRights, Organization, Post, User } from "@lafka/types";
 
 export const user: User = {
   blocked_posts: [],

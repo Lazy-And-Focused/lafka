@@ -1,46 +1,53 @@
-import type { Auth } from "@lafka/types";
+import mongoose, { Schema } from "mongoose";
 
-import Schema, { SchemaTypes } from "./schema";
+import type { SchemaParameters } from "lafka/types/mongodb.types";
+import type { Auth } from "lafka/types";
 
-export const schema = new Schema<Auth>(Schema.models.auth, {
+const data: SchemaParameters<Auth> = {
   id: {
-    type: SchemaTypes.String,
+    type: mongoose.SchemaTypes.String,
     required: true,
-    unique: true,
+    unique: true
   },
-
+  
   service_id: {
-    type: SchemaTypes.String,
+    type: mongoose.SchemaTypes.String,
     required: true,
-    unique: true,
+    unique: true
   },
-
+  
   created_at: {
-    type: SchemaTypes.String,
+    type: mongoose.SchemaTypes.String,
     required: true,
-    unique: false,
+    unique: false
   },
-
+  
   profile_id: {
-    type: SchemaTypes.String,
+    type: mongoose.SchemaTypes.String,
     required: true,
-    unique: false,
+    unique: false
   },
-
+  
   access_token: {
-    type: SchemaTypes.String,
-    required: true,
+    type: mongoose.SchemaTypes.String,
+    required: true
   },
-
+  
   refresh_token: {
-    type: SchemaTypes.String,
-    required: false,
+    type: mongoose.SchemaTypes.String,
+    required: false
   },
-
+  
   type: {
-    type: SchemaTypes.String,
-    required: true,
-  },
-});
+    type: mongoose.SchemaTypes.String,
+    required: true
+  }
+};
+const schema = new Schema<Auth>(data);
+const keys = Object.keys(data) as unknown as (keyof Auth)[];
 
-export default schema;
+const database = mongoose.model("auth", schema);
+
+export { schema as AuthUsersSchema, keys as AuthUsersKeys };
+
+export default database;

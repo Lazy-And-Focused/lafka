@@ -1,4 +1,4 @@
-import { PostService } from "../index";
+import { Rights } from "../index";
 
 import { user, post } from "./constants";
 import Test from "./test.class";

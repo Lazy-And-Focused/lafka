@@ -1,13 +1,37 @@
 import { Api } from "./api";
 
-export class Frapi<ApiURL extends string> {
-  public constructor(public readonly url: ApiURL) {}
+type Return<
+  Root extends keyof Api.Routes,
+  Url extends Api.Path<Root>
+> = {
+  url: string,
+  type: ResponseType,
+  statusText: string,
+  body: ReadableStream<Uint8Array<ArrayBufferLike>>,
+  bodyUsed: boolean,
+  status: number,
+  headers: Headers,
+  ok: boolean,
+  redirected: boolean,
+
+  blob: () => Promise<Blob>,
+  arrayBuffer: () => Promise<ArrayBuffer>,
+  bytes: () => Promise<Uint8Array>,
+  clone: () => Response,
+  formData: () => Promise<FormData>,
+
+  //@ts-ignore
+  data: Api.ParseRoute<Root, Url>["return"]
+};
+
+export class Frapi<ApiUrl extends string> {
+  public constructor(public readonly url: ApiUrl) {};
 
   public readonly parseInit = <
     Root extends keyof Api.Routes,
-    URL extends Api.Path<Root>,
+    Url extends Api.Path<Root>
   >(
-    init: Api.RequestInitialize<Root, URL>,
+    init: Api.RequestInitialize<Root, Url>
   ): RequestInit => {
     const body = JSON.stringify(init.body);
     const headers = {
@@ -24,13 +48,13 @@ export class Frapi<ApiURL extends string> {
 
   public readonly parseURL = <
     Root extends keyof Api.Routes,
-    URL extends Api.Path<Root>,
+    Url extends Api.Path<Root>
   >({
     root,
     url,
   }: {
-    root: Root;
-    url: URL;
+    root: Root,
+    url: Url
   }) => {
     const stringUrl = String(url);
     const method = stringUrl.match(Api.METHOD_REGEXP);
@@ -40,38 +64,19 @@ export class Frapi<ApiURL extends string> {
     const path = stringUrl.slice(method[0].length + 1);
 
     return { method: method[0], url: root + path } as {
-      method: string;
-      url: `${ApiURL}/${Root}${Api.ParseRoute<Root, URL>["path"]}`;
+      method: string,
+      url: `${ApiUrl}/${Root}${Api.ParseRoute<Root, Url>["path"]}`
     };
   };
 
   public readonly fetch = async <
     Root extends keyof Api.Routes,
-    URL extends Api.Path<Root>,
+    Url extends Api.Path<Root>
   >(data: {
-    root: Root;
-    url: URL;
-    init: Api.RequestInitialize<Root, URL, undefined>;
-  }): Promise<{
-    url: string;
-    type: ResponseType;
-    statusText: string;
-    body: ReadableStream<Uint8Array<ArrayBufferLike>>;
-    bodyUsed: boolean;
-    status: string;
-    headers: Headers;
-    ok: boolean;
-    redirected: boolean;
-
-    blob: () => Promise<Blob>;
-    arrayBuffer: () => Promise<ArrayBuffer>;
-    bytes: () => Promise<Uint8Array>;
-    clone: () => Response;
-    formData: () => Promise<FormData>;
-
-    //@ts-ignore
-    data: Api.ParseRoute<Root, URL>["return"] & { type: Root };
-  }> => {
+    root: Root,
+    url: Url,
+    init: Api.RequestInitialize<Root, Url, undefined>
+  }): Promise<Return<Root, Url>> => {
     const url = this.parseURL(data).url;
     const query = this.parseQuery(data.init.query);
 
@@ -79,20 +84,11 @@ export class Frapi<ApiURL extends string> {
 
     try {
       const json = await fetched.json();
-
-      return this.writeFetched["return"](fetched, json);
+      
+      return this.writeFetched(fetched, json);
     } catch (error) {
-      return this.writeFetched["return"](fetched, {
-        error: error,
-        successed: false,
-        resource: null,
-        created_resource: null,
-        changed_resource: null,
-        deleted_resource: null,
-        type: data.root,
-        date: new Date().toISOString(),
-      });
-    }
+      return this.writeFetched(fetched, null);
+    };
   };
 
   private readonly parseQuery = (query?: unknown): string => {
@@ -108,7 +104,11 @@ export class Frapi<ApiURL extends string> {
             .join("&");
   };
 
-  private readonly writeFetched = <T>(fetched: Response, data: T) => {
+  private readonly writeFetched = <
+    Root extends keyof Api.Routes,
+    Url extends Api.Path<Root>
+  //@ts-ignore
+  >(fetched: Response, data: Api.ParseRoute<Root, Url>["return"]): Return<Root, Url> => {
     return {
       url: fetched.url,
       type: fetched.type,
