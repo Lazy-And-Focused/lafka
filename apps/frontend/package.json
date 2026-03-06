@@ -25,24 +25,24 @@
     "format": "prettier . --check --write"
   },
   "dependencies": {
-    "next": "15.2.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@eslint/eslintrc": "^3.3.4",
     "@lafka/types": "workspace:^",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@lazy-and-focused/prettier-config": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "eslint": "catalog:",
     "eslint-config-next": "15.1.3",
     "eslint-config-prettier": "catalog:",
-    "postcss": "^8",
+    "postcss": "^8.5.8",
     "prettier": "catalog:",
-    "@lazy-and-focused/prettier-config": "catalog:",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "^3.4.1",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "tailwindcss": "^3.4.19",
     "typescript": "catalog:"
   }
 }
