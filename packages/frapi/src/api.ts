@@ -11,7 +11,7 @@ import type {
 
 export namespace Api {
   export const METHOD_REGEXP = /GET|POST|PUT|DELETE|PAST/;
-
+  
   export type Routes = {
     users: {
       "GET /:id": {
@@ -47,7 +47,7 @@ export namespace Api {
         return: Response<unknown>,
         path: "/:id",
 
-        headers: { token: string };
+        headers: { token: string }
 
         body?: null,
         query?: null,
@@ -86,8 +86,8 @@ export namespace Api {
         body: CreatePost,
         headers: { token: string },
 
-        query?: null;
-      };
+        query?: null
+      },
 
       "PUT /:id": {
         return: Response<unknown>,
@@ -187,37 +187,42 @@ export namespace Api {
     /** @template */
     organizations: {
       "GET /": {
-        return: undefined;
-        path: undefined;
+        return: undefined,
+        path: undefined,
 
-        body: undefined;
-        headers: undefined;
-        query: undefined;
-      };
-    };
-  };
+        body: undefined,
+        headers: undefined,
+        query: undefined,
+      }
+    }
+  }
 
-  export type Path<Root extends keyof Routes> = keyof Routes[Root];
+  export type Path<
+    Root extends keyof Routes,
+  > = keyof Routes[Root];
 
-  export type ParseRoute<Root extends keyof Routes, P extends Path<Root>> = {
+  export type ParseRoute<
+    Root extends keyof Routes,
+    P extends Path<Root>
+  > = {
     //@ts-ignore
-    return: Routes[Root][P]["return"];
+    return: Routes[Root][P]["return"],
     //@ts-ignore
-    path: `${Routes[Root][P]["path"]}`;
+    path: `${Routes[Root][P]["path"]}`,
     init: {
       //@ts-ignore
-      body: Routes[Root][P]["body"];
+      body: Routes[Root][P]["body"],
       //@ts-ignore
-      headers: Routes[Root][P]["headers"];
+      headers: Routes[Root][P]["headers"],
       //@ts-ignore
-      query: Routes[Root][P]["query"];
-    };
+      query: Routes[Root][P]["query"],
+    }
   };
 
   export type RequestInitialize<
     Root extends keyof Api.Routes,
     URL extends Api.Path<Root>,
-    OmitData extends string = "query",
-  > = Omit<Partial<RequestInit>, "body" | "headers"> &
-    Omit<Api.ParseRoute<Root, URL>["init"], OmitData>;
-}
+    OmitData extends string = "query"
+  > = Omit<Partial<RequestInit>, "body"|"headers">
+    & Omit<Api.ParseRoute<Root, URL>["init"], OmitData>
+};

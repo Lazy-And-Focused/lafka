@@ -11,8 +11,8 @@ export const user: User = {
   forum_posts: [],
   id: "1",
   links: [],
-  rights: Rights.CONSTANTS.raw.default.my.toString(),
-  username: "FOCKUSTY",
+  rights: LAFkaRights.CONSTANTS.raw.default.my.toString(),
+  username: "FOCKUSTY"
 };
 
 export const post: Post = {
@@ -27,11 +27,11 @@ export const post: Post = {
   status: "open",
   tags: [],
   rights: new Map<string, string>([
-    ["1", Rights.CONSTANTS.raw.default.posts.toString()],
-    ["4", Rights.CONSTANTS.raw.default.posts.toString()],
-    ["2", Rights.CONSTANTS.raw.available.posts.toString()],
-    ["3", 0n.toString()],
-  ]),
+    ["1", LAFkaRights.CONSTANTS.raw.default.posts.toString()],
+    ["4", LAFkaRights.CONSTANTS.raw.default.posts.toString()],
+    ["2", LAFkaRights.CONSTANTS.raw.available.posts.toString()],
+    ["3", 0n.toString()]
+  ])
 };
 
 export const organization: Organization = {
@@ -40,9 +40,9 @@ export const organization: Organization = {
   tags: [],
   members: ["1", "2", "3"],
   rights: new Map<string, string>([
-    ["4", Rights.CONSTANTS.raw.default.organizations.toString()],
-    ["1", Rights.CONSTANTS.raw.default.organizations.toString()],
-    ["2", Rights.CONSTANTS.raw.available.organizations.toString()],
+    ["4", LAFkaRights.CONSTANTS.raw.default.organizations.toString()],
+    ["1", LAFkaRights.CONSTANTS.raw.default.organizations.toString()],
+    ["2", LAFkaRights.CONSTANTS.raw.available.organizations.toString()],
     ["3", 0n.toString()],
   ]),
   name: "",
@@ -51,5 +51,5 @@ export const organization: Organization = {
   logo: "",
   banner: "",
   posts: [],
-  links: [],
+  links: []
 };

@@ -41,28 +41,26 @@ export class Frapi<ApiUrl extends string> {
 
     return {
       ...init,
-      headers,
-      body,
+      headers, body,
     };
-  };
+  }
 
   public readonly parseURL = <
     Root extends keyof Api.Routes,
     Url extends Api.Path<Root>
   >({
-    root,
-    url,
+    root, url
   }: {
     root: Root,
     url: Url
   }) => {
     const stringUrl = String(url);
     const method = stringUrl.match(Api.METHOD_REGEXP);
-
+    
     if (!method || !method[0]) throw new Error("url is does not have method");
 
-    const path = stringUrl.slice(method[0].length + 1);
-
+    const path = stringUrl.slice(method[0].length+1);
+    
     return { method: method[0], url: root + path } as {
       method: string,
       url: `${ApiUrl}/${Root}${Api.ParseRoute<Root, Url>["path"]}`
@@ -81,7 +79,7 @@ export class Frapi<ApiUrl extends string> {
     const query = this.parseQuery(data.init.query);
 
     const fetched = await fetch(url + query, this.parseInit(data.init));
-
+    
     try {
       const json = await fetched.json();
       
@@ -97,12 +95,8 @@ export class Frapi<ApiUrl extends string> {
 
     return Object.keys(query).length === 0
       ? ""
-      : "?" +
-          Object.keys(query)
-            .map((k) => [k, query[k]])
-            .map((e) => e.join("="))
-            .join("&");
-  };
+      : "?" + Object.keys(query).map(k => [k, query[k]]).map(e => e.join("=")).join("&");
+  }
 
   private readonly writeFetched = <
     Root extends keyof Api.Routes,
@@ -126,10 +120,10 @@ export class Frapi<ApiUrl extends string> {
       clone: fetched.clone,
       formData: fetched.formData,
 
-      data,
-    };
-  };
-}
+      data
+    }
+  }
+};
 
 export { Api };
 

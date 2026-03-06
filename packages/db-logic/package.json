@@ -1,0 +1,44 @@
+{
+  "name": "@lafka/db-logic",
+  "version": "1.0.0",
+  "description": "",
+  "types": "dist/database/models.database.d.ts",
+  "main": "dist/database/models.database.js",
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "dev": "nodemon -r tsconfig-paths/register src/database/start.database.ts",
+    "start:prod": "node dist/database/start.database.js",
+    "start": "pnpm run build && pnpm run start:prod",
+    "build": "tsc && tsc-alias"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Lazy-And-Focused",
+    "url": "https://laf-info.netlify.app/"
+  },
+  "contributors": [
+    {
+      "name": "FOCKUSTY",
+      "email": "viserd.yt@gmail.com",
+      "url": "http://fockusty.netlify.app/"
+    }
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "fock-logger": "catalog:",
+    "mongodb": "catalog:",
+    "mongoose": "catalog:"
+  },
+  "devDependencies": {
+    "@lafka/rights": "workspace:^",
+    "@lafka/types": "workspace:^",
+    "@types/node": "catalog:",
+    "nodemon": "catalog:",
+    "ts-node": "catalog:",
+    "tsc-alias": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "typescript": "catalog:"
+  }
+}
