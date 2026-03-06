@@ -1,13 +1,10 @@
-import { Models } from "lafka/database";
-
-const { auth: Auth } = new Models();
+import type { Auth } from "types";
 
 import passport = require("passport");
 
 import Authenticator from "./authenticator";
-import { Auth } from "lafka/types";
 
-class GeneralStrategy {
+export class Strategy {
   protected readonly _passport: passport.PassportStatic = passport;
   private readonly _authenticator: Authenticator;
 
@@ -15,8 +12,10 @@ class GeneralStrategy {
     this.serializer();
 
     this._authenticator = new Authenticator(this._passport);
+    
+    this.auth.init();
   }
-  
+
   public readonly initialize = () => {
     return this._passport.initialize();
   };
@@ -44,29 +43,15 @@ class GeneralStrategy {
         refresh_token: user.refresh_token,
 
         created_at: user.created_at,
-        type: user.type
+        type: user.type,
       });
     });
 
     this._passport.deserializeUser(async (u: string, done) => {
       try {
-        const user = await Auth.model.findOne({
-          id: u
-        });
-
-        return user
-          ? done(null, {
-              id: user.id,
-              profile_id: user.profile_id,
-              service_id: user.service_id,
-
-              access_token: user.access_token,
-              refresh_token: user.refresh_token,
-
-              created_at: user.created_at,
-              type: user.type
-            } as Auth)
-          : done(null, null);
+        /* 
+          FIND USER IN DATABASE
+        */
       } catch (err) {
         console.error(err);
 
@@ -76,4 +61,4 @@ class GeneralStrategy {
   }
 }
 
-export default GeneralStrategy;
+export default Strategy;

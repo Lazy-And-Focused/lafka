@@ -1,40 +1,43 @@
-import { Request } from "express";
+import type { Request } from "express";
+import type { Auth } from "types";
 
-import Hash from "api/hash.api";
-import { Models } from "lafka/database";
+import Hash from "services/hash.service";
 
-const { auth, users } = new Models();
+import authErrors from "src/errors/guards/auth.errors";
 
-class Service {
-  public async validateRequest(req: Request) {
+export class Service {
+  public static async validateRequest(req: Request) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { successed, id, token, profile_id } = Hash.parse(req);
 
     if (!successed) {
-      console.log("User blocked: Hash parse error #0001");
+      console.log(authErrors.HASH_PARSE);
       return false;
     }
 
-    const findedUser = await auth.model.findOne({ id: id });
+    const findedUser = {} as Auth;
+    // const findedUser = await auth.findOne({ id: id });
 
     if (!findedUser) {
-      console.log("User blocked: User not found #0002");
+      console.log(authErrors.USER_NOT_FOUND);
       return false;
     }
 
     if (findedUser.profile_id !== profile_id) {
-      console.log("User blocked: Profile id is not equals #0003");
+      console.log(authErrors.PROFILE_ID_ERROR);
       return false;
     }
 
     if (token !== new Hash().execute(findedUser.access_token)) {
-      console.log("User blocked: Token is not equals #0004");
+      console.log(authErrors.TOKEN_ERROR);
       return false;
     }
 
-    const profileUser = await users.model.findOne({ id: findedUser.profile_id });
+    const profileUser = {};
+    // const profileUser = await users.findOne({ id: findedUser.profile_id });
 
     if (!profileUser) {
-      console.log("User blocked: Profile not found #0005");
+      console.log(authErrors.PROFILE_NOT_FOUND);
       return false;
     }
 
