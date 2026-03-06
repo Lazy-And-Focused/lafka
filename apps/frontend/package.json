@@ -7,7 +7,8 @@
   "private": true,
   "author": {
     "name": "Lazy-And-Focused",
-    "url": "https://laf-team.ru/"
+    "url": "https://laf-team.ru/",
+    "email": "love.laf.command@gmail.com"
   },
   "contributors": [
     {
@@ -24,8 +25,7 @@
     "format": "prettier . --check --write"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
-    "next": "15.2.3",
+    "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
