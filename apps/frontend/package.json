@@ -40,7 +40,7 @@
     "eslint-config-prettier": "catalog:",
     "postcss": "^8",
     "prettier": "catalog:",
-    "prettier-config-laf": "workspace:^",
+    "@lazy-and-focused/prettier-config": "workspace:^",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.1",
     "typescript": "catalog:"
