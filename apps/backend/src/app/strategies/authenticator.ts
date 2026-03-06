@@ -19,16 +19,17 @@ import { getPassportEnv } from "services/env.service";
   // database code...
 }; */
 
-const defaultPassports: Record<AuthTypes, { path: string; scopes: string[] }> = {
-  google: {
-    path: "passport-google-oauth20",
-    scopes: ["profile"],
-  },
-  yandex: {
-    path: "passport-yandex",
-    scopes: []
-  }
-};
+const defaultPassports: Record<AuthTypes, { path: string; scopes: string[] }> =
+  {
+    google: {
+      path: "passport-google-oauth20",
+      scopes: ["profile"],
+    },
+    yandex: {
+      path: "passport-yandex",
+      scopes: [],
+    },
+  };
 
 export class Authenticator {
   private readonly _passport: passport.PassportStatic;

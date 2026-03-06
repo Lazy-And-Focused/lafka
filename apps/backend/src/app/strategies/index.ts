@@ -12,7 +12,7 @@ export class Strategy {
     this.serializer();
 
     this._authenticator = new Authenticator(this._passport);
-    
+
     this.auth.init();
   }
 
