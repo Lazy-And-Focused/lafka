@@ -7,7 +7,7 @@ export default async function HomePage() {
     <div className='section-block grid grid-cols-2'>
       <div className='post'>
         <div className='cover'>
-          <Image src='/post-cover.png' alt='Обложка поста' fill />
+          <Image src='/images/placeholders/cover.webp' alt='Обложка поста' fill />
 
           <p className='author'>
             <MessageUser width={12} height={12} />

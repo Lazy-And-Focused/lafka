@@ -30,7 +30,7 @@ export default function AuthPage() {
   );
 }
 
-const services = AUTH_TYPES;
+const services = [];//AUTH_TYPES;
 
 const locale: Record<AuthTypes, string> = {
   google: 'Google',

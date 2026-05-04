@@ -33,7 +33,7 @@ export default function RootLayout({
           <a href={process.env.TEAM_URL} target='_blank'>
             <Image
               className='h-6 w-auto'
-              src='/made-laf.png'
+              src='/images/footer-losung.webp'
               alt='Made with LAF'
               width='128'
               height='25'
