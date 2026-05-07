@@ -1,0 +1,34 @@
+model User {
+  id       String @id @default(uuid())
+  
+  username String @unique
+  nickname String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts Post[] @relation("PostAuthor")
+  comments Comment[] @relation("UserComments")
+
+  commentVotes CommentVote[]
+  postVotes PostVote[]
+  reposts Repost[]
+
+  follows   Follow[] @relation("UserFollows")
+  followers Follow[] @relation("UserFollowedBy")
+
+  account Account?
+}
+
+model Follow {
+  followerId String
+  follower   User   @relation("UserFollows", fields: [followerId], references: [id])
+
+  followeeId String
+  followee   User   @relation("UserFollowedBy", fields: [followeeId], references: [id])
+
+  @@id([followerId, followeeId])
+
+  @@index([followeeId])
+  @@index([followerId])
+}

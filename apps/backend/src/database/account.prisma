@@ -1,0 +1,32 @@
+model Service {
+  id           String @id
+
+  provider     OauthProviders
+  providerId   String
+
+  accessToken  String
+  refreshToken String?
+
+  accountId String
+  account   Account @relation("AccountServices", fields: [accountId], references: [id])
+
+  @@unique([provider, providerId])
+  @@unique([accountId, provider])
+}
+
+model Account {
+  id     String  @id @default(uuid())
+  
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
+
+  email  String? @unique
+
+  password String?
+  token    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  services Service[] @relation("AccountServices")
+}

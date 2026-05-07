@@ -1,0 +1,41 @@
+model CommentVote {
+  id        String   @id @default(uuid())
+  type      VoteType
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  commentId    String
+  comment      Comment     @relation(fields: [commentId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([commentId])
+  @@index([userId])
+  
+  @@unique([userId, commentId])
+}
+
+model Comment {
+  id String @id @default(uuid())
+  
+  content String
+  
+  author User @relation("UserComments", fields: [authorId], references: [id])
+  authorId String
+
+  post Post @relation("PostComments", fields: [postId], references: [id])
+  postId String
+
+  parentId String?
+  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  children Comment[] @relation("CommentReplies")
+ 
+  commentVotes CommentVote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([postId])
+}

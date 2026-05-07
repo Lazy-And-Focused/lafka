@@ -1,0 +1,24 @@
+enum OauthProviders {
+  google
+}
+
+enum PostType {
+  forum
+  blog
+}
+
+enum PostVisibility {
+  public
+  private
+  followers
+}
+
+enum Languages {
+  ru
+  en
+}
+
+enum VoteType {
+  like
+  dislike
+}

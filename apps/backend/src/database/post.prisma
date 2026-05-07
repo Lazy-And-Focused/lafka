@@ -1,0 +1,68 @@
+model PostVote {
+  id        String   @id @default(uuid())
+  type      VoteType
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([postId])
+  @@index([userId])
+  
+  @@unique([userId, postId])
+}
+
+model Repost {
+  id        String   @id @default(uuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([postId])
+  @@index([userId])
+
+  @@unique([userId, postId])
+}
+
+model Post {
+  id String @id @default(uuid())
+
+  title String @db.Char(255)
+  content String
+  description String?
+
+  type PostType
+  visibility PostVisibility @default(public)
+  tags String[]
+  
+  parentId String?
+  parent   Post?   @relation("PostReplies", fields: [parentId], references: [id])
+  children Post[]  @relation("PostReplies")
+
+  language Languages
+  spoiler Boolean @default(false)
+  nsfw Boolean @default(false)
+
+  author User @relation("PostAuthor", fields: [authorId], references: [id])
+  authorId String
+
+  comments Comment[] @relation("PostComments")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postVotes PostVote[]
+  reposts Repost[]
+
+  @@index([type, visibility, language, createdAt])
+  @@index([authorId, createdAt])
+}
