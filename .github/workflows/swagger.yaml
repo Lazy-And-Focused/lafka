@@ -1,0 +1,58 @@
+name: Deploy Swagger Docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm i
+
+      - name: Generate Prisma Client
+        run: pnpm run prisma generate:backend
+        env:
+          DATABASE_URL: "prisma+postgres://"
+
+      - name: Generate Swagger JSON
+        run: pnpm run swagger:backend
+        env:
+          IGNORE: true
+          PROGRAM_MODE: "swagger"
+
+      - name: Prepare documentation folder
+        run: |
+          mkdir -p apps/backend/public
+          cp -r apps/backend/swagger/*.json apps/backend/public/
+
+          VERSIONS_JSON=$(ls apps/backend/swagger/*.json | sed 's/.*\/v\([0-9]*\)\.json/\1/' | jq -R -s -c 'split("\n") | map(select(length > 0)) | map(tonumber)')
+
+          cp apps/backend/swagger-template.html apps/backend/public/index.html
+          sed -i "s|__VERSIONS_LIST__|$VERSIONS_JSON|g" apps/backend/public/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/backend/public
+          publish_branch: gh-pages

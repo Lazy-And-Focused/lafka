@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>BAD-Architecture API</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css"
+    />
+    <style>
+      :root {
+        --selected-version: #49cc90;
+      }
+
+      #ba-sc .active-version-badge {
+        background-color: var(--selected-version);
+      }
+    </style>
+  </head>
+
+  <body class="swagger-ui">
+    <h1>BAD-Architecture API</h1>
+    <div class="swagger-ui" id="ba-sc"></div>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+
+    <script>
+      (function () {
+        // [Не менять]!: будет подставлен массив чисел из CI, например [1,2,3]
+        const VERSIONS = __VERSIONS_LIST__;
+
+        const DEFAULT_DOCS_FILE_TYPE = "json";
+
+        let currentVersion;
+        let currentType = DEFAULT_DOCS_FILE_TYPE;
+        let swaggerUiInstance = null;
+
+        function getVersion() {
+          const query = new URLSearchParams(window.location.search);
+          const version = parseInt(query.get("version") || query.get("v"));
+          if (!VERSIONS.includes(version)) {
+            return VERSIONS[0];
+          }
+          return version;
+        }
+
+        function getType() {
+          const query = new URLSearchParams(window.location.search);
+          return query.get("type") || DEFAULT_DOCS_FILE_TYPE;
+        }
+
+        function updateUrl(version) {
+          const url = new URL(window.location);
+          url.searchParams.set("v", version);
+          if (url.searchParams.has("version")) {
+            url.searchParams.delete("version");
+          }
+          window.history.pushState({ version }, "", url);
+        }
+
+        function render(version, type = DEFAULT_DOCS_FILE_TYPE) {
+          renderVersions(version);
+          loadSwaggerUi(version, type);
+        }
+
+        function renderVersions(activeVersion) {
+          const container = document.getElementById("ba-sc");
+          container.innerHTML = "";
+
+          if (!VERSIONS.length) {
+            const message = document.createElement("div");
+            message.textContent = "No API versions available.";
+            container.appendChild(message);
+            return;
+          }
+
+          VERSIONS.forEach((version) => {
+            container.appendChild(getVersionComponent(version, activeVersion));
+          });
+        }
+
+        function getVersionComponent(version, activeVersion) {
+          const actived = version === activeVersion;
+
+          const wrapper = document.createElement("span");
+          const block = document.createElement("div");
+          block.className = "opblock opblock-get";
+
+          const summary = document.createElement("div");
+          summary.className = "opblock-summary";
+
+          const button = document.createElement("button");
+          button.className = "opblock-summary-control";
+
+          const methodSpan = document.createElement("span");
+          methodSpan.className =
+            "opblock-summary-method" + (actived ? " active-version-badge" : "");
+          methodSpan.textContent = actived ? "SELECTED" : `v${version}`;
+
+          const pathSpan = document.createElement("span");
+          pathSpan.className = "opblock-summary-path";
+          pathSpan.setAttribute("data-path", `/api/v${version}`);
+          const pathLink = document.createElement("a");
+          pathLink.className = "nostyle";
+          pathLink.textContent = `./v${version}.${DEFAULT_DOCS_FILE_TYPE}`;
+          pathSpan.appendChild(pathLink);
+
+          const descriptionDiv = document.createElement("div");
+          descriptionDiv.className = "opblock-summary-description";
+          descriptionDiv.textContent = `api specification for ${version} version`;
+
+          button.appendChild(methodSpan);
+          button.appendChild(pathSpan);
+          button.appendChild(descriptionDiv);
+          summary.appendChild(button);
+          block.appendChild(summary);
+          wrapper.appendChild(block);
+
+          wrapper.addEventListener("click", (event) => {
+            event.preventDefault();
+            updateVersion(version);
+          });
+
+          return wrapper;
+        }
+
+        function loadSwaggerUi(version, type) {
+          const specificationPath = `./v${version}.${type}`;
+          if (swaggerUiInstance) {
+            document.getElementById("swagger-ui").innerHTML = "";
+          }
+          swaggerUiInstance = SwaggerUIBundle({
+            url: specificationPath,
+            dom_id: "#swagger-ui",
+          });
+        }
+
+        function updateVersion(newVersion) {
+          if (newVersion === currentVersion) {
+            return;
+          }
+          currentVersion = newVersion;
+          updateUrl(currentVersion);
+          render(currentVersion, currentType);
+        }
+
+        window.addEventListener("popstate", () => {
+          const version = getVersion();
+          const type = getType();
+          if (version !== currentVersion || type !== currentType) {
+            currentVersion = version;
+            currentType = type;
+            render(currentVersion, currentType);
+          }
+        });
+
+        // --- initialize page data
+        currentType = getType();
+        currentVersion = getVersion();
+        render(currentVersion, currentType);
+      })();
+    </script>
+  </body>
+</html>

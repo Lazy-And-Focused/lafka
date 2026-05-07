@@ -1,36 +1,42 @@
-import connect from "lafka/database/database/index.database";
+import { env, PROGRAM_MODE } from "@/services";
+
+import { init as initSentry, consoleLoggingIntegration } from "@sentry/nestjs";
+import { NestFactory } from "@nestjs/core";
 
 import { json, urlencoded } from "express";
-import { NestFactory } from "@nestjs/core";
+
+import cookieParser from "cookie-parser";
+
+import { Session } from "./app.session";
 import { AppModule } from "./app.module";
 
-import cookieParser = require("cookie-parser");
+import { swagger } from "./swagger";
 
-import Passport from "./strategies";
+initSentry({
+  dsn: env.SENTRY_URL,
+  tracesSampleRate: 1.0,
+  integrations: [
+    consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+  ],
+  enableLogs: true,
+});
 
-import Session from "./app/session.app";
-import Api from "api/index.api";
-
-const passport = new Passport();
-const api = new Api();
-
-async function bootstrap() {
-  await connect(api.env.MONGO_URL);
+(async () => {
+  if (PROGRAM_MODE === "swagger") {
+    return swagger();
+  }
 
   const app = await NestFactory.create(AppModule, {
-    cors: { origin: [api.env.CLIENT_URL], credentials: true }
+    cors: { origin: [env.CLIENT_URL], credentials: true },
   });
 
-  new Session("AVlzkjbsazvhxczvoiz", app).create();
+  new Session(env.SESSION_SECRET, app).create();
 
   app.use(cookieParser());
-  app.use(json());
   app.use(urlencoded());
+  app.use(json());
 
-  app.use(passport.session());
-  app.use(passport.initialize());
+  swagger(app);
 
-  await app.listen(3001);
-}
-
-bootstrap();
+  await app.listen(env.PORT);
+})();

@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output = "./generated"
+  moduleFormat = "cjs"
+  generatedFileExtension = "ts"
+  compilerBuild = "fast"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthTypes {
+  google
+}
+
+model Service {
+  id           String @id
+  name         AuthTypes
+  accessToken  String
+  refreshToken String?
+
+  authId String
+  auth   Auth @relation("auth", fields: [authId], references: [id])
+}
+
+model Auth {
+  id     String  @id @default(uuid())
+  userId String  @unique
+  email  String? @unique
+
+  password String?
+  token    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  services Service[] @relation("auth")
+}
+
+model User {
+  id       String @id @default(uuid())
+  
+  username String @unique
+  nickname String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
